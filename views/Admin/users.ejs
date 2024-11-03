@@ -1,0 +1,227 @@
+<% layout('./Layout/layout.ejs') -%>
+    <% block('head').append(` <link href="/assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css"
+        rel="stylesheet" type="text/css" />
+    <link href="/assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-select-bs5/css/select.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    `) %>
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+                <h4 class="page-title">
+                    <%=pagetitle%>
+                </h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+
+                    <li class="breadcrumb-item active">Users</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-vcenter js-dataTable-full"
+                            id="datatable-buttons">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+
+                                <th>Fullname</th>
+                                <th>Phonenumber</th>
+                                <th>Email</th>
+                                <th>Status</th>
+
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% users.forEach((record, index)=> { %>
+                                <tr>
+                                    <td class="text-center fs-sm">
+                                        <%= index + 1 %>
+                                    </td>
+
+                                    <td class="fw-semibold fs-sm d-flex align-items-center">
+                                        <img src="/images/profile/<%= record.profile_url %>" class="img-avatar me-2"
+                                            alt="" style="width: 40px; height: 40px;">
+                                        <span>
+                                            <%= record.lastname %>, <%= record.firstname %>
+                                        </span>
+                                    </td>
+                                    <td class="fs-sm">
+                                        <%= record.phonenumber %>
+                                    </td>
+                                    <td class="fs-sm">
+                                        <%= record.email %>
+                                    </td>
+
+                                    <td class="text-center">
+
+                                        <% if (record.is_verified) { %>
+                                            <span class="badge bg-success">Verified</span>
+                                            <% } else { %>
+                                                <span class="badge bg-danger">Not Verified</span>
+                                                <% } %>
+
+
+
+                                    </td>
+
+                                    <td class="text-center fs-sm">
+                                        <div class="btn-group">
+                                            <a href="/admin/user/<%= record.uuid %>/edit"
+                                                class="btn btn-sm btn-secondary js-bs-tooltip-enabled"
+                                                data-bs-toggle="tooltip" aria-label="Edit User"
+                                                data-bs-original-title="Edit User"
+                                               >
+                                                <i class="fa fa-fw fa-pencil-alt"></i>Edit
+                                        </a>
+                                            <button type="button"
+                                                class="btn btn-sm btn-danger js-bs-tooltip-enabled"
+                                                data-bs-toggle="tooltip" aria-label="Remove User"
+                                                onclick="deleteUser('<%= record.uuid %>', '<%= record.lastname %>, <%= record.firstname %>')"
+                                                data-bs-original-title="Remove User">
+                                                <i class="fa fa-fw fa-times"></i>Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <%})%>
+
+
+                        </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+ <!-- Delete User Modal -->
+ <div class="modal fade" id="modal-delete-user" tabindex="-1" aria-labelledby="modal-delete-user"
+ aria-hidden="true">
+ <div class="modal-dialog">
+     <div class="modal-content">
+         <form id="deleteUserForm" action="/admin/user/delete/" method="POST">
+             <input type="hidden" name="user_id" id="delete-user-id">
+             <div class="modal-header">
+                 <h5 class="modal-title">Delete User</h5>
+                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+             </div>
+             <div class="modal-body">
+                 <p>Are you sure you want to delete the account of <span id="user_delete_name" class="fw-bold"></span>
+                     ?</p>
+                 <div class="alert alert-danger d-flex align-items-center" role="alert">
+                     <i class="fa fa-exclamation-triangle me-2"></i>
+                     <div>
+                         <strong>Note:</strong> Deleting this will also delete all associated records.
+                     </div>
+                 </div>
+             </div>
+             <div class="modal-footer">
+                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                 <button type="submit" class="btn btn-danger">Delete</button>
+             </div>
+         </form>
+     </div>
+ </div>
+</div>
+
+<%block('script').append(`
+<script>
+function deleteUser(userId, userName) {
+    document.getElementById("user_delete_name").innerText = userName;
+    document.getElementById("delete-user-id").value = userId;
+
+    // Show the modal using Bootstrap 5 API
+    const modal = new bootstrap.Modal(document.getElementById('modal-delete-user'));
+    modal.show();
+    }
+
+
+    document.getElementById('deleteUserForm').addEventListener('submit', async function (event) {
+    event.preventDefault(); // Prevent the form from submitting the traditional way
+
+    const userId = document.getElementById('delete-user-id').value;
+
+    try {
+    const response = await fetch('/admin/user/delete/', {
+    method: 'POST',
+    headers: {
+    'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ user_id: userId })
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+    // Close the modal
+    const modal = bootstrap.Modal.getInstance(document.getElementById('modal-delete-user'));
+    modal.hide();
+
+    $.notify({
+    icon: 'fa fa-check me-1',
+    message: 'User deleted successfully!'
+    }, {
+    type: 'success',allow_dismiss: false,
+    });
+    setTimeout(() => {
+    window.location.href = '/admin/users';
+    }, 2000);
+    } else {
+    $.notify({
+    icon: 'fa fa-check me-1',
+    message: 'User updating error!'
+    }, {
+    type: 'danger',allow_dismiss: false,
+    });
+    setTimeout(() => {
+    window.location.href = '/admin/users';
+    }, 2000);
+    }
+    } catch (error) {
+    $.notify({
+    icon: 'fa fa-times-circle me-1',
+    message: 'An error occurred. Please try again.'
+    }, {
+    type: 'danger'
+    });
+    console.error('Error:', error);
+    }
+    });
+
+    </script>
+ 
+ `)%>
+
+
+    <%block('script').append(`<script src="/assets/vendor/datatables.net/js/jquery.dataTables.min.js">
+        </script>
+        <script src="/assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+        <script src="/assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="/assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+        <script src="/assets/vendor/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
+        <script src="/assets/vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+        <script src="/assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="/assets/vendor/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+        <script src="/assets/vendor/datatables.net-buttons/js/buttons.html5.min.js"></script>
+        <script src="/assets/vendor/datatables.net-buttons/js/buttons.flash.min.js"></script>
+        <script src="/assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
+        <script src="/assets/vendor/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+        <script src="/assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
+
+        <!-- Datatable Demo Aapp js -->
+        <script src="/assets/js/pages/demo.datatable-init.js"></script>`)%>

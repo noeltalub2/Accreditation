@@ -1,0 +1,145 @@
+<% layout('./Layout/layout.ejs') -%>
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+        <h4 class="page-title">
+          <%=pagetitle%>
+        </h4>
+        <ol class="breadcrumb m-0">
+          <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+
+          <li class="breadcrumb-item active">Current</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="row g-3">
+
+    
+    <div class="col-md-4">
+      <div class="card widget-flat">
+          <div class="card-body">
+              <div class="float-end">
+                  <i class="ri-user-line text-bg-info widget-icon"></i>
+              </div>
+              <h5 class="text-muted fw-normal mt-0" title="Number of Assessors">Users</h5>
+              <h3 class="my-3"><%= total_users %></h3>
+          </div> <!-- end card-body-->
+      </div> <!-- end card-->
+  </div>
+
+    <div class="col-md-4">
+        <div class="card widget-flat">
+            <div class="card-body">
+                <div class="float-end">
+                    <i class="ri-user-2-line text-bg-info widget-icon"></i>
+                </div>
+                <h5 class="text-muted fw-normal mt-0" title="Number of Assessors">Assessors</h5>
+                <h3 class="my-3"><%= total_assessors %></h3>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div>
+    <div class="col-md-4">
+      <div class="card widget-flat">
+          <div class="card-body">
+              <div class="float-end">
+                  <i class="ri-file-list-3-line text-bg-info widget-icon"></i>
+              </div>
+              <h5 class="text-muted fw-normal mt-0" title="Total Applications">Total Applications</h5>
+              <h3 class="my-3"><%= total_applications %></h3>
+          </div> <!-- end card-body-->
+      </div> <!-- end card-->
+  </div>
+    <div class="col-md-4">
+        <div class="card widget-flat">
+            <div class="card-body">
+                <div class="float-end">
+                    <i class="ri-check-double-line text-bg-success widget-icon"></i>
+                </div>
+                <h5 class="text-muted fw-normal mt-0" title="Total Evaluations">Total Evaluations</h5>
+                <h3 class="my-3"><%= total_evaluations %></h3>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div>
+
+
+    <div class="col-md-4">
+        <div class="card widget-flat">
+            <div class="card-body">
+                <div class="float-end">
+                    <i class="ri-error-warning-line text-bg-danger widget-icon"></i>
+                </div>
+                <h5 class="text-muted fw-normal mt-0" title="Pending Applications">Pending Applications</h5>
+                <h3 class="my-3"><%= pending_applications %></h3>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div>
+
+    <div class="col-md-4">
+        <div class="card widget-flat">
+            <div class="card-body">
+                <div class="float-end">
+                    <i class="ri-star-line text-bg-primary widget-icon"></i>
+                </div>
+                <h5 class="text-muted fw-normal mt-0" title="Qualified Evaluations">Qualified Evaluations</h5>
+                <h3 class="my-3"><%= qualified_evaluations %></h3>
+            </div> <!-- end card-body-->
+        </div> <!-- end card-->
+    </div>
+
+    <div class="col-md-12">
+      <div class="card"><div class="card-body">
+          <h5>Recent Applications</h5>
+      <table class="table table-bordered">
+          <thead>
+              <tr>
+                  <th>Application ID</th>
+                  <th>Name</th>
+                  <th>Status</th>
+                  <th>Created At</th>
+              </tr>
+          </thead>
+          <tbody>
+              <% recentApplications.forEach(function(application) { %>
+                  <tr>
+                      <td><%= application.id %></td>
+                      <td><%= application.name %></td>
+                      <td><%= application.status %></td>
+                      <td><%= application.created_at.toISOString().slice(0, 10) %></td>
+                  </tr>
+              <% }); %>
+          </tbody>
+      </table>
+      </div></div>
+    
+  </div>
+
+  <!-- Assessor Evaluation Details Section -->
+  <div class="col-md-12">
+    <div class="card"><div class="card-body">
+         <h5>Assessor Evaluation Details</h5>
+      <table class="table table-bordered">
+          <thead>
+              <tr>
+                  <th>Assessor Name</th>
+                  <th>Email</th>
+                  <th>Total Score</th>
+                  <th>Evaluation Status</th>
+              </tr>
+          </thead>
+          <tbody>
+              <% assessors.forEach(function(assessor) { %>
+                  <tr>
+                      <td><%= assessor.firstname %> <%= assessor.lastname %></td>
+                      <td><%= assessor.email ? assessor.email : 'N/A' %></td>
+                      <td><%= assessor.total_score ? assessor.total_score : 'N/A' %></td>
+                      <td><%= assessor.evaluation_status ? assessor.evaluation_status : 'N/A' %></td>
+                  </tr>
+              <% }); %>
+          </tbody>
+      </table>
+    </div></div>
+   
+  </div>
+
+</div>

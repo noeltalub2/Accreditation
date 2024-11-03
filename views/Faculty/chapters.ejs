@@ -1,0 +1,88 @@
+<% layout('./Layout/layout.ejs') -%>
+<div class="bg-body-extra-light">
+  <div class="content content-boxed py-3">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb breadcrumb-alt">
+        <li class="breadcrumb-item">
+          <a class="link-fx" href="/faculty/project">Project</a>
+        </li>
+        <li class="breadcrumb-item" aria-current="page">
+          Chapters
+        </li>
+      </ol>
+    </nav>
+  </div>
+</div>
+  <div class="content">
+
+    <div class="block block-rounded">
+   
+      <div class="block block-rounded">
+        <div class="block-content fs-sm">
+          <!-- Chapter I. INTRODUCTION -->
+          <table class="table table-borderless table-vcenter">
+            <tbody>
+              <tr class="table-active">
+             
+                <th>Chapter I. INTRODUCTION</th>
+          
+              </tr>
+              <% chapters.filter(chapter => chapter.chapter_number.startsWith('1.')).forEach(chapter => { %>
+                <tr>
+                
+                  <td>
+                    <a class="fw-medium ms-4" href="/faculty/project/<%= projectId %>/chapter/<%= chapter.chapter_number.replace('.', '-') %>">
+                      <%= chapter.chapter_number %> <%= chapter.title %>
+                    </a>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+  
+          <!-- Chapter II. REVIEW OF RELATED LITERATURE/STUDIES -->
+          <table class="table table-borderless table-vcenter">
+            <tbody>
+              <tr class="table-active">
+          
+                <th>Chapter II. REVIEW OF RELATED LITERATURE/STUDIES</th>
+        
+              </tr>
+              <% chapters.filter(chapter => chapter.chapter_number.startsWith('2.')).forEach(chapter => { %>
+                <tr>
+                
+                  <td>
+                    <a class="fw-medium ms-4" href="/faculty/project/<%= projectId %>/chapter/<%= chapter.chapter_number.replace('.', '-') %>">
+                      <%= chapter.chapter_number %> <%= chapter.title %>
+                    </a>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+  
+          <!-- Chapter III. DESIGN AND METHODOLOGY -->
+          <table class="table table-borderless table-vcenter">
+            <tbody>
+              <tr class="table-active">
+          
+                <th>Chapter III. DESIGN AND METHODOLOGY</th>
+     
+              </tr>
+              <% chapters.filter(chapter => chapter.chapter_number.startsWith('3.')).forEach(chapter => { %>
+                <tr>
+                 
+                  <td>
+                    <a class="fw-medium ms-4" href="/faculty/project/<%= projectId %>/chapter/<%= chapter.chapter_number.replace('.', '-') %>">
+                      <%= chapter.chapter_number %> <%= chapter.title %>
+                    </a>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </div>

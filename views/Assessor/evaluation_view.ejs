@@ -1,0 +1,559 @@
+<% layout('./Layout/layout.ejs') -%>
+    <% block('head').append(` <link href="/assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css"
+        rel="stylesheet" type="text/css" />
+    <link href="/assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-select-bs5/css/select.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    `) %>
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+                <h4 class="page-title">
+                    <%=pagetitle%>
+                </h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/assessor/home">For Evaluation</a></li>
+             
+                    <li class="breadcrumb-item active">Current</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <% if (usersEvaluation.length > 0) { %>
+                        <form action="/evaluation/<%= usersEvaluation[0].id %>/edit" method="POST" class="evaluation-edit-validation">
+                            <input type="hidden" name="application_id" value="<%= application.id %>">
+                            <h4>Edit Evaluation</h4>
+                    <% } else { %>
+                        <form action="/evaluation/create" method="POST" class="evaluation-validation">
+                            <input type="hidden" name="application_id" value="<%= application.id %>">
+                            <h4>Create Evaluation</h4>
+                    <% } %>
+                
+                    <h4>1. Educational Qualification</h4>
+                    
+                    <div class="mb-3">
+                        <p>Max Points: 20</p>
+                    </div>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item">1.1 High School Graduate - 4 Points</li>
+                        <li class="list-group-item">1.2 One Year College - 12 Points</li>
+                        <li class="list-group-item">1.3 Two Years College / Graduate of Vocational - 12 Points</li>
+                        <li class="list-group-item">1.4 Technical course of two years - 16 Points</li>
+                        <li class="list-group-item">1.5 Three Years College - 20 Points</li>
+                        <li class="list-group-item">1.6 College Degree Holder - 20 Points</li>
+                    </ul>
+                    <div class="mb-3">
+                        <label for="educational_points" class="form-label">Educational Qualification Points</label>
+                        <input type="number" id="educational_points" name="educational_points" class="form-control"
+                               min="0" max="20" required
+                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].educational_points : '' %>">
+                    </div>
+                
+                    <h4>2. Work Experience</h4>
+                    <div class="mb-3">
+                        <p>Max Points: 40</p>
+                    </div>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item">2.1 Ordinary Employee - 1 Point / year</li>
+                        <li class="list-group-item">2.2 Supervisor - 2 Points / year</li>
+                        <li class="list-group-item">2.3 Head/Manager - 3 Points / year</li>
+                    </ul>
+                    <div class="mb-3">
+                        <label for="work_experience_points" class="form-label">Work Experience Points</label>
+                        <input type="number" id="work_experience_points" name="work_experience_points"
+                               class="form-control" min="0" max="40" required
+                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].work_experience_points : '' %>">
+                    </div>
+                
+                    <h4>3. Professional Achievement</h4>
+                    <div class="mb-3">
+                        <p>Max Points: 25</p>
+                    </div>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item">3.1 Training/Seminar</li>
+                        <ul>
+                            <li>3.1.1 Local/Regional - 2 Points</li>
+                            <li>3.1.2 National - 3 Points</li>
+                            <li>3.1.3 International - 5 Points</li>
+                        </ul>
+                        <li class="list-group-item">3.2 Professional Development</li>
+                        <ul>
+                            <li>3.2.1 Membership or Scholarship - 5 Points</li>
+                        </ul>
+                        <li class="list-group-item">3.3 Eligibility/Awards</li>
+                        <ul>
+                            <li>3.3.1.1 Sub-professional - 2 Points</li>
+                            <li>3.3.1.2 Technical (NC, COC) - 3 Points</li>
+                            <li>3.3.1.3 Professional - 5 Points</li>
+                        </ul>
+                    </ul>
+                    <div class="mb-3">
+                        <label for="training_points" class="form-label">Training Points</label>
+                        <input type="number" id="training_points" name="training_points" class="form-control"
+                               min="0" max="10" required
+                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].training_points : '' %>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="professional_development_points" class="form-label">Professional Development Points</label>
+                        <input type="number" id="professional_development_points" name="professional_development_points"
+                               class="form-control" min="0" max="10" required
+                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].professional_development_points : '' %>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="eligibility_points" class="form-label">Eligibility & Awards Points</label>
+                        <input type="number" id="eligibility_points" name="eligibility_points" class="form-control"
+                               min="0" max="5" required
+                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].eligibility_points : '' %>">
+                    </div>
+                
+                    <h4>4. Interview</h4>
+                    <div class="mb-3">
+                        <p>Max Points: 15</p>
+                    </div>
+                    <ul class="list-group mb-3">
+                        <li class="list-group-item">4.1 Chief of ETEEAP - 5 Points</li>
+                        <li class="list-group-item">4.2 Internal Assessor - 10 Points</li>
+                    </ul>
+                    <div class="mb-3">
+                        <label for="interview_chief_points" class="form-label">Interview Chief Points</label>
+                        <input type="number" id="interview_chief_points" name="interview_chief_points"
+                               class="form-control" min="0" max="5" required
+                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].interview_chief_points : '' %>">
+                    </div>
+                    <div class="mb-3">
+                        <label for="interview_assessor_points" class="form-label">Interview Assessor Points</label>
+                        <input type="number" id="interview_assessor_points" name="interview_assessor_points"
+                               class="form-control" min="0" max="10" required
+                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].interview_assessor_points : '' %>">
+                    </div>
+                
+                    <!-- Qualification Status Input -->
+                    <div class="mb-3">
+                        <div class="row align-items-center ">
+                            <div class="col-4">
+                                <label for="qualification_status" class="">Qualification Status</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="text" id="qualification_status" name="qualification_status" class="form-control-plaintext text-center" readonly>
+                            </div>
+                        </div>
+                        
+                    
+                    
+                    </div>
+                
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary">
+                        <% if (usersEvaluation.length > 0) { %>Update Evaluation<% } else { %>Create Evaluation<% } %>
+                    </button>
+                </form>
+                </div>
+                
+            </div>
+        </div>
+        
+    </div>
+
+
+    <script>
+        // Function to calculate total points and update qualification status
+        function calculateQualificationStatus() {
+            // Get the values of the input fields
+            const educationalPoints = parseInt(document.getElementById('educational_points').value) || 0;
+            const workExperiencePoints = parseInt(document.getElementById('work_experience_points').value) || 0;
+            const trainingPoints = parseInt(document.getElementById('training_points').value) || 0;
+            const professionalDevelopmentPoints = parseInt(document.getElementById('professional_development_points').value) || 0;
+            const eligibilityPoints = parseInt(document.getElementById('eligibility_points').value) || 0;
+            const interviewChiefPoints = parseInt(document.getElementById('interview_chief_points').value) || 0;
+            const interviewAssessorPoints = parseInt(document.getElementById('interview_assessor_points').value) || 0;
+    
+            // Calculate total points
+            const totalPoints = educationalPoints + workExperiencePoints + trainingPoints +
+                professionalDevelopmentPoints + eligibilityPoints + interviewChiefPoints + interviewAssessorPoints;
+    
+            // Update qualification status
+            const qualificationStatusInput = document.getElementById('qualification_status');
+            qualificationStatusInput.value = totalPoints >= 80 ? 'Qualified' : 'Not Qualified';
+
+              // Change text color based on qualification status
+        if (qualificationStatusInput.value === 'Qualified') {
+            qualificationStatusInput.style.color = 'green';
+        } else {
+            qualificationStatusInput.style.color = 'red'; // Default color for "Qualified"
+        }
+        }
+    
+        // Attach event listeners to input fields
+        const inputFields = [
+            'educational_points',
+            'work_experience_points',
+            'training_points',
+            'professional_development_points',
+            'eligibility_points',
+            'interview_chief_points',
+            'interview_assessor_points'
+        ];
+        
+        inputFields.forEach(field => {
+            document.getElementById(field).addEventListener('input', calculateQualificationStatus);
+        });
+    
+        // Initial calculation on page load
+        window.onload = calculateQualificationStatus;
+    </script>
+
+    <%block('script').append(` <!-- Datatable Demo Aapp js -->
+        <script>
+
+            !(function () {
+                "use strict";
+                class EvaluationFormValidation {
+                    static initValidation() {
+                        // Initialize jQuery validation
+                        jQuery(".evaluation-validation").validate({
+                            rules: {
+                                educational_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 20
+                                },
+                                work_experience_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 40
+                                },
+                                training_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 10
+                                },
+                                professional_development_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 10
+                                },
+                                eligibility_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 5
+                                },
+                                interview_chief_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 5
+                                },
+                                interview_assessor_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 10
+                                }
+                            },
+                            messages: {
+                                educational_points: {
+                                    required: "Please enter educational qualification points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 20"
+                                },
+                                work_experience_points: {
+                                    required: "Please enter work experience points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 40"
+                                },
+                                training_points: {
+                                    required: "Please enter training points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 10"
+                                },
+                                professional_development_points: {
+                                    required: "Please enter professional development points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 10"
+                                },
+                                eligibility_points: {
+                                    required: "Please enter eligibility points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 5"
+                                },
+                                interview_chief_points: {
+                                    required: "Please enter interview chief points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 5"
+                                },
+                                interview_assessor_points: {
+                                    required: "Please enter interview assessor points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 10"
+                                }
+                            },
+                            submitHandler: function (form) {
+                                const data = {
+                                    educational_points: form.educational_points.value,
+                                    work_experience_points: form.work_experience_points.value,
+                                    training_points: form.training_points.value,
+                                    professional_development_points: form.professional_development_points.value,
+                                    eligibility_points: form.eligibility_points.value,
+                                    interview_chief_points: form.interview_chief_points.value,
+                                    interview_assessor_points: form.interview_assessor_points.value,
+                                 
+                                    application_id: form.application_id.value,
+                             
+                                };
+
+                                fetch('/assessor/evaluation', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json', // Specify the content type as JSON
+                                    },
+                                    body: JSON.stringify(data), // Convert form data to JSON string
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                         
+
+                                            $.notify({
+                                                icon: 'fa fa-check me-1',
+                                                message: 'Evaluation submitted successfully!'
+                                            }, {
+                                                type: 'success', allow_dismiss: false,
+                                            });
+                                            setTimeout(() => {
+                                                window.location.reload()
+                                            }, 2000);
+                                        } else {
+                                            $.notify({
+                                                icon: 'fa fa-exclamation-triangle me-1',
+                                                message: 'Failed to submit evaluation. Please try again.'
+                                            }, {
+                                                type: 'danger', allow_dismiss: false,
+                                            });
+                                        }
+                                    })
+                                    .catch(error => {
+                                        $.notify({
+                                            icon: 'fa fa-times-circle me-1',
+                                            message: 'An error occurred. Please try again.'
+                                        }, {
+                                            type: 'danger'
+                                        });
+                                        console.error('Error:', error);
+                                    });
+                            }
+                        });
+                    }
+
+                    static init() {
+                        this.initValidation();
+                    }
+                }
+
+                // Call init function on document ready
+                $(document).ready(() => EvaluationFormValidation.init());
+            })();
+
+            !(function () {
+                "use strict";
+                class EditEvaluationFormValidation {
+                    static initValidation() {
+                        // Initialize jQuery validation
+                        jQuery(".evaluation-edit-validation").validate({
+                            rules: {
+                                educational_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 20
+                                },
+                                work_experience_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 40
+                                },
+                                training_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 10
+                                },
+                                professional_development_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 10
+                                },
+                                eligibility_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 5
+                                },
+                                interview_chief_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 5
+                                },
+                                interview_assessor_points: {
+                                    required: true,
+                                    number: true,
+                                    min: 0,
+                                    max: 10
+                                }
+                            },
+                            messages: {
+                                educational_points: {
+                                    required: "Please enter educational qualification points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 20"
+                                },
+                                work_experience_points: {
+                                    required: "Please enter work experience points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 40"
+                                },
+                                training_points: {
+                                    required: "Please enter training points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 10"
+                                },
+                                professional_development_points: {
+                                    required: "Please enter professional development points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 10"
+                                },
+                                eligibility_points: {
+                                    required: "Please enter eligibility points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 5"
+                                },
+                                interview_chief_points: {
+                                    required: "Please enter interview chief points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 5"
+                                },
+                                interview_assessor_points: {
+                                    required: "Please enter interview assessor points",
+                                    number: "Please enter a valid number",
+                                    min: "Points should not be less than 0",
+                                    max: "Points should not exceed 10"
+                                }
+                            },
+                            submitHandler: function (form) {
+                                const data = {
+                                    educational_points: form.educational_points.value,
+                                    work_experience_points: form.work_experience_points.value,
+                                    training_points: form.training_points.value,
+                                    professional_development_points: form.professional_development_points.value,
+                                    eligibility_points: form.eligibility_points.value,
+                                    interview_chief_points: form.interview_chief_points.value,
+                                    interview_assessor_points: form.interview_assessor_points.value,
+                                
+                                    application_id: form.application_id.value,
+                                    qualification_status: form.qualification_status.value
+                                };
+
+                                fetch('/assessor/evaluation/update', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json', // Specify the content type as JSON
+                                    },
+                                    body: JSON.stringify(data), // Convert form data to JSON string
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+                                        if (data.success) {
+                                           
+
+                                            $.notify({
+                                                icon: 'fa fa-check me-1',
+                                                message: 'Evaluation updated successfully!'
+                                            }, {
+                                                type: 'success', allow_dismiss: false,
+                                            });
+                                            setTimeout(() => {
+                                                window.location.reload()
+                                            }, 2000);
+                                        } else {
+                                            $.notify({
+                                                icon: 'fa fa-exclamation-triangle me-1',
+                                                message: 'Failed to submit evaluation. Please try again.'
+                                            }, {
+                                                type: 'danger', allow_dismiss: false,
+                                            });
+                                        }
+                                    })
+                                    .catch(error => {
+                                        $.notify({
+                                            icon: 'fa fa-times-circle me-1',
+                                            message: 'An error occurred. Please try again.'
+                                        }, {
+                                            type: 'danger'
+                                        });
+                                        console.error('Error:', error);
+                                    });
+                            }
+                        });
+                    }
+
+                    static init() {
+                        this.initValidation();
+                    }
+                }
+
+                // Call init function on document ready
+                $(document).ready(() => EditEvaluationFormValidation.init());
+            })();
+
+        </script>
+        `) %>
+
+        <%block('script').append(`<script src="/assets/vendor/datatables.net/js/jquery.dataTables.min.js">
+            </script>
+            <script src="/assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+            <script src="/assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons/js/buttons.html5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons/js/buttons.flash.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
+            <script src="/assets/vendor/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+            <script src="/assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
+
+            <!-- Datatable Demo Aapp js -->
+            <script src="/assets/js/pages/demo.datatable-init.js"></script>`)%>

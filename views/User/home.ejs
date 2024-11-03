@@ -1,0 +1,114 @@
+<% layout('./Layout/layout.ejs') -%>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+        <h4 class="page-title">
+          <%=pagetitle%>
+        </h4>
+        <ol class="breadcrumb m-0">
+          <li class="breadcrumb-item"><a href="/home">Dashboard</a></li>
+
+          <li class="breadcrumb-item active">Home</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col col-md-6">
+      <div class="card widget-flat">
+        <div class="card-body">
+          <div class="float-end">
+            <i class="ri-file-2-fill text-bg-info widget-icon"></i>
+          </div>
+          <h5 class="text-muted fw-normal mt-0" title="Number of Customers">Applications Submitted</h5>
+          <h3 class="my-3"><%=count_application%></h3>
+       
+        </div> <!-- end card-body-->
+      </div> <!-- end card-->
+    </div> <!-- end col-->
+
+    <!-- end col -->
+    <% if (interview.length> 0) { %> <!-- Check if there are interviews -->
+      <div class="col col-md-6">
+        <div class="card widget-flat">
+          <div class="card-body">
+            <div class="float-end">
+              <i class="ri-calendar-2-line text-bg-primary widget-icon"></i>
+            </div>
+            <h5 class="text-muted fw-normal mt-0" title="Average Revenue">Interviews Available</h5>
+
+            <% interview.forEach(function(interview) { %>
+              <div class="mb-0">
+              
+                <p class="mb-0 text-muted">
+                  <span class="text-nowrap">
+                    <%function formatDate(dateString) {
+                      const date = new Date(dateString);
+                      const options = { day: "numeric", month: "long" };
+                      return date.toLocaleDateString("en-US", options);
+                    }
+                    function formatTime(timeString) {
+                      // Split the time string (e.g., "14:31:00") to get hours and minutes
+                      const [hours, minutes] = timeString.split(':');
+                      
+                      // Create a new Date object using current date and provided time
+                      const date = new Date();
+                      date.setHours(hours, minutes, 0, 0);  // Set hours, minutes, and reset seconds
+                      
+                      // Format the time using toLocaleTimeString
+                      const options = { hour: "numeric", minute: "numeric", hour12: true };
+                      return date.toLocaleTimeString("en-US", options);
+                    }
+                    %>
+                    <%= interview.status !=='Rejected' && interview.status !=='Cancelled' ? '' + formatDate(interview.interview_date) + ' at ' + formatTime(interview.interview_time)
+                      : '' %>
+                  </span>
+                  <span class="badge 
+                  <%= interview.status === 'Pending' ? 'bg-warning' : '' %>
+                  <%= interview.status === 'Accepted' ? 'bg-success' : '' %>
+                  <%= interview.status === 'Rejected' ? 'bg-danger' : '' %>
+                  <%= interview.status === 'Completed' ? 'bg-info' : '' %>
+                  <%= interview.status === 'Cancelled' ? 'bg-danger' : '' %> 
+                " class="me-1">
+                    <%= interview.status %>
+                  </span>
+               
+                </p>
+
+               
+
+                <!-- Conditionally render messages based on interview status -->
+                <% if (interview.status==='Pending' ) { %>
+                  <p class="text-warning mt-1 mb-2">Your interview is currently <strong>Pending</strong>. Please wait for
+                    admin to make a decision.</p>
+                  <% } else if (interview.status==='Accepted' ) { %>
+                    <p class="text-success mt-1 mb-2">Interview Accepted. Prepare accordingly!</p>
+                    <% } else if (interview.status==='Rejected' ) { %>
+                      <p class="text-danger mt-1 mb-2">Interview Rejected.</p>
+                      <% } else if (interview.status==='Completed' ) { %>
+                        <p class="text-info mt-1 mb-2">Interview Completed. Thank you!</p>
+                        <% } else if (interview.status==='Cancelled' ) { %> <!-- Added condition for Cancelled -->
+                          <p class="text-secondary mt-1 mb-2">Interview Cancelled.</p>
+                          <% } %>
+              </div>
+              <% }); %> <!-- End of forEach -->
+          </div>
+        </div>
+      </div>
+
+      <% } else { %> <!-- Message when there are no interviews -->
+        <div class="col col-md-6">
+          <div class="card widget-flat">
+            <div class="card-body">
+              <div class="float-end">
+                <i class="ri-calendar-2-line text-bg-primary widget-icon"></i>
+              </div>
+              <h5 class="text-muted fw-normal mt-0" title="Average Revenue">No Interviews Available</h5>
+              <h3 class="my-3">Currently no interviews scheduled.</h3>
+          
+            </div>
+          </div>
+          <% } %> <!-- End of if statement -->
+
+        </div>

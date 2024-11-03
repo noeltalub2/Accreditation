@@ -1,0 +1,118 @@
+<% layout('./Layout/layout.ejs') -%>
+    <% block('head').append(` <link href="/assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css"
+        rel="stylesheet" type="text/css" />
+    <link href="/assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-select-bs5/css/select.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    `) %>
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+                <h4 class="page-title">
+                    <%=pagetitle%>
+                </h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/admin/assessor">Assessors</a></li>
+                    <li class="breadcrumb-item active">View Assessors Evaluation</li>
+                </ol>
+
+            </div>
+        </div>
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <div class="d-flex align-items-center mb-3">
+              <img src="/images/profile/<%= assessor_account.profile_url %>" class="img-avatar me-3 rounded-circle" alt="" style="width: 80px; height: 80px;">
+              <div>
+                <h4 class="mb-1"><%= assessor_account.firstname %> <%= assessor_account.lastname %></h4>
+                <p class="text-muted mb-1"><strong>UUID:</strong> <%= assessor_account.uuid %></p>
+                <p class="text-muted mb-1"><strong>Email:</strong> <%= assessor_account.email %></p>
+                <p class="text-muted mb-1"><strong>Phone:</strong> <%= assessor_account.phonenumber %></p>
+                <p class="text-muted mb-1"><strong>Gender:</strong> <%= assessor_account.gender %></p>
+              </div>
+            </div>
+        </div>
+        
+    </div>
+    <div class="row g-3">
+
+
+
+
+        <% assessor_application.forEach(function(item) { %> <!-- Assuming 'results' contains the query result -->
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-primary text-white">
+                        <a href="/admin/applications/review/<%= item.application_id %>" class="text-white">
+                            <h5 class="mb-0">Application ID: <%= item.application_id %>
+                            </h5>
+                        </a>
+                    </div>
+                    <div class="card-body">
+                        <h6 class="text-muted">Applicant Information</h6>
+                        <p class="mb-1"><strong>Name:</strong>
+                            <%= item.applicant_name %>
+                        </p>
+                        <p class="mb-1"><strong>Email:</strong>
+                            <%= item.applicant_email %>
+                        </p>
+                        <p class="mb-1"><strong>Status:</strong>
+                            <%= item.application_status %>
+                        </p>
+
+                        <hr>
+
+
+                        <h6 class="text-muted">Evaluation Details</h6>
+                        <% if (item.total_score !==null) { %>
+                            <p><strong>Total Score:</strong>
+                                <%= item.total_score %>
+                            </p>
+                            <p><strong>Status:</strong>
+                                <%= item.evaluation_status %>
+                            </p>
+                            <ul>
+                                <li><strong>Educational Points:</strong>
+                                    <%= item.educational_points %>
+                                </li>
+                                <li><strong>Work Experience Points:</strong>
+                                    <%= item.work_experience_points %>
+                                </li>
+                                <li><strong>Training Points:</strong>
+                                    <%= item.training_points %>
+                                </li>
+                                <li><strong>Professional Development Points:</strong>
+                                    <%= item.professional_development_points %>
+                                </li>
+                                <li><strong>Eligibility Points:</strong>
+                                    <%= item.eligibility_points %>
+                                </li>
+                                <li><strong>Interview Chief Points:</strong>
+                                    <%= item.interview_chief_points %>
+                                </li>
+                                <li><strong>Interview Assessor Points:</strong>
+                                    <%= item.interview_assessor_points %>
+                                </li>
+                            </ul>
+                            <a href="/admin/download-evaluation/<%= item.application_id %>/<%= item.uuid %>"
+                                class="btn btn-sm btn-primary js-bs-tooltip-enabled"
+                                data-bs-toggle="tooltip" aria-label="Download Evaluation"
+                                data-bs-original-title="Download Evaluation">
+                                <i class="ri-download-line me-1"></i>Download
+                             </a>
+                            <% } else { %>
+                                <p>No evaluations available for this application.</p>
+                                <% } %>
+                    </div> <!-- end card-body-->
+                </div> <!-- end card-->
+            </div> <!-- end col-->
+            <% }); %>
+    </div> <!-- end row -->

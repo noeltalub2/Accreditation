@@ -1,0 +1,752 @@
+<% layout('./Layout/layout.ejs') -%>
+    <% block('head').append(` <link href="/assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css"
+        rel="stylesheet" type="text/css" />
+    <link href="/assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-select-bs5/css/select.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    `) %>
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+                <h4 class="page-title">
+                    <%=pagetitle%>
+                </h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+
+                    <li class="breadcrumb-item active">Assessors</li>
+                </ol>
+                
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">
+                        <div class="ms-auto">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addAssessor">
+                                <i class="fa fa-plus-circle me-1"></i> Add Assessor
+                            </button>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-vcenter js-dataTable-full"
+                            id="datatable-buttons">
+                        <thead>
+                            <tr>
+                                <th class="text-center">#</th>
+
+                                <th>Fullname</th>
+                              
+                                <th>Email</th>
+                       
+
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                         
+                            <% users.forEach((record, index)=> { %>
+                                <tr>
+                                    <td class="text-center fs-sm">
+                                        <%= index + 1 %>
+                                    </td>
+
+                                    <td class="fw-semibold fs-sm d-flex align-items-center">
+                                        <img src="/images/profile/<%= record.profile_url %>" class="img-avatar me-2"
+                                            alt="" style="width: 40px; height: 40px;">
+                                        <span>
+                                            <%= record.lastname %>, <%= record.firstname %>
+                                        </span>
+                                    </td>
+                                
+                                    <td class="fs-sm">
+                                        <%= record.email %>
+                                    </td>
+
+                           
+
+                                    <td class="text-center fs-sm">
+                                        <div class="btn-group">
+                                            <a  href="/admin/assessor/<%= record.uuid %>"
+                                                class="btn btn-sm btn-primary js-bs-tooltip-enabled"
+                                                data-bs-toggle="tooltip" aria-label="View Assessor"
+                                                data-bs-original-title="View Assessor"
+                                               >
+                                                <i class="fa fa-fw fa-eye"></i>View
+                                            </a>
+                                            <button type="button"  onclick="editById('<%= record.assessor_id %>','<%= record.firstname %>','<%= record.middlename %>','<%= record.lastname %>','<%= record.username %>','<%= record.email %>','<%= record.phonenumber %>','<%= record.birthday %>','<%= record.gender %>')"
+                                                class="btn btn-sm btn-secondary js-bs-tooltip-enabled"
+                                                data-bs-toggle="tooltip" aria-label="Edit User"
+                                                data-bs-original-title="Edit User"
+                                               >
+                                                <i class="fa fa-fw fa-pencil-alt"></i>Edit
+                                            </button>
+                                            <button type="button"
+                                                class="btn btn-sm btn-danger js-bs-tooltip-enabled"
+                                                data-bs-toggle="tooltip" aria-label="Remove User"
+                                                onclick="deleteUser('<%= record.uuid %>', '<%= record.lastname %>, <%= record.firstname %>')"
+                                                data-bs-original-title="Remove User">
+                                                <i class="fa fa-fw fa-times"></i>Delete
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <%})%>
+
+                        </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+  <!-- Modal for Adding Assessor -->
+<div class="modal fade" id="addAssessor" tabindex="-1" aria-labelledby="addAssessorLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="add-assessor-validation" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="addAssessorLabel">Add New Assessor</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label for="firstname" class="form-label">First Name</label>
+                        <input class="form-control" type="text" name="firstname" id="firstname" required autofocus placeholder="Enter First Name">
+                    </div>
+                    <div class="mb-2">
+                        <label for="middlename" class="form-label">Middle Name</label>
+                        <input class="form-control" type="text" name="middlename" id="middlename" placeholder="Enter Middle Name">
+                    </div>
+                    <div class="mb-2">
+                        <label for="lastname" class="form-label">Last Name</label>
+                        <input class="form-control" type="text" name="lastname" id="lastname" required placeholder="Enter Last Name">
+                    </div>
+                    <div class="mb-2">
+                        <label for="username" class="form-label">Username</label>
+                        <input class="form-control" type="text" name="username" id="username" required placeholder="Enter Username">
+                    </div>
+                    <div class="mb-2">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input class="form-control" type="email" name="email" id="email" required placeholder="Enter Email">
+                    </div>
+                    <div class="mb-2">
+                        <label for="phonenumber" class="form-label">Phone Number</label>
+                        <input class="form-control" type="tel" name="phonenumber" id="phonenumber" required placeholder="Enter Phone Number">
+                    </div>
+                    <div class="mb-2">
+                        <label for="birthday" class="form-label">Birthday</label>
+                        <input class="form-control" type="date" name="birthday" id="birthday" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="gender" class="form-label">Gender</label>
+                        <select class="form-select" name="gender" id="gender" required>
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                       
+                        </select>
+                    </div>
+                   
+                    <div class="mb-2">
+                        <label for="password" class="form-label">Password</label>
+                        <input class="form-control" type="password" name="password" id="password" required placeholder="Enter Password">
+                    </div>
+                    <div class="mb-2">
+                        <label for="confirm_password" class="form-label">Confirm Password</label>
+                        <input class="form-control" type="password" name="confirm_password" id="confirm_password" required placeholder="Re-enter Password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="submit-button">Insert
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+ <!-- Delete User Modal -->
+ <div class="modal fade" id="modal-delete-user" tabindex="-1" aria-labelledby="modal-delete-user"
+ aria-hidden="true">
+ <div class="modal-dialog">
+     <div class="modal-content">
+         <form id="deleteUserForm" action="/admin/user/delete/" method="POST">
+             <input type="hidden" name="user_id" id="delete-user-id">
+             <div class="modal-header">
+                 <h5 class="modal-title">Delete User</h5>
+                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+             </div>
+             <div class="modal-body">
+                 <p>Are you sure you want to delete the account of <span id="user_delete_name" class="fw-bold"></span>
+                     ?</p>
+                 <div class="alert alert-danger d-flex align-items-center" role="alert">
+                     <i class="fa fa-exclamation-triangle me-2"></i>
+                     <div>
+                         <strong>Note:</strong> Deleting this will also delete all associated records.
+                     </div>
+                 </div>
+             </div>
+             <div class="modal-footer">
+                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                 <button type="submit" class="btn btn-danger">Delete</button>
+             </div>
+         </form>
+     </div>
+ </div>
+</div>
+
+ <!-- Modal for Editing Assessor -->
+<!-- Modal for Editing Assessor -->
+<div class="modal fade" id="editAssessor" tabindex="-1" aria-labelledby="editAssessorLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <form class="edit-assessor-validation" method="POST">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="editAssessorLabel">Edit Assessor</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="edit-id">
+                    <div class="mb-2">
+                        <label for="edit-firstname" class="form-label">First Name</label>
+                        <input class="form-control" type="text" name="firstname" id="edit-firstname" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="edit-middlename" class="form-label">Middle Name</label>
+                        <input class="form-control" type="text" name="middlename" id="edit-middlename">
+                    </div>
+                    <div class="mb-2">
+                        <label for="edit-lastname" class="form-label">Last Name</label>
+                        <input class="form-control" type="text" name="lastname" id="edit-lastname" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="edit-username" class="form-label">Username</label>
+                        <input class="form-control" type="text" name="username" id="edit-username" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="edit-email" class="form-label">Email Address</label>
+                        <input class="form-control" type="email" name="email" id="edit-email" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="edit-phonenumber" class="form-label">Phone Number</label>
+                        <input class="form-control" type="tel" name="phonenumber" id="edit-phonenumber" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="edit-birthday" class="form-label">Birthday</label>
+                        <input class="form-control" type="date" name="birthday" id="edit-birthday" required>
+                    </div>
+                    <div class="mb-2">
+                        <label for="edit-gender" class="form-label">Gender</label>
+                        <select class="form-select" name="gender" id="edit-gender" required>
+                            <option value="" disabled selected>Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="edit-password" class="form-label">New Password (Optional)</label>
+                        <input class="form-control" type="password" name="password" id="edit-password">
+                    </div>
+                    <div class="mb-2">
+                        <label for="edit-confirm-password" class="form-label">Confirm Password</label>
+                        <input class="form-control" type="password" name="confirm_password" id="edit-confirm-password">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary" id="edit-submit-button">Save Changes</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+
+    <%block('script').append(`
+    <script>
+        !(function () {
+    "use strict";
+    class e {
+        static initValidation() {
+            // Initialize jQuery validation for assessor
+            jQuery(".add-assessor-validation").validate({
+                rules: {
+                    firstname: {
+                        required: true,
+                        minlength: 2,
+                    }, lastname: {
+                        required: true,
+                        minlength: 2,
+                    }, middlename: {
+                        required: true,
+                        minlength: 2,
+                    },
+                    username: {
+                        required: true,
+                        minlength: 3,
+						remote: {
+                            url: "/admin/availability",
+                            type: "POST",
+                            data: {
+                                field: "username",
+                                value: function () {
+                                    return $("#username").val();
+                                },
+                                user: "assessor",
+                            },
+                            dataType: "json",
+                            async: true,
+                            dataFilter: function (response) {
+                                var json = JSON.parse(response);
+                                return json.available ? "true" : "false";
+                            },
+                        },
+                    },
+                    email: {
+                        required: true,
+                        email: true,
+                        remote: {
+                            url: "/admin/availability",
+                            type: "POST",
+                            data: {
+                                field: "email",
+                                value: function () {
+                                    return $("#email").val();
+                                },
+                                user: "assessor",
+                            },
+                            dataType: "json",
+                            async: true,
+                            dataFilter: function (response) {
+                                var json = JSON.parse(response);
+                                return json.available ? "true" : "false";
+                            },
+                        },
+                    }, phonenumber: {
+                        required: true,
+                  
+                        remote: {
+                            url: "/admin/availability",
+                            type: "POST",
+                            data: {
+                                field: "phonenumber",
+                                value: function () {
+                                    return $("#phonenumber").val();
+                                },
+                                user: "assessor",
+                            },
+                            dataType: "json",
+                            async: true,
+                            dataFilter: function (response) {
+                                var json = JSON.parse(response);
+                                return json.available ? "true" : "false";
+                            },
+                        },
+                    },
+                    password: {
+                        required: true,
+                        minlength: 6,
+                    },
+                    confirm_password: {
+                        required: true,
+                        equalTo: "#password",
+                    },
+                },
+                messages: {
+                    firstname: {
+                        required: "Please enter the firstname",
+                        minlength: "The name must consist of at least 2 characters",
+                    },
+                    middlename: {
+                        required: "Please enter the middlename",
+                        minlength: "The name must consist of at least 2 characters",
+                    },
+                    lastname: {
+                        required: "Please enter the lastname",
+                        minlength: "The name must consist of at least 2 characters",
+                    },
+                    username: {
+                        required: "Please enter a username",
+                        minlength: "The username must consist of at least 3 characters",
+						remote: "This username is not available",
+                    },
+                    email: {
+                        required: "Please enter the email address",
+                        email: "Please enter a valid email address",
+                        remote: "This email is already registered",
+                    },
+                    phonenumber: {
+                        required: "Please enter the phone number",
+                 
+                        remote: "This phonenumber is already registered",
+                    },
+                    password: {
+                        required: "Please provide a password",
+                        minlength: "Your password must be at least 6 characters long",
+                    },
+                    confirm_password: {
+                        required: "Please confirm your password",
+                        equalTo: "Passwords do not match",
+                    },
+                },
+                submitHandler: function (form) {
+                    const submitButton = document.getElementById("submit-button");
+                    const spinner = submitButton.querySelector(".spinner-border");
+                    // Show spinner and disable button
+                    spinner.style.display = "inline-block";
+                    submitButton.disabled = true;
+                    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Inserting...';
+                    
+                    const formData = new FormData(form); // Collect form data
+                 
+                    fetch("/admin/assessor", {
+                        method: "POST",
+                        body: formData,
+                    })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        spinner.style.display = "none";
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = 'Insert <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>';
+                        if (data.success) {
+                            const modal = document.querySelector("#addAssessor"); // Updated to correct modal ID
+                            if (modal) {
+                                const modalInstance = bootstrap.Modal.getInstance(modal);
+                                if (modalInstance) {
+                                    modalInstance.hide(); // Close the modal
+                                }
+                            }
+                            $.notify({
+                                type: "success",
+                                icon: "fa fa-check me-1",
+                                message: data.message,
+                            }, {
+                                type: "success",
+                                allow_dismiss: false,
+                            });
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000);
+                        } else {
+                            $.notify({
+                                type: "danger",
+                                icon: "fa fa-times-circle me-1",
+                                message: data.message,
+                            }, {
+                                type: "danger",
+                                allow_dismiss: false,
+                            });
+                        }
+                    })
+                    .catch((error) => {
+                        spinner.style.display = "none";
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = 'Insert <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>';
+                        $.notify({
+                            type: "danger",
+                            icon: "fa fa-times-circle me-1",
+                            message: "An error occurred. Please try again.",
+                        }, {
+                            type: "danger",
+                            allow_dismiss: false,
+                        });
+                        console.error("Error:", error);
+                    });
+                },
+            });
+        }
+
+        static init() {
+            this.initValidation();
+        }
+    }
+
+    // Call init function on document ready
+    $(document).ready(() => e.init());
+})();
+
+!(function () {
+	"use strict";
+	class e {
+		static initValidation() {
+			// Initialize jQuery validation for assessor
+			jQuery(".edit-assessor-validation").validate({
+				rules: {
+                    firstname: {
+                        required: true,
+                        minlength: 2,
+                    }, lastname: {
+                        required: true,
+                        minlength: 2,
+                    }, middlename: {
+                        required: true,
+                        minlength: 2,
+                    },phonenumber: {
+                        required: true,
+                  
+                        remote: {
+                            url: "/admin/availability",
+                            type: "POST",
+                            data: {
+                                id: function () {
+									return $("#edit-id").val();
+								},
+                                field: "phonenumber",
+                                value: function () {
+                                    return $("#edit-phonenumber").val();
+                                },
+                                user: "assessor",
+                            },
+                            dataType: "json",
+                            async: true,
+                            dataFilter: function (response) {
+                                var json = JSON.parse(response);
+                                return json.available ? "true" : "false";
+                            },
+                        },
+                    },
+					username: {
+						required: true,
+						minlength: 3,
+						remote: {
+							url: "/admin/availability",
+							type: "POST",
+							data: {
+								id: function () {
+									return $("#edit-id").val();
+								},
+								field: "username",
+								value: function () {
+									return $("#edit-username").val();
+								},
+								user: "assessor",
+							},
+							dataType: "json",
+							async: true,
+							dataFilter: function (response) {
+								var json = JSON.parse(response);
+								return json.available ? "true" : "false";
+							},
+						},
+					},
+					email: {
+						required: true,
+						email: true,
+						remote: {
+							url: "/admin/availability",
+							type: "POST",
+							data: {
+								id: function () {
+									return $("#edit-id").val();
+								},
+								field: "email",
+								value: function () {
+									return $("#edit-email").val();
+								},
+								user: "assessor",
+							},
+							dataType: "json",
+							async: true,
+							dataFilter: function (response) {
+								var json = JSON.parse(response);
+								return json.available ? "true" : "false";
+							},
+						},
+					},
+					password: {
+						required: false,
+						minlength: 6,
+					},
+					confirm_password: {
+						required: false,
+						equalTo: "#edit-password",
+					},
+				},
+				messages: {
+                    firstname: {
+                        required: "Please enter the firstname",
+                        minlength: "The name must consist of at least 2 characters",
+                    },
+                    middlename: {
+                        required: "Please enter the middlename",
+                        minlength: "The name must consist of at least 2 characters",
+                    },
+                    lastname: {
+                        required: "Please enter the lastname",
+                        minlength: "The name must consist of at least 2 characters",
+                    },
+					username: {
+						required: "Please enter a username",
+						minlength:
+							"The username must consist of at least 3 characters",
+						remote: "This username is not available",
+					},
+					email: {
+						required: "Please enter the email address",
+						email: "Please enter a valid email address",
+						remote: "This email is already registered",
+					},
+					password: {
+						required: "Please provide a password",
+						minlength:
+							"Your password must be at least 6 characters long",
+					},
+					confirm_password: {
+						required: "Please confirm your password",
+						equalTo: "Passwords do not match",
+					}, phonenumber: {
+                        required: "Please enter the phone number",
+                 
+                        remote: "This phonenumber is already registered",
+                    },
+				},
+				submitHandler: function (form) {
+					const submitButton =
+						document.getElementById("submit-button");
+					const spinner =
+						submitButton.querySelector(".spinner-border");
+					// Show spinner and disable button
+					spinner.style.display = "inline-block";
+					submitButton.disabled = true;
+					submitButton.innerHTML =
+						'<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Inserting...';
+
+					const formData = new FormData(form); // Collect form data
+
+					fetch("/admin/assessor/edit", {
+						method: "POST",
+						body: formData,
+					})
+						.then((response) => response.json())
+						.then((data) => {
+							spinner.style.display = "none";
+							submitButton.disabled = false;
+							submitButton.innerHTML =
+								'Insert <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>';
+							if (data.success) {
+								const modal =
+									document.querySelector("#editAssessor"); // Updated to correct modal ID
+								if (modal) {
+									const modalInstance =
+										bootstrap.Modal.getInstance(modal);
+									if (modalInstance) {
+										modalInstance.hide(); // Close the modal
+									}
+								}
+								$.notify(
+									{
+										type: "success",
+										icon: "fa fa-check me-1",
+										message: data.message,
+									},
+									{
+										type: "success",
+										allow_dismiss: false,
+									}
+								);
+                                    setTimeout(() => {
+                                        window.location.reload(); // Reload the current page
+                                    },2000)
+							} else {
+								$.notify(
+									{
+										type: "danger",
+										icon: "fa fa-times-circle me-1",
+										message: data.message,
+									},
+									{
+										type: "danger",
+										allow_dismiss: false,
+									}
+								);
+							}
+						})
+						.catch((error) => {
+							spinner.style.display = "none";
+							submitButton.disabled = false;
+							submitButton.innerHTML =
+								'Insert <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>';
+							$.notify(
+								{
+									type: "danger",
+									icon: "fa fa-times-circle me-1",
+									message:
+										"An error occurred. Please try again.",
+								},
+								{
+									type: "danger",
+									allow_dismiss: false,
+								}
+							);
+							console.error("Error:", error);
+						});
+				},
+			});
+		}
+
+		static init() {
+			this.initValidation();
+		}
+	}
+
+	// Call init function on document ready
+	$(document).ready(() => e.init());
+})();
+
+    </script>
+    
+    <script src="/assets/vendor/datatables.net/js/jquery.dataTables.min.js">
+        </script>
+        <script src="/assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+        <script src="/assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+        <script src="/assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+        <script src="/assets/vendor/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
+        <script src="/assets/vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+        <script src="/assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+        <script src="/assets/vendor/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+        <script src="/assets/vendor/datatables.net-buttons/js/buttons.html5.min.js"></script>
+        <script src="/assets/vendor/datatables.net-buttons/js/buttons.flash.min.js"></script>
+        <script src="/assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
+        <script src="/assets/vendor/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+        <script src="/assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
+
+        <!-- Datatable Demo Aapp js -->
+        <script src="/assets/js/pages/demo.datatable-init.js"></script>`)%>
+
+
+        <script>
+            function editById(id, firstname, middlename, lastname, username, email, phonenumber, birthday, gender) {
+                // Set values for each field in the form
+                document.getElementById("edit-id").value = id;
+                document.getElementById("edit-firstname").value = firstname;
+                document.getElementById("edit-middlename").value = middlename;
+                document.getElementById("edit-lastname").value = lastname;
+                document.getElementById("edit-username").value = username;
+                document.getElementById("edit-email").value = email;
+                document.getElementById("edit-phonenumber").value = phonenumber;
+                document.getElementById("edit-birthday").value = birthday;
+                document.getElementById("edit-gender").value = gender;
+        
+                // Show the modal using Bootstrap 5 API
+                const modal = new bootstrap.Modal(document.getElementById("editAssessor"));
+                modal.show();
+            }
+        </script>
+        

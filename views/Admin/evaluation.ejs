@@ -1,0 +1,124 @@
+<% layout('./Layout/layout.ejs') -%>
+    <% block('head').append(` <link href="/assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css"
+        rel="stylesheet" type="text/css" />
+    <link href="/assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-select-bs5/css/select.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    `) %>
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+                <h4 class="page-title">
+                    <%=pagetitle%>
+                </h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+
+                    <li class="breadcrumb-item active">Evaluation</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped table-vcenter js-dataTable-full"
+                            id="datatable-buttons">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">#</th>
+
+                                    <th>Fullname</th>
+                                    <th>Application</th>
+                                    <th>Interview Date</th>
+                                    <th>Interview Time</th>
+                             
+
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% usersForEvaluation.forEach((record, index)=> { %>
+                                    <tr>
+                                        <td class="text-center fs-sm">
+                                            <%= index + 1 %>
+                                        </td>
+
+                                        <td class="fw-semibold ">
+                                            <%= record.name %>
+                                        </td>
+                                        <td class="fs-sm">
+                                            <a target="_blank" href="/admin/applications/review/<%= record.application_id %>">Application #<%= record.application_id %></a>
+                                        </td>
+                                        <td class="fs-sm">
+                                            <%= new Date(record.interview_date).toLocaleString('en-US', {
+                                                year: 'numeric' , month: 'long' , day: 'numeric' }) %>
+
+                                        </td>
+                                        <td class="fs-sm">
+                                            <%= new Date('1970-01-01T' + record.interview_time).toLocaleString('en-US',
+                                                { hour: 'numeric' , minute: 'numeric' , second: 'numeric' , hour12: true
+                                                }) %>
+                                        </td>
+
+                                        <td class="text-center fs-sm">
+                                            <div class="btn-group">
+                                                <a href="/admin/evaluate/<%= record.application_id %>" class="btn btn-sm btn-success"
+                                               
+                                                data-bs-toggle="tooltip" aria-label="View Evaluation"
+                                                data-bs-original-title="View Evaluation">
+                                                <i class="fa fa-fw fa-check"></i><i class="ri-search-line me-1"></i>View 
+                                            </a>
+                                            
+                                            </div>
+                                            
+
+                                        </td>
+
+
+                                    </tr>
+                                    <%})%>
+
+
+                            </tbody>
+                        </table>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+
+
+
+
+        <%block('script').append(`<script src="/assets/vendor/datatables.net/js/jquery.dataTables.min.js">
+            </script>
+            <script src="/assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+            <script src="/assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons/js/buttons.html5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons/js/buttons.flash.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
+            <script src="/assets/vendor/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+            <script src="/assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
+
+            <!-- Datatable Demo Aapp js -->
+            <script src="/assets/js/pages/demo.datatable-init.js"></script>`)%>

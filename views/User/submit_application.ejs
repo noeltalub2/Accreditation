@@ -1,0 +1,1092 @@
+<% layout('./Layout/layout.ejs') -%>
+    <%block('script').append(` <style>
+        /* Styles for the custom file input */
+        .custom-file-upload {
+        border: 2px dashed #dee2e6;
+        background: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+        min-height: 150px;
+        padding: 20px;
+        text-align: center
+        }
+
+        .custom-file-upload:hover {
+        background-color: #f8f9fa;
+        }
+
+
+
+        /* Hidden file input */
+        #fileInput {
+        display: none;
+        }
+
+        .file-list {
+        margin-top: 10px;
+        }
+
+        .file-list-item {
+        padding: 5px;
+        border: 1px solid #ccc;
+        margin: 5px 0;
+        border-radius: 3px;
+        }
+        </style>
+        `)%>
+<div class="row">
+    <div class="col-12">
+        <div
+            class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+            <h4 class="page-title">
+                Submit Application
+            </h4>
+            <ol class="breadcrumb m-0">
+                <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="/application">Applications</a></li>
+                <li class="breadcrumb-item active">Submit Application</li>
+            </ol>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card">
+            <div class="card-body">
+              <form class="applicationForm">
+                <h4>I. Personal Information</h4>
+  
+                <!-- Name Field -->
+                <div class="mb-3">
+                  <label for="name" class="form-label">Name (Last Name, First Name, Middle Name)</label>
+                  <input type="text" class="form-control" id="name" name="name" required
+                    value="<%=userProfile.lastname%>, <%=userProfile.firstname%>, <%=userProfile.middlename%>">
+                </div>
+                <div class="row">
+                  <div class="col-lg-6"> <!-- Address Field -->
+                    <div class="mb-3">
+                      <label for="address" class="form-label">Address</label>
+                      <input type="text" class="form-control" id="address" name="address" required>
+                    </div>
+                  </div>
+                  <div class="col-lg-6"> <!-- Zip Code Field -->
+                    <div class="mb-3">
+                      <label for="zip_code" class="form-label">Zip Code</label>
+                      <input type="text" class="form-control" id="zip_code" name="zip_code">
+                    </div>
+                  </div>
+                  <div class="col-lg-6"> <!-- Phonenumber and Email Fields -->
+                    <div class="mb-3">
+                      <label for="phonenumber" class="form-label">Phonenumber Number(s)</label>
+                      <input type="text" class="form-control" id="phonenumber" name="phonenumber" required
+                        value="<%=userProfile.phonenumber%>">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="email" class="form-label">Email</label>
+                      <input type="email" class="form-control" id="email" name="email" required
+                        value="<%=userProfile.email%>">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <!-- Birth Date Field -->
+                    <div class="mb-3">
+                      <label for="birth_date" class="form-label">Birth Date</label>
+                      <input type="date" class="form-control" id="birth_date" name="birth_date" required
+                        value="<%=userProfile.birthday%>">
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <!-- Birthplace Field -->
+                    <div class="mb-3">
+                      <label for="birthplace" class="form-label">Birthplace</label>
+                      <input type="text" class="form-control" id="birthplace" name="birthplace" required>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+                    <div class="mb-3">
+                      <label for="civil_status" class="form-label">Civil Status</label>
+                      <select class="form-select" id="civil_status" name="civil_status" required>
+                        <option value="" selected disabled>Select Status</option>
+                        <option value="Single">Single</option>
+                        <option value="Married">Married</option>
+                        <option value="Separated">Separated</option>
+                        <option value="Widowed">Widowed</option>
+                        <option value="Divorced">Divorced</option>
+                      </select>
+                    </div>
+  
+                  </div>
+                  <div class="col-lg-6">
+                    <!-- Sex Field -->
+                    <div class="mb-3">
+                      <label for="sex" class="form-label">Sex</label>
+                      <select class="form-select " id="sex" name="sex" required>
+                        <option value="" hidden>Choose...</option>
+                        <option value="male" <%=userProfile.gender==='male' ? 'selected' : '' %>
+                          >Male</option>
+                        <option value="female" <%=userProfile.gender==='female' ? 'selected' : '' %>
+                          >Female</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-lg-6">
+  
+                    <!-- Civil Status Field -->
+  
+  
+  
+                    <!-- Nationality Field -->
+                    <div class="mb-3">
+                      <label for="nationality" class="form-label">Nationality</label>
+                      <input type="text" class="form-control" id="nationality" name="nationality" value="Filipino"
+                        required>
+                    </div>
+  
+                  </div>
+                  <div class="col-lg-6">
+  
+                    <!-- Languages Spoken Field -->
+                    <div class="mb-3">
+                      <label for="languages" class="form-label">Languages and Dialects Spoken</label>
+                      <input type="text" class="form-control" id="languages" name="languages" required>
+                    </div>
+                  </div>
+                </div>
+  
+  
+  
+  
+                <!-- Learning Objectives -->
+                <h4>Learning Objectives</h4>
+  
+                <div class="mb-3">
+                  <label for="first_priority" class="form-label">First Priority Degree Program</label>
+                  <select class="form-control" id="first_priority" name="first_priority">
+                    <option value="" hidden selected>Choose Program</option>
+                    <option value="Civil/Drafting Technology">Civil/Drafting Technology</option>
+                    <option value="Computer Technology">Computer Technology</option>
+                    <option value="Electronics Technology">Electronics Technology</option>
+                    <option value="Electrical Technology">Electrical Technology</option>
+                    <option value="Food Technology">Food Technology</option>
+                    <option value="Garments Technology">Garments Technology</option>
+                    <option value="Refrigeration and Air-con Technology">Refrigeration and Air-con Technology</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="second_priority" class="form-label">Second Priority Degree Program</label>
+                  <select class="form-control" id="second_priority" name="second_priority">
+                    <option value="" hidden selected>Choose Program</option>
+                    <option value="Civil/Drafting Technology">Civil/Drafting Technology</option>
+                    <option value="Computer Technology">Computer Technology</option>
+                    <option value="Electronics Technology">Electronics Technology</option>
+                    <option value="Electrical Technology">Electrical Technology</option>
+                    <option value="Food Technology">Food Technology</option>
+                    <option value="Garments Technology">Garments Technology</option>
+                    <option value="Refrigeration and Air-con Technology">Refrigeration and Air-con Technology</option>
+                  </select>
+                </div>
+                <div class="mb-3">
+                  <label for="third_priority" class="form-label">Third Priority Degree Program</label>
+                  <select class="form-control" id="third_priority" name="third_priority">
+                    <option value="" hidden selected>Choose Program</option>
+                    <option value="Civil/Drafting Technology">Civil/Drafting Technology</option>
+                    <option value="Computer Technology">Computer Technology</option>
+                    <option value="Electronics Technology">Electronics Technology</option>
+                    <option value="Electrical Technology">Electrical Technology</option>
+                    <option value="Food Technology">Food Technology</option>
+                    <option value="Garments Technology">Garments Technology</option>
+                    <option value="Refrigeration and Air-con Technology">Refrigeration and Air-con Technology</option>
+                  </select>
+                </div>
+  
+  
+                <div class="mb-3">
+                  <label for="cost_accreditation" class="form-label">Who will pay for the cost of obtaining your
+                    accreditation?</label>
+                  <input class="form-control" id="cost_accreditation" name="cost_accreditation">
+                </div>
+  
+                <div class="mb-3">
+                  <label for="time_commitment" class="form-label">How soon do you need to complete
+                    accreditation/equivalency?</label>
+                  <input class="form-control" id="time_commitment" name="time_commitment">
+                </div>
+  
+  
+                <!-- Lifelong Learning Experiences -->
+                <h4>II. Lifelong Learning Experiences</h4>
+  
+                <div class="mb-3">
+                  <label for="hobbies_leisure" class="form-label">A. Hobbies/Leisure Activities</label>
+                  <br><small>Include only those leisure activities which can be considered learning opportunities.</small>
+                  <textarea class="form-control" id="hobbies_leisure" name="hobbies_leisure" rows="5"></textarea>
+                </div>
+                <div class="mb-3">
+                  <label for="special_skills" class="form-label">B. Special Skills</label>
+                  <br><small>A special skill can be considered as an acceptable substitute for a specific credit
+                    requirement. Note down those special skills which you think must be related to the field of study you
+                    want to pursue.</small>
+                  <textarea class="form-control" id="special_skills" name="special_skills" rows="5"></textarea>
+                </div>
+  
+                <div class="mb-3">
+                  <label for="work_related_activities" class="form-label">C. Work-Related Activities</label>
+                  <br><small>Some work-work related activities are occasions for you to learn something new. Identify
+                    those tasks that can be considered as new and through which you learned new skills and knowledge.
+                    Please do not include, under this category, formal training. However, you may include here experiences
+                    which can be classified as on-the-job-training or apprenticeship.</small>
+                  <textarea class="form-control" id="work_related_activities" name="work_related_activities"
+                    rows="5"></textarea>
+                </div>
+  
+                <div class="mb-3">
+  
+                  <label for="volunteer_activities" class="form-label">D. Volunteer Activities</label>
+                  <br><small>Choose only volunteer activities that also demonstrate learning opportunities.</small>
+                  <textarea class="form-control" id="volunteer_activities" name="volunteer_activities"
+                    rows="5"></textarea>
+                </div>
+  
+                <div class="mb-3">
+                  <label for="travels" class="form-label">E. Travels (CITE PLACES VISITED AND PURPOSE OF TRAVEL)</label>
+                  <br><small>Please enumerate places visited within and outside the Philippines. Include a write-up of the
+                    nature of the travel undertaken, whether for leisure, employment, businesses or other purpose. State
+                    in clear turns what new learning experience was obtained from this travels and how it helps you become
+                    a better person.</small>
+                  <textarea class="form-control" id="travels" name="travels" rows="5"></textarea>
+                </div>
+                <!-- Education -->
+                <h4>III. Education</h4>
+  
+  
+                <div class="mb-3">
+                  <label for="qualification" class="form-label">Educational Qualification</label>
+                  <select id="qualification" name="qualification" class="form-control">
+                    <option value=""  selected>Select Educational Qualification</option>
+                    <option value="High School Graduate">High School Graduate</option>
+                    <option value="One Year College">One Year College</option>
+                    <option value="Two Years College">Two Years College/Graduate of Vocational/Technical Course of two
+                      years</option>
+                    <option value="Three Years College">Three Years College</option>
+                    <option value="College Degree Holder">College Degree Holder</option>
+                  </select>
+                </div>
+  
+                <!-- Name of School -->
+                <div class="mb-3">
+                  <label for="school_name" class="form-label">Name of School</label>
+                  <input type="text" class="form-control" id="school_name" name="school_name" required>
+                </div>
+  
+                <!-- Address of School -->
+                <div class="mb-3">
+                  <label for="school_address" class="form-label">Address of School</label>
+                  <input type="text" class="form-control" id="school_address" name="school_address" required>
+                </div>
+  
+                <!-- Date First Attended -->
+                <div class="mb-3">
+                  <label for="date_first_attended" class="form-label">Date First Attended</label>
+                  <input type="date" class="form-control " id="date_first_attended" name="date_first_attended" required>
+                </div>
+  
+                <!-- Date Last Attended -->
+                <div class="mb-3">
+                  <label for="date_last_attended" class="form-label">Date Last Attended</label>
+                  <input type="date" class="form-control " id="date_last_attended" name="date_last_attended" required>
+                </div>
+  
+                <!-- Copy of TOR/Form 137 -->
+                <div class="mb-3">
+                  <label for="tor_file" class="form-label">Copy of TOR/Form 137</label>
+                  <input type="file" class="form-control" id="tor_file" name="tor_file" accept=".pdf" required multiple>
+                </div>
+  
+  
+                <h4>IV. Work Experiences</h4>
+                <div class="mb-3">
+                  <label for="job_title" class="form-label">Position/Job Title</label>
+                  <select id="job_title" name="job_title" class="form-control" onchange="showFields(this.value)">
+                    <option value="" hidden selected>Select Job Title</option>
+                    <option value="ordinary_employee">Ordinary Employee/Regular Employee</option>
+                    <option value="supervisor">Supervisor</option>
+                    <option value="head_manager">Head/Manager</option>
+                  </select>
+                </div>
+  
+                <div id="ordinary_employee_fields" class="input-fields" style="display: none;">
+                  <h5>Ordinary Employee/Regular Employee Details</h5>
+                  <div class="mb-3">
+                    <label for="company_name_ordinary" class="form-label">Company Name</label>
+                    <input type="text" class="form-control" id="company_name_ordinary" name="company_name_ordinary"
+                      required>
+                  </div>
+  
+                  <div class="mb-3">
+                    <label for="company_address_ordinary" class="form-label">Company Address</label>
+                    <input type="text" class="form-control" id="company_address_ordinary" name="company_address_ordinary"
+                      required>
+                  </div>
+  
+                  <div class="mb-3">
+                    <label for="date_started_work_ordinary" class="form-label">Date Started</label>
+                    <input type="date" class="form-control" id="date_started_work_ordinary"
+                      name="date_started_work_ordinary" required>
+                  </div>
+  
+                  <div class="mb-3">
+                    <label for="date_ended_work_ordinary" class="form-label">Date Ended</label>
+                    <input type="date" class="form-control" id="date_ended_work_ordinary" name="date_ended_work_ordinary"
+                      required>
+                  </div>
+  
+                  <div class="mb-3">
+                    <label for="employment_file_ordinary" class="form-label">Copy of Certificate of Employment</label>
+                    <input type="file" class="form-control" id="employment_file_ordinary" name="employment_file_ordinary"
+                      accept=".pdf" required multiple>
+                  </div>
+                </div>
+  
+                <div id="supervisor_fields" class="input-fields" style="display: none;">
+                  <h5>Supervisor Details</h5>
+                  <div class="mb-3">
+                    <label for="company_name_supervisor" class="form-label">Company Name</label>
+                    <input type="text" class="form-control" id="company_name_supervisor" name="company_name_supervisor"
+                      required>
+                  </div>
+  
+                  <div class="mb-3">
+                    <label for="company_address_supervisor" class="form-label">Company Address</label>
+                    <input type="text" class="form-control" id="company_address_supervisor"
+                      name="company_address_supervisor" required>
+                  </div>
+  
+                  <div class="mb-3">
+                    <label for="date_started_work_supervisor" class="form-label">Date Started</label>
+                    <input type="date" class="form-control " id="date_started_work_supervisor"
+                      name="date_started_work_supervisor" required>
+                  </div>
+  
+                  <div class="mb-3">
+                    <label for="date_ended_work_supervisor" class="form-label">Date Ended</label>
+                    <input type="date" class="form-control" id="date_ended_work_supervisor"
+                      name="date_ended_work_supervisor" required>
+                  </div>
+  
+                  <div class="mb-3">
+                    <label for="employment_file_supervisor" class="form-label">Copy of Certificate of Employment</label>
+                    <input type="file" class="form-control" id="employment_file_supervisor"
+                      name="employment_file_supervisor" accept=".pdf" required multiple>
+                  </div>
+                </div>
+  
+                <div id="head_manager_fields" class="input-fields" style="display: none;">
+                  <h5>Head/Manager Details</h5>
+                  <div class="mb-3">
+                    <label for="company_name_manager" class="form-label">Company Name</label>
+                    <input type="text" class="form-control" id="company_name_manager" name="company_name_manager"
+                      required>
+                  </div>
+  
+                  <div class="mb-3">
+                    <label for="company_address_manager" class="form-label">Company Address</label>
+                    <input type="text" class="form-control" id="company_address_manager" name="company_address_manager"
+                      required>
+                  </div>
+  
+                  <div class="mb-3">
+                    <label for="date_started_work_manager" class="form-label">Date Started</label>
+                    <input type="date" class="form-control " id="date_started_work_manager"
+                      name="date_started_work_manager" required>
+                  </div>
+  
+                  <div class="mb-3">
+                    <label for="date_ended_work_manager" class="form-label">Date Ended</label>
+                    <input type="date" class="form-control" id="date_ended_work_manager" name="date_ended_work_manager"
+                      required>
+                  </div>
+  
+                  <div class="mb-3">
+                    <label for="employment_file_manager" class="form-label">Copy of Certificate of Employment</label>
+                    <input type="file" class="form-control" id="employment_file_manager" name="employment_file_manager"
+                      accept=".pdf" required multiple>
+                  </div>
+                </div>
+  
+  
+                <h4>V. PROFESSIONAL ACHIEVEMENTS</h4>
+  
+  
+                <!-- Level of Training/Seminar -->
+                <h6>A. Trainings and Seminars</h6>
+                <div class="">
+                  <div class="mb-3">
+                    <label for="training_level" class="form-label">Level of Training/Seminar</label>
+                    <select id="training_level" name="training_level" class="form-control"
+                      onchange="showTrainingFields(this.value)">
+                      <option value=""  selected>Select Level of Training/Seminar</option>
+                      <option value="local_regional">Local/Regional</option>
+                      <option value="national">National</option>
+                      <option value="international">International</option>
+                    </select>
+                  </div> <!-- Local/Regional -->
+                  <div id="local_regional_fields" class="input-fields" style="display: none;">
+                    <h5>Local/Regional Seminar Details</h5>
+                    <div class="mb-3">
+                      <label for="title_local" class="form-label">Title of Training/Seminar</label>
+                      <input type="text" class="form-control" id="title_local" name="title_local" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="organization_local" class="form-label">Sponsoring Organization</label>
+                      <input type="text" class="form-control" id="organization_local" name="organization_local" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="date_local" class="form-label">Inclusive Date</label>
+                      <input type="date" class="form-control" id="date_local" name="date_local" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="certificate_file_local" class="form-label">Copy of Certificate Obtained</label>
+                      <input type="file" class="form-control" id="certificate_file_local" name="certificate_file_local"
+                        accept=".pdf" required>
+                    </div>
+                  </div>
+  
+                  <!-- National -->
+                  <div id="national_fields" class="input-fields" style="display: none;">
+                    <h5>National Seminar Details</h5>
+                    <div class="mb-3">
+                      <label for="title_national" class="form-label">Title of Training/Seminar</label>
+                      <input type="text" class="form-control" id="title_national" name="title_national" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="organization_national" class="form-label">Sponsoring Organization</label>
+                      <input type="text" class="form-control" id="organization_national" name="organization_national"
+                        required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="date_national" class="form-label">Inclusive Date</label>
+                      <input type="date" class="form-control" id="date_national" name="date_national" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="certificate_file_national" class="form-label">Copy of Certificate Obtained</label>
+                      <input type="file" class="form-control" id="certificate_file_national"
+                        name="certificate_file_national" accept=".pdf" required>
+                    </div>
+                  </div>
+  
+                  <!-- International -->
+                  <div id="international_fields" class="input-fields" style="display: none;">
+                    <h5>International Seminar Details</h5>
+                    <div class="mb-3">
+                      <label for="title_international" class="form-label">Title of Training/Seminar</label>
+                      <input type="text" class="form-control" id="title_international" name="title_international"
+                        required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="organization_international" class="form-label">Sponsoring Organization</label>
+                      <input type="text" class="form-control" id="organization_international"
+                        name="organization_international" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="date_international" class="form-label">Inclusive Date</label>
+                      <input type="date" class="form-control" id="date_international" name="date_international" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="certificate_file_international" class="form-label">Copy of Certificate Obtained</label>
+                      <input type="file" class="form-control" id="certificate_file_international"
+                        name="certificate_file_international" accept=".pdf" required>
+                    </div>
+                  </div>
+                </div>
+                <h6>B. Professional Development</h6>
+                <div>
+              
+                  <div class="mb-3">
+                    <label for="professional_dev_level" class="form-label">Level</label>
+                    <select id="professional_dev_level" name="professional_dev_level" class="form-control"
+                      onchange="showProfessionalDevFields(this.value)">
+                      <option value="" hidden selected>Select Level</option>
+                      <option value="local_regional">Local/Regional</option>
+                      <option value="national">National</option>
+                      <option value="international">International</option>
+                    </select>
+                  </div>
+  
+                  <!-- Local/Regional -->
+                  <div id="local_regional_dev_fields" class="input-fields" style="display: none;">
+                    <h5>Local/Regional Professional Development Details</h5>
+                    <div class="mb-3">
+                      <label for="organization_local_dev" class="form-label">Name of Organization/Scholarship</label>
+                      <input type="text" class="form-control" id="organization_local_dev" name="organization_local_dev"
+                        required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="description_local_dev" class="form-label">Description</label>
+                      <textarea class="form-control" id="description_local_dev" name="description_local_dev"
+                        required></textarea>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="certificate_file_local_dev" class="form-label">Copy of Certificate</label>
+                      <input type="file" class="form-control" id="certificate_file_local_dev"
+                        name="certificate_file_local_dev" accept=".pdf" required>
+                    </div>
+                  </div>
+  
+                  <!-- National -->
+                  <div id="national_dev_fields" class="input-fields" style="display: none;">
+                    <h5>National Professional Development Details</h5>
+                    <div class="mb-3">
+                      <label for="organization_national_dev" class="form-label">Name of Organization/Scholarship</label>
+                      <input type="text" class="form-control" id="organization_national_dev"
+                        name="organization_national_dev" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="description_national_dev" class="form-label">Description</label>
+                      <textarea class="form-control" id="description_national_dev" name="description_national_dev"
+                        required></textarea>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="certificate_file_national_dev" class="form-label">Copy of Certificate</label>
+                      <input type="file" class="form-control" id="certificate_file_national_dev"
+                        name="certificate_file_national_dev" accept=".pdf" required>
+                    </div>
+                  </div>
+  
+                  <!-- International -->
+                  <div id="international_dev_fields" class="input-fields" style="display: none;">
+                    <h5>International Professional Development Details</h5>
+                    <div class="mb-3">
+                      <label for="organization_international_dev" class="form-label">Name of
+                        Organization/Scholarship</label>
+                      <input type="text" class="form-control" id="organization_international_dev"
+                        name="organization_international_dev" required>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="description_international_dev" class="form-label">Description</label>
+                      <textarea class="form-control" id="description_international_dev"
+                        name="description_international_dev" required></textarea>
+                    </div>
+  
+                    <div class="mb-3">
+                      <label for="certificate_file_international_dev" class="form-label">Copy of Certificate</label>
+                      <input type="file" class="form-control" id="certificate_file_international_dev"
+                        name="certificate_file_international_dev" accept=".pdf" required>
+                    </div>
+                  </div>
+                </div>
+                <h6>C. Eligibilities/Awards</h6>
+
+                <!-- Eligibilities -->
+                <div class="mb-3">
+                  <label for="eligibility" class="form-label">Eligibilities</label>
+                  <select id="eligibility" name="eligibility" class="form-control" onchange="showEligibilityFields(this.value)">
+                    <option value="" hidden selected>Select Eligibility</option>
+                    <option value="sub_professional">CSC Sub-Professional</option>
+                    <option value="technical_nc">Technical (NC)</option>
+                    <option value="professional_prc_csc">Professional (PRC) (CSC)</option>
+                  </select>
+                </div>
+                
+                <!-- Sub-Professional Eligibility Details -->
+                <div id="sub_professional_fields" class="input-fields" style="display: none;">
+                  <h5>CSC Sub-Professional Details</h5>
+                  <div class="mb-3">
+                    <label for="certificate_file_sub_professional" class="form-label">Copy of Certificate</label>
+                    <input type="file" class="form-control" id="certificate_file_sub_professional" name="certificate_file_sub_professional" accept=".pdf" required>
+                  </div>
+                </div>
+                
+                <!-- Technical (NC) Eligibility Details -->
+                <div id="technical_nc_fields" class="input-fields" style="display: none;">
+                  <h5>Technical (NC) Details</h5>
+                  <div class="mb-3">
+                    <label for="certificate_file_technical_nc" class="form-label">Copy of Certificate</label>
+                    <input type="file" class="form-control" id="certificate_file_technical_nc" name="certificate_file_technical_nc" accept=".pdf" required>
+                  </div>
+                </div>
+                
+                <!-- Professional (PRC) (CSC) Eligibility Details -->
+                <div id="professional_prc_csc_fields" class="input-fields" style="display: none;">
+                  <h5>Professional (PRC) (CSC) Details</h5>
+                  <div class="mb-3">
+                    <label for="certificate_file_professional_prc_csc" class="form-label">Copy of Certificate</label>
+                    <input type="file" class="form-control" id="certificate_file_professional_prc_csc" name="certificate_file_professional_prc_csc" accept=".pdf" required>
+                  </div>
+                </div>
+                
+                <!-- Awards -->
+                <div class="mb-3">
+                  <label for="award_level" class="form-label">Awards</label>
+                  <select id="award_level" name="award_level" class="form-control" onchange="showAwardFields(this.value)">
+                    <option value="" hidden selected>Select Award Level</option>
+                    <option value="local_regional">Local/Regional</option>
+                    <option value="national_international">National/International</option>
+                  </select>
+                </div>
+                
+                <!-- Local/Regional Award Details -->
+                <div id="local_regional_fields_award" class="input-fields" style="display: none;">
+                  <h5>Local/Regional Award Details</h5>
+                  <div class="mb-3">
+                    <label for="certificate_file_local_regional" class="form-label">Copy of Certificate</label>
+                    <input type="file" class="form-control" id="certificate_file_local_regional" name="certificate_file_local_regional" accept=".pdf" required>
+                  </div>
+                </div>
+                
+                <!-- National/International Award Details -->
+                <div id="national_international_fields" class="input-fields" style="display: none;">
+                  <h5>National/International Award Details</h5>
+                  <div class="mb-3">
+                    <label for="certificate_file_national_international" class="form-label">Copy of Certificate</label>
+                    <input type="file" class="form-control" id="certificate_file_national_international" name="certificate_file_national_international" accept=".pdf" required>
+                  </div>
+                </div>
+  
+  
+  
+  
+  
+  
+  
+  
+                <!-- Final Essay -->
+                <h4>VI. Essay</h4>
+                <div class="mb-3">
+                  <label for="final_essay" class="form-label">If you finish your degree, how will this contribute to your personal development to the development of your community, your work place, society and country?</label>
+                  <textarea class="form-control" id="final_essay" name="final_essay" rows="5"></textarea>
+                </div>
+  
+                <button type="submit" class="btn btn-primary" id="submit-button"><span
+                    class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"
+                    style="display: none;"></span>Submit</button>
+              </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<%block('script').append(`
+<script>
+    (function () {
+"use strict";
+
+class DocumentUpload {
+static initValidation() {
+// Initialize jQuery validation
+jQuery(".applicationForm").validate({
+    rules: {
+        name: {
+        required: true,
+        minlength: 3,
+      },
+      address: {
+        required: true,
+      },
+      zip_code: {
+        digits: true,
+        minlength: 4,
+        maxlength: 6,
+        required: true,
+      },
+      phonenumber: {
+        required: true,
+        minlength: 11,
+        digits: true,
+      },
+      email: {
+        required: true,
+        email: true,
+      },
+      birth_date: {
+        required: true,
+      },
+      birthplace: {
+        required: true,
+      },
+      civil_status: {
+        required: true,
+      },
+      sex: {
+        required: true,
+      },
+      nationality: {
+        required: true,
+      },
+      languages: {
+        required: true,
+      },
+      first_priority: {
+        required: true,
+      },
+      second_priority: {
+        required: true,
+      },
+      third_priority: {
+        required: true,
+      },
+      goal_statement: {
+        required: true,
+        minlength: 10,
+      },
+      time_commitment: {
+        required: true,
+      
+      },
+      elementary_school: {
+        required: true,
+      },
+      elementary_dates: {
+        required: true,
+      },
+      high_school: {
+        required: true,
+      },
+      high_school_dates: {
+        required: true,
+      },
+      post_secondary: {
+        required: true,
+      },
+      post_secondary_institution: {
+        required: true,
+      },
+      non_formal_training: {
+        required: true,
+      },
+      work_position: {
+        required: true,
+      },
+      work_dates: {
+        required: true,
+      },
+      company_name: {
+        required: true,
+      },
+      award_academic: {
+        required: true,
+      },
+      award_community: {
+        required: true,
+      },
+      award_work: {
+        required: true,
+      },
+      creative_works: {
+        required: true,
+      },
+      hobbies_leisure: {
+        required: true,
+      },
+      special_skills: {
+        required: true,
+      },
+      work_related_activities: {
+        required: true,
+      },
+      volunteer_activities: {
+        required: true,
+      },
+      travels: {
+        required: true,
+      },
+      final_essay: {
+        required: true,
+        minlength: 20,
+      },
+      qualification: {
+        required: true,
+      },cost_accreditation: {
+        required: true,
+      }
+
+    },
+    messages: {
+        name: {
+        required: "Please enter your full name.",
+        minlength: "Name must be at least 3 characters long.",
+      },
+      address: {
+        required: "Please enter your address.",
+      },
+      zip_code: {
+        required: "Please enter your zip code.",
+        digits: "Please enter only numbers for the zip code.",
+        minlength: "Zip code must be at least 4 digits.",
+        maxlength: "Zip code must not exceed 6 digits.",
+      },
+      phonenumber: {
+        required: "Please enter your phone number.",
+        minlength: "Phone number must be at least 11 digits.",
+        digits: "Please enter a valid phone number.",
+      },
+      email: {
+        required: "Please enter your email.",
+        email: "Please enter a valid email address.",
+      },
+      birth_date: {
+        required: "Please enter your birth date.",
+      },
+      birthplace: {
+        required: "Please enter your birthplace.",
+      },
+      civil_status: {
+        required: "Please select your civil status.",
+      },
+      sex: {
+        required: "Please select your gender.",
+      },
+      nationality: {
+        required: "Please enter your nationality.",
+      },
+      languages: {
+        required: "Please enter the languages you speak.",
+      },
+      goal_statement: {
+        minlength: "Your goal statement must be at least 10 characters long.",
+      },
+      time_commitment: {
+        minlength: "Your time commitment must be at least 10 characters long.",
+      },
+      final_essay: {
+        minlength: "Your final essay must be at least 20 characters long.",
+      },
+      qualification: {
+        required: "Please select your qualification.",
+      }
+    },
+    submitHandler: function (form) {
+        const submitButton =
+            document.getElementById("submit-button");
+        const spinner =
+            submitButton.querySelector(".spinner-border");
+
+        // Show spinner and disable button
+        spinner.style.display = "inline-block";
+        submitButton.disabled = true;
+
+        // Change button text to 'Uploading...'
+        submitButton.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Submitting...';
+
+        const formData = new FormData(form); // Collect form data
+        // Show loader or header loader (custom logic can be added here)
+
+        // Send the FormData directly
+        fetch("/submit-application", {
+            method: "POST",
+            body: formData, // Send FormData containing file
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                spinner.style.display = "none";
+                submitButton.disabled = false;
+                submitButton.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>Submit';
+                // Hide loader or header loader (custom logic can be added here)
+                if (data.success) {
+                    // Reset the form
+
+                    $.notify(
+                        {
+                            icon: "fa fa-check me-1",
+                            message: data.message,
+                        },
+                        {
+                            type: "success",
+                            allow_dismiss: false,
+                        }
+                    );
+
+                    // Delay the reload to allow the notification to be seen
+                    setTimeout(() => {
+                        window.location.href = '/application'; // Reload the current page
+                    }, 2500); // Adjust delay as needed
+                } else {
+                    $.notify(
+                        {
+                            icon: "fa fa-times-circle me-1",
+                            message: data.message,
+                        },
+                        {
+                            type: "danger",
+                            allow_dismiss: false,
+                        }
+                    );
+                }
+            })
+            .catch((error) => {
+                spinner.style.display = "none";
+                submitButton.disabled = false;
+                submitButton.innerHTML =
+                    '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>Submit';
+                // Hide loader or header loader (custom logic can be added here)
+                $.notify(
+                    {
+                        icon: "fa fa-times-circle me-1",
+                        message:
+                            "An error occurred. Please try again.",
+                    },
+                    {
+                        type: "danger",
+                        allow_dismiss: false,
+                    }
+                );
+                console.error("Error:", error);
+            });
+    },
+});
+}
+
+static init() {
+this.initValidation();
+}
+}
+
+// Call init function on document ready
+$(document).ready(() => DocumentUpload.init());
+})();
+
+</script>
+<script>
+    // Get references to the elements
+    const dropzone = document.getElementById("dropzone");
+    const fileInput = document.getElementById("fileInput");
+    const filePreviewContainer = document.getElementById("filePreviewContainer");
+
+    // Allow clicking the dropzone to open the file input
+    dropzone.addEventListener("click", () => fileInput.click());
+
+    // Handle file selection
+    fileInput.addEventListener("change", () => {
+        const files = fileInput.files;
+        handleFiles(files);
+    });
+
+    // Handle dropping files onto the dropzone
+    dropzone.addEventListener("dragover", (event) => {
+        event.preventDefault();
+    });
+
+    dropzone.addEventListener("drop", (event) => {
+        event.preventDefault();
+        const files = event.dataTransfer.files;
+        handleFiles(files);
+    });
+
+    // Function to handle files
+    function handleFiles(files) {
+        for (let i = 0; i < files.length; i++) {
+            const file = files[i];
+            const listItem = createFilePreview(file);
+            filePreviewContainer.appendChild(listItem);
+        }
+    }
+
+    // Create file preview card
+    function createFilePreview(file) {
+        const card = document.createElement("div");
+        card.className = "card mb-1 mb-0 shadow-none border file-preview-card";
+
+        // Create a thumbnail (replace this with actual file icons if needed)
+        const thumbnail = document.createElement("div");
+        thumbnail.className = "avatar-sm";
+        thumbnail.innerHTML = '<span class="avatar-title bg-primary-subtle text-primary rounded">' + file.name.split('.').pop().toUpperCase() + '</span>';
+
+
+        card.innerHTML =
+            '<div class="p-2">' +
+            '<div class="row align-items-center">' +
+            '<div class="col-auto">' +
+            thumbnail.outerHTML +
+            '</div>' +
+            '<div class="col ps-0">' +
+            '<a href="javascript:void(0);" class="text-muted fw-bold">' + file.name + '</a>' +
+            '<p class="mb-0"><strong>' + (file.size / 1024).toFixed(2) + '</strong> KB</p>' +
+            '</div>' +
+            '<div class="col-auto">' +
+            '<a href="javascript:void(0);" class="btn btn-link btn-lg text-muted" onclick="deleteFile(this)">' +
+            '<i class="ri-close-line"></i>' +
+            '</a>' +
+            '</div>' +
+            '</div>' +
+            '</div>';
+
+        return card;
+    }
+
+    // Function to delete file preview
+    function deleteFile(button) {
+        const card = button.closest('.file-preview-card');
+        filePreviewContainer.removeChild(card);
+    }
+</script>
+
+`)%>
+
+<script>
+   function showEligibilityFields(value) {
+    // Hide all eligibility fields
+    document.getElementById("sub_professional_fields").style.display = "none";
+    document.getElementById("technical_nc_fields").style.display = "none";
+    document.getElementById("professional_prc_csc_fields").style.display = "none";
+
+    // Show relevant fields based on the selected eligibility
+    if (value === "sub_professional") {
+      document.getElementById("sub_professional_fields").style.display = "block";
+    } else if (value === "technical_nc") {
+      document.getElementById("technical_nc_fields").style.display = "block";
+    } else if (value === "professional_prc_csc") {
+      document.getElementById("professional_prc_csc_fields").style.display = "block";
+    }
+  }
+
+  function showAwardFields(value) {
+    // Hide all award fields
+    document.getElementById("local_regional_fields_award").style.display = "none";
+    document.getElementById("national_international_fields").style.display = "none";
+
+    // Show relevant fields based on the selected award level
+    if (value === "local_regional") {
+      document.getElementById("local_regional_fields_award").style.display = "block";
+    } else if (value === "national_international") {
+      document.getElementById("national_international_fields").style.display = "block";
+    }
+  }
+  
+  function showProfessionalDevFields(value) {
+    document.getElementById('local_regional_dev_fields').style.display = (value === 'local_regional') ? 'block' : 'none';
+    document.getElementById('national_dev_fields').style.display = (value === 'national') ? 'block' : 'none';
+    document.getElementById('international_dev_fields').style.display = (value === 'international') ? 'block' : 'none';
+  } function showTrainingFields(value) {
+    document.getElementById('local_regional_fields').style.display = (value === 'local_regional') ? 'block' : 'none';
+    document.getElementById('national_fields').style.display = (value === 'national') ? 'block' : 'none';
+    document.getElementById('international_fields').style.display = (value === 'international') ? 'block' : 'none';
+  }    function showFields(selectedValue) {
+    // Hide all input fields initially
+    document.querySelectorAll('.input-fields').forEach(function (field) {
+      field.style.display = 'none';
+    });
+
+    // Show the relevant input fields based on the selected job title
+    if (selectedValue) {
+      document.getElementById(selectedValue + '_fields').style.display = 'block';
+    }
+  }
+</script>

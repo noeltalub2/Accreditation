@@ -1,0 +1,383 @@
+<% layout('./Layout/layout.ejs') -%>
+
+  <div class="content">
+
+    <div class="block block-rounded">
+      <div class="block-header block-header-default">
+        <h3 class="block-title">Project</h3>
+        <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+          data-bs-target="#modal-block-select2"><i class="si si-plus"></i> Create Folder</button>
+      </div>
+      <div class="block-content">
+        <div class="block-options">
+          <% const projectsArray=Object.values(projectsWithAccess); %>
+            <% const sharedArray=Object.values(sharedProjects); %>
+
+              <!-- Display "My Projects" -->
+              <% if (projectsArray.length> 0) { %>
+                <h4 class="mb-1">My Projects</h4>
+                <div class="row items-push py-4">
+                  <% projectsArray.forEach(project=> { %>
+                    <div class="col-md-6 col-xl-3">
+                      <div class="block block-rounded bg-gray-light"
+                        ondblclick="window.location.href='/faculty/project/<%= project.id %>/chapter'"
+                        style="cursor: pointer;">
+                        <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+                          <div class="d-flex align-items-center">
+                            <i class="si si-folder-alt fa-2x me-3"></i>
+                            <p class="fw-semibold mb-0">
+                              <%= project.title %>
+                            </p>
+                          </div>
+                          <button class="btn text-dark" data-bs-toggle="modal"
+                            data-bs-target="#folderDetailsModal<%= project.id %>">
+                            <i class="fa fa-ellipsis-vertical"></i>
+                          </button>
+                          <div class="modal fade" id="folderDetailsModal<%= project.id %>" tabindex="-1"
+                            aria-labelledby="folderDetailsModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h5 class="modal-title" id="folderDetailsModalLabel">
+                                    <%= project.title %>
+                                  </h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  <p><strong>Description:</strong>
+                                    <%= project.description %>
+                                  </p>
+
+                                  <p><strong>Created At:</strong>
+                                    <%= project.created_at.toISOString().slice(0, 10) %>
+                                  </p>
+
+                                  <p class="mb-1"><strong>Shared With:</strong></p>
+
+                                  <% project.access.forEach(access=> { %>
+                                    <div class="d-flex align-items-center justify-content-between">
+                                      <p class="mb-2 ms-2">
+                                        <%= access.faculty_full_name ? access.faculty_full_name : access.user_full_name %>
+                                        <span class="badge bg-primary">
+                                          <%= access.faculty_full_name ? 'Faculty' : 'Student' %>
+                                        </span>
+                                      </p>
+                                      <button class="btn rounded-pill btn-alt-danger btn-sm"
+                                        onclick="deleteAccess(<%= project.id %>, <%= access.id %>, '<%= access.faculty_full_name || access.user_full_name %>');">
+                                        <i class="fa fa-fw fa-times me-1"></i> Remove
+                                      </button>
+                                    </div>
+                                    <% }) %>
+
+                                      <hr>
+
+                                      <p class="mb-1"><strong>Share Access:</strong></p>
+                                      <form id="shareAccessForm<%= project.id %>"
+                                        onsubmit="shareAccess(event, <%= project.id %>)">
+                                        <div class="mb-3">
+                                          <input type="email" class="form-control" id="shareEmail<%= project.id %>"
+                                            placeholder="Enter email" required name="email">
+                                        </div>
+                                        <button type="submit" class="btn btn-primary">Share</button>
+                                      </form>
+
+                                      <hr>
+
+                                      <button class="btn btn-danger" onclick="deleteFolder(<%= project.id %>);">
+                                        <i class="fa fa-fw fa-trash me-1"></i> Delete Folder
+                                      </button>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <% }) %>
+                    </div>
+                    <% } else { %>
+                      <p>No projects found.</p>
+                      <% } %>
+
+                        <!-- Display "Shared Projects" -->
+                        <% if (sharedArray.length> 0) { %>
+                          <h4 class="mb-1">Shared Projects</h4>
+                          <div class="row items-push py-4">
+                            <% sharedArray.forEach(project=> { %>
+                              <div class="col-md-6 col-xl-3">
+                                <div class="block block-rounded bg-gray-light"
+                                  ondblclick="window.location.href='/faculty/project/<%= project.id %>/chapter'"
+                                  style="cursor: pointer;">
+                                  <div
+                                    class="block-content block-content-full d-flex align-items-center justify-content-between">
+                                    <div class="d-flex align-items-center">
+                                      <i class="si si-folder-alt fa-2x me-3"></i>
+                                      <p class="fw-semibold mb-0">
+                                        <%= project.title %>
+                                      </p>
+                                    </div>
+                                    <button class="btn text-dark" data-bs-toggle="modal"
+                                      data-bs-target="#sharedFolderDetailsModal<%= project.id %>">
+                                      <i class="fa fa-ellipsis-vertical"></i>
+                                    </button>
+                                    <!-- Shared Projects Modals -->
+                                    <div class="modal fade" id="sharedFolderDetailsModal<%= project.id %>" tabindex="-1"
+                                      aria-labelledby="sharedFolderDetailsModalLabel" aria-hidden="true">
+                                      <div class="modal-dialog">
+                                        <div class="modal-content">
+                                          <div class="modal-header">
+                                            <h5 class="modal-title" id="sharedFolderDetailsModalLabel">
+                                              <%= project.title %>
+                                            </h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                              aria-label="Close"></button>
+                                          </div>
+                                          <div class="modal-body">
+                                            <p><strong>Description:</strong>
+                                              <%= project.description %>
+                                            </p>
+                                            <p><strong>Created By:</strong>
+                                              <%= project.creator_name || project.creator_faculty_name %>
+                                            </p>
+                                            <p><strong>Created At:</strong>
+                                              <%= project.created_at.toISOString().slice(0, 10) %>
+                                            </p>
+                                            <p class="mb-1"><strong>Shared With Others:</strong></p>
+                                            <% project.access.forEach(access=> { %>
+                                              <div class="d-flex align-items-center justify-content-between">
+                                                <p class="mb-2 ms-2">
+                                                  <%= access.faculty_full_name ? access.faculty_full_name : access.user_full_name %>
+                                                  <span class="badge bg-primary">
+                                                    <%= access.faculty_full_name ? 'Faculty' : 'Student' %>
+                                                  </span>
+                                                </p>
+                                                
+                                              </div>
+                                              <% }) %>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                  </div>
+                                </div>
+                              </div>
+                              <% }) %>
+                          </div>
+                          <% } else { %>
+                            <p>No shared projects found.</p>
+                            <% } %>
+                </div>
+
+
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Select2 in a modal -->
+    <div class="modal" id="modal-block-select2" tabindex="-1" role="dialog" aria-labelledby="modal-block-select2"
+      aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="block block-rounded block-transparent mb-0">
+            <form class="project-faculty-validation">
+              <div class="block-header block-header-default">
+                <h3 class="block-title">Create New Folder</h3>
+                <div class="block-options">
+                  <button type="button" class="btn-block-option" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fa fa-fw fa-times"></i>
+                  </button>
+                </div>
+              </div>
+              <div class="block-content">
+                <!-- Select2 is initialized at the bottom of the page -->
+
+
+                <div class="mb-2">
+                  <label class="form-label" for="title-input">Title</label>
+                  <input type="text" class="form-control" id="title-input" name="title" required
+                    oninput="this.value = this.value.toUpperCase();">
+                </div>
+                <div class="mb-2">
+                  <label class="form-label" for="description-textarea">Description</label>
+                  <textarea class="form-control" id="description-textarea" name="description" required
+                    oninput="this.value = this.value.toUpperCase();" rows="3"></textarea>
+                </div>
+
+
+
+
+              </div>
+              <div class="block-content block-content-full text-end bg-body">
+                <button type="button" class="btn btn-sm btn-alt-secondary me-1" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-sm btn-primary">Submit</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+      async function shareAccess(event, projectId) {
+        event.preventDefault(); // Prevent the form from submitting the traditional way
+
+        // Use backticks and proper template literal for `shareEmail${projectId}`
+        const email = document.getElementById(`shareEmail${projectId}`).value;
+
+        try {
+          // Use backticks and template literals for the fetch URL
+          const response = await fetch(`/faculty/project/${projectId}/access`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email }), // Send the email or name in the body
+          });
+
+          if (response.ok) {
+            Swal.fire({
+              title: 'Success!',
+              text: `Access shared successfully with ${email}`, // Use template literal here too
+              icon: 'success',
+              confirmButtonText: 'OK',
+            }).then(() => {
+              // Optionally, you can refresh the modal content or the access list here
+              location.reload(); // Reloads the page to reflect changes
+            });
+
+          } else {
+            const error = await response.json();
+            Swal.fire({
+              title: 'Error!',
+              text: `Error: ${error.message}`, // Fix template literal for error message
+              icon: 'error',
+              confirmButtonText: 'OK',
+            });
+          }
+        } catch (error) {
+          console.error('Error sharing access:', error);
+          Swal.fire({
+            title: 'Error!',
+            text: 'Error sharing access. Please try again.',
+            icon: 'error',
+            confirmButtonText: 'OK',
+          });
+        }
+      }
+    </script>
+
+
+
+
+    <script>
+      async function deleteAccess(projectId, accessId, accessName) {
+        const { isConfirmed } = await Swal.fire({
+          title: 'Are you sure?',
+          text: `You want to delete access for ${accessName}?`,
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, delete it!',
+          cancelButtonText: 'Cancel',
+        });
+
+        if (isConfirmed) {
+          try {
+            const response = await fetch(`/faculty/project/${projectId}/access/${accessId}/delete`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+
+            if (response.ok) {
+              Swal.fire({
+                title: 'Deleted!',
+                text: 'Access deleted successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+              }).then(() => {
+                location.reload();
+              });
+              // Optionally, you can refresh the modal content or remove the deleted item from the list
+              // Reloads the page to reflect changes
+            } else {
+              const error = await response.json();
+              Swal.fire({
+                title: 'Error!',
+                text: `Error: ${error.message}`,
+                icon: 'error',
+                confirmButtonText: 'OK',
+              });
+            }
+          } catch (error) {
+            console.error('Error deleting access:', error);
+            Swal.fire({
+              title: 'Error!',
+              text: 'Error deleting access. Please try again.',
+              icon: 'error',
+              confirmButtonText: 'OK',
+            });
+          }
+        }
+      }
+    </script>
+
+    <script>
+      async function deleteFolder(projectId) {
+        const { isConfirmed } = await Swal.fire({
+          title: 'Are you sure?',
+          text: 'You want to delete this folder? This action cannot be undone.',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, delete it!',
+          cancelButtonText: 'Cancel',
+        });
+
+        if (isConfirmed) {
+          try {
+            const response = await fetch(`/faculty/project/${projectId}/delete`, {
+              method: 'DELETE',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+
+            if (response.ok) {
+              Swal.fire({
+                title: 'Deleted!',
+                text: 'Folder deleted successfully.',
+                icon: 'success',
+                confirmButtonText: 'OK',
+              }).then(() => {
+                location.reload(); // Reloads the page to reflect changes
+              });
+            } else {
+              const error = await response.json();
+              Swal.fire({
+                title: 'Error!',
+                text: `Error: ${error.message}`,
+                icon: 'error',
+                confirmButtonText: 'OK',
+              });
+            }
+          } catch (error) {
+            console.error('Error deleting folder:', error);
+            Swal.fire({
+              title: 'Error!',
+              text: 'Error deleting folder. Please try again.',
+              icon: 'error',
+              confirmButtonText: 'OK',
+            });
+          }
+        }
+      }
+    </script>
+
+
+    <!-- END Select2 in a modal -->

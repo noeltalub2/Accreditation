@@ -1,0 +1,163 @@
+<!-- ========== Left Sidebar Start ========== -->
+<div class="leftside-menu">
+
+    <!-- Brand Logo Light -->
+    <a href="/" class="logo logo-light">
+        <span class="logo-lg">
+            <img src="/assets/images/logo.png" alt="logo" height="55">
+            <span class="ms-1 text-success fw-bold fs-4">MMSU ETEEAP<span>
+        </span>
+        <span class="logo-sm">
+            <img src="/assets/images/logo.png" alt="small logo" height="55">
+            <span class="ms-1 text-success fw-bold fs-4">MMSU ETEEAP<span>
+        </span>
+   
+    </a>
+
+    <!-- Brand Logo Dark -->
+    <a href="/" class="logo logo-dark">
+        <span class="logo-lg">
+            <img src="/assets/images/logo.png" alt="dark logo" height="55">
+            <span class="ms-1 text-success fw-bold fs-4">MMSU ETEEAP<span>
+        </span>
+        <span class="logo-sm">
+            <img src="/assets/images/logo.png" alt="small logo" height="55">
+            <span class="ms-1 text-success fw-bold fs-4">MMSU ETEEAP<span>
+        </span>
+      
+    </a>
+    
+    <!-- Sidebar Hover Menu Toggle Button -->
+    <div class="button-sm-hover" data-bs-toggle="tooltip" data-bs-placement="right" title="Show Full Sidebar">
+        <i class="ri-checkbox-blank-circle-line align-middle"></i>
+    </div>
+
+    <!-- Full Sidebar Menu Close Button -->
+    <div class="button-close-fullsidebar">
+        <i class="ri-close-fill align-middle"></i>
+    </div>
+
+    <!-- Sidebar -left -->
+    <div class="h-100" id="leftside-menu-container" data-simplebar>
+        <!-- Leftbar User -->
+        <div class="leftbar-user p-3 text-white">
+            <div class="d-flex align-items-center text-reset">
+                <div class="flex-shrink-0">
+                    <img src="/images/profile/<%=user_info.profile_url%>" alt="user-image" height="42" class="rounded-circle shadow">
+                </div>
+                <div class="flex-grow-1 ms-2">
+                    <span class="fw-semibold fs-15 d-block"><%=user_info.fullname.toUpperCase()%></span>
+              
+                </div>
+               
+            </div>
+        </div>
+
+      <!--- Sidemenu -->
+<ul class="side-nav">
+
+    <li class="side-nav-title mt-1"> Main</li>
+
+    <% if (user.role === 'user') { %>
+        <li class="side-nav-item">
+            <a href="/home" class="side-nav-link <%= page === 'home' ? 'active' : '' %>">
+                <i class="ri-dashboard-2-fill"></i>
+                <span> Dashboard </span>
+            </a>
+        </li>
+
+        <li class="side-nav-item <%= page === 'application_form' ? 'menuitem-active' : '' %>">
+            <a href="/application" class="side-nav-link <%= page === 'application_form' ? 'active' : '' %>">
+                <i class=" ri-file-text-line"></i>
+                <span> Application </span> 
+            </a>
+        </li>
+     
+        <li class="side-nav-item">
+            <a href="/profile" class="side-nav-link <%= page === 'profile' ? 'active' : '' %>">
+                <i class="ri-user-fill"></i>
+                <span> Profile </span>
+            </a>
+        </li>
+      
+    <%} else if (user.role === 'assessor') {%>
+        <li class="side-nav-item <%= page === 'evaluation' ? 'menuitem-active' : '' %>">
+            <a href="/assessor/home" class="side-nav-link <%= page === 'evaluation' ? 'active' : '' %>">
+                <i class="ri-file-text-line"></i>
+                <span> For Evaluation </span>
+            </a>
+        </li>
+        <li class="side-nav-item">
+            <a href="/assessor/profile" class="side-nav-link <%= page === 'profile' ? 'active' : '' %>">
+                <i class="ri-user-fill"></i>
+                <span> Profile </span>
+            </a>
+        </li>
+    <% } else { %>
+        <li class="side-nav-item">
+            <a href="/admin/dashboard" class="side-nav-link <%= page === 'dashboard' ? 'active' : '' %>">
+                <i class="ri-dashboard-2-fill"></i>
+                <span> Dashboard </span>
+            </a>
+        </li>
+
+    
+
+        <li class="side-nav-item  <%= page === 'application_form' ? 'menuitem-active' : '' %>">
+            <a data-bs-toggle="collapse" href="#applicationsTasks" aria-expanded="false" aria-controls="applicationsTasks" class="side-nav-link">
+                <i class=" ri-file-text-line"></i>
+                <span> Applications </span> 
+                <span class="menu-arrow"></span>
+            </a>
+            <div class="collapse <%= page === 'application_form' || page === 'interview' || page === 'evaluation' ? 'show' : '' %>" id="applicationsTasks">
+                <ul class="side-nav-second-level">
+                    <!-- For Review link -->
+                    <li class="<%= page === 'application_form' ? 'menuitem-active' : '' %>">
+                        <a href="/admin/applications/review">For Review</a>
+                    </li>
+            
+                    <!-- For Interview link -->
+                    <li class="<%= page === 'interview' ? 'menuitem-active' : '' %>">
+                        <a href="/admin/interview">For Interview</a>
+                    </li>
+            
+                    <!-- For Interview link -->
+                    <li class="<%= page === 'evaluation' ? 'menuitem-active' : '' %>">
+                        <a href="/admin/evaluation">For Evaluation</a>
+                    </li>
+            
+                    
+                </ul>
+            </div>
+            
+        </li>
+
+    
+
+        
+        <li class="side-nav-item <%= page === 'users' ? 'menuitem-active' : '' %>">
+            <a href="/admin/users" class="side-nav-link <%= page === 'users' ? 'active' : '' %>">
+                <i class="ri-user-fill"></i>
+                <span> Users </span>
+            </a>
+        </li>
+        <li class="side-nav-item <%= page === 'assessor' ? 'menuitem-active' : '' %>">
+            <a href="/admin/assessor" class="side-nav-link <%= page === 'assessor' ? 'active' : '' %>">
+                <i class="ri-user-2-line"></i>
+                <span> Assessor </span>
+            </a>
+        </li>
+     
+
+
+     
+    <% } %>
+
+</ul>
+<!--- End Sidemenu -->
+
+
+        <div class="clearfix"></div>
+    </div>
+</div>
+<!-- ========== Left Sidebar End ========== -->

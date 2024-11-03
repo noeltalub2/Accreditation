@@ -1,0 +1,86 @@
+<% layout('./Layout/layout.ejs') -%>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+                <h4 class="page-title">
+                    <%=pagetitle%>
+                </h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+
+                    <li class="breadcrumb-item active">Application</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+             
+                        <div class="card-title d-flex justify-content-end">
+                            <a href="/submit-application" class="btn btn-success btn-sm">
+                                <i class="ri-file-add-line me-1"></i>Submit Application
+                            </a>
+                        </div>
+                 
+                        <% if (applications.length === 0) { %>
+                            <div class="card mb-1 shadow-none border">
+                                <div class="p-2 text-center">
+                                    <p class="text-muted fw-bold">No applications found.</p>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <% applications.forEach(application => { %>
+                                <div class="card mb-1 shadow-none border">
+                                    <div class="p-2">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <div class="avatar-sm">
+                                                    <span class="avatar-title bg-primary-subtle text-primary rounded">
+                                                        <i class="ri-file-line"></i>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col ps-0">
+                                                <a href="/application/<%= application.id %>/view" class="text-muted fw-bold">
+                                                    ETEEAP Application #<%= application.id %>
+                                                </a>
+                                                <p class="mb-0">
+                                                    <%= new Date(application.created_at).toLocaleString('en-US', { 
+                                                        year: 'numeric', 
+                                                        month: 'long', 
+                                                        day: 'numeric', 
+                                                        hour: 'numeric', 
+                                                        minute: 'numeric', 
+                                                        hour12: true 
+                                                    }) %>
+                                                </p>
+                                            </div>
+                                            <div class="col-auto">
+                                                <!-- Button -->
+                                                <span class="badge 
+                                                <%= application.status === 'Approved' ? 'bg-success text-white' :
+                                                    application.status === 'Rejected' ? 'bg-danger text-white' :
+                                                    application.status === 'Pending' ? 'bg-warning text-white' :
+                                                    application.status === 'Under Review' ? 'bg-info text-white' :
+                                                    application.status === 'Additional Information Requested' ? 'bg-info text-white' :
+                                                    'bg-light text-dark' // Default case
+                                                %> p-1">
+                                                <%= application.status %>
+                                                </span>
+                                              
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            <% }); %>
+                        <% } %>
+                        
+                    
+             
+                </div>
+            </div>
+        </div>
+    </div>

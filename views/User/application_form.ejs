@@ -1,0 +1,530 @@
+<% layout('./Layout/layout.ejs') -%>
+    <%block('script').append(` <style>
+        /* Styles for the custom file input */
+        .custom-file-upload {
+        border: 2px dashed #dee2e6;
+        background: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+        min-height: 150px;
+        padding: 20px;
+        text-align: center
+        }
+
+        .custom-file-upload:hover {
+        background-color: #f8f9fa;
+        }
+
+
+
+        /* Hidden file input */
+        #fileInput {
+        display: none;
+        }
+
+        .file-list {
+        margin-top: 10px;
+        }
+
+        .file-list-item {
+        padding: 5px;
+        border: 1px solid #ccc;
+        margin: 5px 0;
+        border-radius: 3px;
+        }
+        </style>
+        `)%>
+        <div class="row">
+            <div class="col-12">
+                <div
+                    class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+                    <h4 class="page-title">
+                        Application
+                    </h4>
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+
+                        <li class="breadcrumb-item active">Application</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card d-block">
+                    <div class="card-body">
+                        <h5 class="text-center"><strong>ADMISSION REQUIREMENTS TO ETEEAP</strong></h5>
+                        <p class="text-muted text-center">MMSU offers CHED-accredited courses in AB/BS Programs with at least Level II accreditation status.</p>
+                    
+                        <h6><strong>Applicant Qualifications:</strong></h6>
+                        <ul class="list-unstyled text-muted">
+                            <li>Filipino citizen, high school graduate with PEPT equivalent to 1st-year college</li>
+                            <li>At least 5 years relevant work experience, 25 years old minimum</li>
+                            <li>Evidence of knowledge in the field applied for equivalency</li>
+                        </ul>
+                    
+                        <h6><strong>Admission Requirements:</strong></h6>
+                        <ul class="list-unstyled text-muted">
+                            <li>Original school credentials (e.g., High School Card, Form 137A, PEPT, Transcript of Records)</li>
+                            <li>NSO Birth Certificate, 1x1 ID pictures, employment records, proof of good moral character</li>
+                            <li>Recommendation letter, interview, test results, certificates (e.g., Proficiency, Business Registration)</li>
+                            <li>ETEEAP application form and training certificates</li>
+                        </ul>
+                    
+                        <h6><strong>Admission Procedures:</strong></h6>
+                        <ol class="text-muted">
+                            <li>Get forms from the MMSU-ETEEAP Office</li>
+                            <li>Submit forms and documents for evaluation</li>
+                            <li>If qualified, attend interview and tests</li>
+                            <li>Attend ETEEAP Orientation</li>
+                            <li>Submit documents for final evaluation and accreditation</li>
+                        </ol>
+                    
+                        <h6><strong>Assessment Criteria:</strong></h6>
+                        <ul class="list-unstyled text-muted">
+                            <li>Formal training: Credit transfer</li>
+                            <li>Non-formal: Credit based on training evaluation</li>
+                            <li>Informal/self-study: Written/oral exams, portfolio, or skills demo</li>
+                            <li>Portfolio: Adviser helps develop portfolio</li>
+                            <li>Supplemental courses may be required</li>
+                        </ul>
+                    
+                        <h6><strong>Cost of Program:</strong></h6>
+                        <p class="text-muted">Candidates must pay assessment fees as approved by the Board of Regents.</p>
+                    </div>
+                    
+                    <!-- end card-body-->
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+
+                            <div class="col-lg-12">
+                                <form action="/application" method="POST" class="uploadDocumentForm"
+                                    enctype="multipart/form-data">
+                                    <div class="mb-3">
+                                        <label for="title" class="form-label">Title</label>
+                                        <input type="text" class="form-control" id="title" name="title" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="description" class="form-label">Description</label>
+                                        <textarea class="form-control" id="description" name="description" rows="3"
+                                            required></textarea>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Attach File or Document</label>
+                                        <div class="custom-file-upload" id="dropzone">
+                                            <i class="fs-36 text-muted ri-upload-cloud-line"></i>
+                                            <h3>
+                                                Drop files here or click to upload.
+                                            </h3>
+
+                                            <input type="file" id="fileInput" name="file_document" multiple
+                                                accept=".pdf, .jpg, .jpeg, .png" style="display: none;">
+                                        </div>
+                                        <div class="file-preview mt-3" id="filePreviewContainer"></div>
+                                    </div>
+                                    <div class="mb-4">
+                                        <button type="submit" class="btn btn-primary" id="submit-button">
+                                            <span class="spinner-border spinner-border-sm me-1" role="status"
+                                                aria-hidden="true" style="display: none;"></span>Upload
+                                        </button>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+
+
+
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+
+                        <!-- end dropdown-->
+                        <h4 class="mb-4 mt-0 fs-16">Upload Section (<%= documents.length %>)</h4>
+
+                        <div class="clearfix"></div>
+
+                        <% documents.forEach(document=> { %>
+                            <div class="d-flex align-items-start mb-5">
+                                <img class="me-2 rounded-circle" src="/images/profile/<%= document.profile_url %>"
+                                    alt="Generic placeholder image" height="40">
+                                <div class="w-100">
+                                    <h5 class="mt-0 mb-0">
+                                        <%= document.full_name %>
+                                    
+                                        <div class=" float-end">
+                                            <% if (document.status === 'pending') { %>
+                                                <span class="badge bg-warning ">Submitted for Review</span>
+                                            <% } else if (document.status === 'checking') { %>
+                                                <span class="badge bg-info text-white">Checking</span>
+                                            <% } else if (document.status === 'rejected') { %>
+                                                <span class="badge bg-danger text-white">Rejected</span>
+                                            <% } else if (document.status === 'approved') { %>
+                                                <span class="badge bg-success text-white">Approved</span>
+                                                
+                                            <% } else { %>
+                                                <span class="badge bg-secondary text-white">Unknown Status</span>
+                                            <% } %>
+                                            </div>
+                                        
+                                    </h5>
+                                    <small>
+                                        <%= document.created_at.toLocaleString('en-US', { year: 'numeric' ,
+                                        month: 'long' , day: 'numeric' , hour: 'numeric' , minute: 'numeric'
+                                        , hour12: true }) %>
+                                    </small>
+                              
+                                    <h5 class="fw-bold">    <%= document.title %></h5>
+                                    <p class="mt-1 mb-0 text-muted">
+                                        <%= document.description %>
+                                    </p>
+                                    <% if (document.file_names && document.file_names.length > 0) { %>
+                                        <div class="mt-2">
+                                            <strong>Attachments:</strong>
+                                                <div class="row">
+                                                <% document.file_names.forEach(fileName => { %>
+                                                    <div class="col-lg-6 col-xl-6">
+
+                                             
+                                                    <div class="card mb-1 shadow-none border">
+                                                    <div class="p-2">
+                                                        <div class="row align-items-center">
+                                                            <div class="col-auto">
+                                                                <div class="avatar-sm">
+                                                                    <span class="avatar-title bg-primary-subtle text-primary rounded">
+                                                                        <%= fileName.split('.').pop().toUpperCase() %>
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col ps-0">
+                                                                <a href="/uploads/<%= fileName %>" class="text-muted fw-bold" target="_blank"><%= fileName %></a>
+                                                                <p class="mb-0">3.25 MB</p> <!-- Replace with actual file size if available -->
+                                                            </div>
+                                                            <div class="col-auto">
+                                                                <!-- Button -->
+                                                                <a href="/uploads/<%= fileName %>" class="btn btn-link fs-16 text-muted" target="_blank">
+                                                                    <i class="ri-download-line"></i>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                <% }); %>
+                                            </div>
+                                      
+                                        </div>
+                                    <% } %>
+                                    <% if (document.comment) { %>
+                                        
+                                    <div class="d-flex align-items-center justify-content-center mt-2">
+                                        <i class="ri-corner-down-right-line fs-20 me-1"></i>
+                                        <a class="pe-2" href="#">
+                                            <img src="/images/profile/default.jpg" class="rounded-circle" alt="Generic placeholder image" height="40">
+                                        </a>
+                                        <div class="w-100">
+                                            <h5 class="mt-0">Administrator <small class="text-muted float-end">  <%= document.comment_date.toLocaleString('en-US', { year: 'numeric' ,
+                                                month: 'long' , day: 'numeric' , hour: 'numeric' , minute: 'numeric'
+                                                , hour12: true }) %></small></h5>
+                                            <%=document.comment%>
+            
+                                       
+                                        </div>
+                                    </div>
+                                    <% } %>
+                                </div>
+                            </div>
+                            <% }); %>
+
+
+
+
+                                <!-- end .border-->
+                    </div>
+                    <!-- end card-body-->
+                </div>
+
+
+            </div>
+            <div class="col-lg-4">
+                <div class="card d-block">
+                    <div class="card-body">
+                        <h5 class="card-title fs-16 mb-3">Application Form</h5>
+                        <p>To begin your application, please download and fill out the ETEEAP application form.</p>
+                        <div class="card mb-1 shadow-none border">
+                            <div class="p-2">
+                                <div class="row align-items-center">
+                                    <div class="col-auto">
+                                        <div class="avatar-sm">
+                                            <span class="avatar-title bg-danger-subtle text-danger rounded">
+                                                PDF
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col ps-0">
+                                        <a href="/application_form/ETEEAP-APPLICATION-FORM.pdf" download
+                                            class="text-muted fw-bold">
+                                            ETEEAP-APPLICATION-FORM.pdf
+                                        </a>
+                                        <p class="mb-0">222 KB</p>
+                                    </div>
+                                    <div class="col-auto">
+                                        <!-- Button -->
+                                        <a href="/application_form/ETEEAP-APPLICATION-FORM.pdf" download
+                                            class="btn btn-link fs-16 text-muted">
+                                            <i class="ri-download-line"></i>
+                                        </a>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- end card-body-->
+                </div>
+                <div class="card d-block">
+                    <div class="card-body">
+                        <!-- Important Notes for Online Submission -->
+                        <h5 class="card-title fs-16 mb-3">Important Notes</h5>
+                        <ul class="list-unstyled text-muted">
+                            <li>Make sure all documents are in the correct format (PDF, JPG, etc.).</li>
+                            <li>Keep a copy of your submitted documents for your records.</li>
+                            <li>If you encounter issues, contact technical support.</li>
+                        </ul>
+
+                    </div>
+                </div>
+                <div class="card d-block">
+                    <div class="card-body">
+                        <h5 class="card-title fs-16 mb-3">Submission Process</h5>
+
+
+                        <!-- Next Steps After Submission -->
+
+                        <ol class="text-muted">
+                            <li>After submission, your application will be reviewed by the ETEEAP Committee.</li>
+                            <li>If qualified, you will attend an interview and undergo personality and work aptitude
+                                tests.</li>
+                            <li>You will attend the ETEEAP Orientation Seminar.</li>
+                            <li>The results of your application will be communicated via email within 4-6 weeks.</li>
+                        </ol>
+
+                    </div>
+                    <!-- end card-body-->
+                </div>
+
+
+            </div>
+        </div>
+
+        <%block('script').append(`
+            <script>
+                (function () {
+	"use strict";
+
+	class DocumentUpload {
+		static initValidation() {
+			// Initialize jQuery validation
+			jQuery(".uploadDocumentForm").validate({
+				rules: {
+					description: {
+						required: true,
+						minlength: 3,
+					},
+					title: {
+						required: true,
+						minlength: 3,
+					},
+					file_document: {
+						required: false,
+					},
+				},
+				messages: {
+					title: {
+						required: "Please enter a title",
+						minlength: "Title must be at least 3 characters long",
+					},
+					description: {
+						required: "Please enter a description",
+						minlength:
+							"Description must be at least 3 characters long",
+					},
+					file_document: {
+						required: "Please upload a file",
+						extension: "Allowed file types: PDF, Word, JPG, PNG",
+						filesize: "File size must not exceed 5 MB",
+					},
+				},
+				submitHandler: function (form) {
+					const submitButton =
+						document.getElementById("submit-button");
+					const spinner =
+						submitButton.querySelector(".spinner-border");
+
+					// Show spinner and disable button
+					spinner.style.display = "inline-block";
+					submitButton.disabled = true;
+
+					// Change button text to 'Uploading...'
+					submitButton.innerHTML =
+						'<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Uploading...';
+
+					const formData = new FormData(form); // Collect form data
+					// Show loader or header loader (custom logic can be added here)
+
+					// Send the FormData directly
+					fetch("/application", {
+						method: "POST",
+						body: formData, // Send FormData containing file
+					})
+						.then((response) => response.json())
+						.then((data) => {
+							spinner.style.display = "none";
+							submitButton.disabled = false;
+							submitButton.innerHTML =
+								'<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>Upload';
+							// Hide loader or header loader (custom logic can be added here)
+							if (data.success) {
+								// Reset the form
+
+								$.notify(
+									{
+										icon: "fa fa-check me-1",
+										message: data.message,
+									},
+									{
+										type: "success",
+										allow_dismiss: false,
+									}
+								);
+
+								// Delay the reload to allow the notification to be seen
+								setTimeout(() => {
+									window.location.reload(); // Reload the current page
+								}, 1800); // Adjust delay as needed
+							} else {
+								$.notify(
+									{
+										icon: "fa fa-times-circle me-1",
+										message: data.message,
+									},
+									{
+										type: "danger",
+										allow_dismiss: false,
+									}
+								);
+							}
+						})
+						.catch((error) => {
+							spinner.style.display = "none";
+							submitButton.disabled = false;
+							submitButton.innerHTML =
+								'<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>Upload';
+							// Hide loader or header loader (custom logic can be added here)
+							$.notify(
+								{
+									icon: "fa fa-times-circle me-1",
+									message:
+										"An error occurred. Please try again.",
+								},
+								{
+									type: "danger",
+									allow_dismiss: false,
+								}
+							);
+							console.error("Error:", error);
+						});
+				},
+			});
+		}
+
+		static init() {
+			this.initValidation();
+		}
+	}
+
+	// Call init function on document ready
+	$(document).ready(() => DocumentUpload.init());
+})();
+
+            </script>
+            <script>
+                // Get references to the elements
+                const dropzone = document.getElementById("dropzone");
+                const fileInput = document.getElementById("fileInput");
+                const filePreviewContainer = document.getElementById("filePreviewContainer");
+
+                // Allow clicking the dropzone to open the file input
+                dropzone.addEventListener("click", () => fileInput.click());
+
+                // Handle file selection
+                fileInput.addEventListener("change", () => {
+                    const files = fileInput.files;
+                    handleFiles(files);
+                });
+
+                // Handle dropping files onto the dropzone
+                dropzone.addEventListener("dragover", (event) => {
+                    event.preventDefault();
+                });
+
+                dropzone.addEventListener("drop", (event) => {
+                    event.preventDefault();
+                    const files = event.dataTransfer.files;
+                    handleFiles(files);
+                });
+
+                // Function to handle files
+                function handleFiles(files) {
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const listItem = createFilePreview(file);
+                        filePreviewContainer.appendChild(listItem);
+                    }
+                }
+
+                // Create file preview card
+                function createFilePreview(file) {
+                    const card = document.createElement("div");
+                    card.className = "card mb-1 mb-0 shadow-none border file-preview-card";
+
+                    // Create a thumbnail (replace this with actual file icons if needed)
+                    const thumbnail = document.createElement("div");
+                    thumbnail.className = "avatar-sm";
+                    thumbnail.innerHTML = '<span class="avatar-title bg-primary-subtle text-primary rounded">' + file.name.split('.').pop().toUpperCase() + '</span>';
+
+
+                    card.innerHTML =
+                        '<div class="p-2">' +
+                        '<div class="row align-items-center">' +
+                        '<div class="col-auto">' +
+                        thumbnail.outerHTML +
+                        '</div>' +
+                        '<div class="col ps-0">' +
+                        '<a href="javascript:void(0);" class="text-muted fw-bold">' + file.name + '</a>' +
+                        '<p class="mb-0"><strong>' + (file.size / 1024).toFixed(2) + '</strong> KB</p>' +
+                        '</div>' +
+                        '<div class="col-auto">' +
+                        '<a href="javascript:void(0);" class="btn btn-link btn-lg text-muted" onclick="deleteFile(this)">' +
+                        '<i class="ri-close-line"></i>' +
+                        '</a>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
+
+                    return card;
+                }
+
+                // Function to delete file preview
+                function deleteFile(button) {
+                    const card = button.closest('.file-preview-card');
+                    filePreviewContainer.removeChild(card);
+                }
+            </script>
+
+            `)%>

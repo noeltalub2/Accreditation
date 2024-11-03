@@ -1,0 +1,363 @@
+<% layout('./Layout/layout.ejs') -%>
+    <% block('head').append(` <link href="/assets/vendor/datatables.net-bs5/css/dataTables.bootstrap5.min.css"
+        rel="stylesheet" type="text/css" />
+    <link href="/assets/vendor/datatables.net-responsive-bs5/css/responsive.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-fixedcolumns-bs5/css/fixedColumns.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-fixedheader-bs5/css/fixedHeader.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-buttons-bs5/css/buttons.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link href="/assets/vendor/datatables.net-select-bs5/css/select.bootstrap5.min.css" rel="stylesheet"
+        type="text/css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    `) %>
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+                <h4 class="page-title">
+                    <%=pagetitle%>
+                </h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                    <li class="breadcrumb-item"><a href="/admin/evaluation">Evaluation</a></li>
+                    <li class="breadcrumb-item active">Current</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-title">
+                        <button type="button" data-bs-toggle="modal" data-bs-target="#modal-block-normal"
+                            class="btn btn-success btn-sm">
+                            <i class="fa fa-fw fa-plus me-1"></i>Add Assessor
+                        </button>
+                    </div>
+           
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-vcenter js-dataTable-full"
+                                id="datatable-buttons">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center">#</th>
+    
+                                        <th>Fullname</th>
+                                        <th>Evaluation Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% list_assessors.forEach((record, index)=> { %>
+                                        <tr>
+                                            <td class="text-center fs-sm">
+                                                <%= index + 1 %>
+                                            </td>
+    
+                                          
+                                            <td class="fw-semibold fs-sm d-flex align-items-center">
+                                                <img src="/images/profile/<%= record.profile_url %>" class="img-avatar me-2"
+                                                    alt="" style="width: 40px; height: 40px;">
+                                                <span>
+                                                    <%= record.lastname %>, <%= record.firstname %>
+                                                </span>
+                                            </td>
+                                            <td class="text-center">
+                                                <span class="badge 
+                                                <%= record.status === 'Evaluated' ? 'bg-success text-white' :
+                                           
+                                                    record.status === 'Pending' ? 'bg-warning text-white' :
+                                              
+                                                    'bg-light text-dark' // Default case
+                                                %> p-1">
+                                                <%= record.status %>
+                                                </span>
+                                               
+                                            </td>
+                                            <td class="text-center fs-sm">
+
+                                                <%if ( record.status === 'Evaluated') {%>
+                                                    <a href="/admin/download-evaluation/<%= record.application_id %>/<%= record.uuid %>"
+                                                        class="btn btn-sm btn-primary js-bs-tooltip-enabled"
+                                                        data-bs-toggle="tooltip" aria-label="Download Evaluation"
+                                                        data-bs-original-title="Download Evaluation">
+                                                        <i class="ri-download-line me-1"></i>Download
+                                                     </a>
+                                                     
+                                                <%}%>
+                                                <div class="btn-group">
+                                                    <button type="button"
+                                                    class="btn btn-sm btn-danger js-bs-tooltip-enabled"
+                                                    data-bs-toggle="tooltip" aria-label="Remove Assessor"
+                                                    onclick="deleteAssessor('<%= record.assessor_id %>', '<%= record.firstname %>')"
+                                                    data-bs-original-title="Remove Assessor">
+                                                    <i class="ri-delete-bin-line me-1"></i>Remove
+                                                </button>
+                                                </div>
+                                            </td>
+    
+                                        </tr>
+                                        <%})%>
+    
+    
+                                </tbody>
+                            </table>
+                        </div>
+    
+    
+                   
+                </div>
+            </div>
+        </div>
+      
+    </div>
+
+
+
+    <!-- Add Assessor Modal -->
+    <div class="modal fade" id="modal-block-normal" tabindex="-1" aria-labelledby="modal-block-normal"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="addAssessorForm" action="/admin/evaluation/add-assessor" method="POST" class="assessor-validation">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Add Assessor</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <input type="hidden" name="application_id" value="<%=application_id%>">
+                            <label for="assessor-input" class="form-label">Assessor Name</label>
+                            <select class="form-control" id="assessor-input" name="assessor_uuid" required>
+                                <option value="" disabled selected>Select an Assessor</option>
+                                <% assessors.forEach(assessor => { %>
+                                    <option value="<%= assessor.uuid %>">
+                                        <%= assessor.firstname %> <%= assessor.middlename %> <%= assessor.lastname %>
+                                    </option>
+                                <% }); %>
+                            </select>
+                        </div>
+                        
+                       
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+<!-- Delete Assessor Modal -->
+<div class="modal fade" id="modal-delete-assessor" tabindex="-1" aria-labelledby="modal-delete-assessor"
+aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <form id="deleteAssessorForm" action="/admin/assessor/delete/" method="POST">
+            <input type="hidden" name="assessor_id" id="delete-assessor-id">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Assessor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to remove <span id="assessor_delete_name" class="fw-bold"></span>
+                    as assessor?</p>
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <i class="fa fa-exclamation-triangle me-2"></i>
+                    <div>
+                        <strong>Note:</strong> Deleting this will also delete all associated records.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
+
+    <%block('script').append(` <!-- Datatable Demo Aapp js -->
+        <script>
+
+!(function () {
+        "use strict";
+        class e {
+        static initValidation() {
+        // Initialize jQuery validation
+        jQuery(".assessor-validation").validate({
+        rules: {
+            assessor_uuid: {
+        required: true,
+ 
+        }
+
+        },
+        messages: {
+            assessor_uuid: {
+        required: "Please select assessor",
+        },
+       
+
+        },
+        submitHandler: function (form) {
+
+        const data = {
+            assessor_uuid: form.assessor_uuid.value,
+            application_id: form.application_id.value,
+        };
+        fetch('/admin/evaluation/add-assessor', {
+        method: 'POST', headers: {
+        'Content-Type': 'application/json', // Specify the content type as JSON
+        },
+        body: JSON.stringify(data), // Convert form data to JSON string
+        })
+        .then(response => response.json())
+        .then(data => {
+        if (data.success) {
+        // Close the modal
+        const modal = document.querySelector('#modal-block-normal'); // Replace with your modal's ID
+        if (modal) {
+        const modalInstance = bootstrap.Modal.getInstance(modal); // Bootstrap 5
+        if (modalInstance) {
+        modalInstance.hide(); // Close the modal
+        }
+        }
+
+        // Reset the form
+        form.reset();
+
+        $.notify({
+        icon: 'fa fa-check me-1',
+        message: 'Assessor added successfully!'
+        }, {
+        type: 'success',allow_dismiss: false,
+        });
+        setTimeout(() => {
+        window.location.reload();
+        }, 2000);
+        } else {
+            // Close the modal
+        const modal = document.querySelector('#modal-block-normal'); // Replace with your modal's ID
+        if (modal) {
+        const modalInstance = bootstrap.Modal.getInstance(modal); // Bootstrap 5
+        if (modalInstance) {
+        modalInstance.hide(); // Close the modal
+        }
+        }
+        $.notify({
+        icon: 'fa fa-exclamation-triangle me-1',
+        message: 'Assessor already exists for this application'
+        }, {
+        type: 'danger',allow_dismiss: false,
+        });
+        }
+        })
+        .catch(error => {
+        $.notify({
+        icon: 'fa fa-times-circle me-1',
+        message: 'An error occurred. Please try again.'
+        }, {
+        type: 'danger'
+        });
+        console.error('Error:', error);
+        });
+        }
+        });
+        }
+
+        static init() {
+        this.initValidation();
+        }
+        }
+
+        // Call init function on document ready
+        $(document).ready(() => e.init());
+        })();
+
+
+        function deleteAssessor(assessorId, assessorName) {
+            document.getElementById("assessor_delete_name").innerText = assessorName;
+            document.getElementById("delete-assessor-id").value = assessorId;
+
+            // Show the modal using Bootstrap 5 API
+            const modal = new bootstrap.Modal(document.getElementById('modal-delete-assessor'));
+            modal.show();
+            }
+
+
+            document.getElementById('deleteAssessorForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent the form from submitting the traditional way
+
+            const assessorId = document.getElementById('delete-assessor-id').value;
+
+            try {
+            const response = await fetch('/admin/assessor/delete/', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ assessor_id: assessorId })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+            // Close the modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modal-delete-assessor'));
+            modal.hide();
+
+            $.notify({
+            icon: 'fa fa-check me-1',
+            message: 'Assessor deleted successfully!'
+            }, {
+            type: 'success',allow_dismiss: false,
+            });
+            setTimeout(() => {
+            window.location.href = '/admin/assessor/delete';
+            }, 2000);
+            } else {
+            $.notify({
+            icon: 'fa fa-check me-1',
+            message: 'Assessor updating error!'
+            }, {
+            type: 'danger',allow_dismiss: false,
+            });
+            setTimeout(() => {
+            window.location.href = '/admin/assessor/delete';
+            }, 2000);
+            }
+            } catch (error) {
+            $.notify({
+            icon: 'fa fa-times-circle me-1',
+            message: 'An error occurred. Please try again.'
+            }, {
+            type: 'danger'
+            });
+            console.error('Error:', error);
+            }
+            });
+        </script>
+        `) %>
+
+        <%block('script').append(`<script src="/assets/vendor/datatables.net/js/jquery.dataTables.min.js">
+            </script>
+            <script src="/assets/vendor/datatables.net-bs5/js/dataTables.bootstrap5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+            <script src="/assets/vendor/datatables.net-responsive-bs5/js/responsive.bootstrap5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-fixedcolumns-bs5/js/fixedColumns.bootstrap5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons-bs5/js/buttons.bootstrap5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons/js/buttons.html5.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons/js/buttons.flash.min.js"></script>
+            <script src="/assets/vendor/datatables.net-buttons/js/buttons.print.min.js"></script>
+            <script src="/assets/vendor/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+            <script src="/assets/vendor/datatables.net-select/js/dataTables.select.min.js"></script>
+
+            <!-- Datatable Demo Aapp js -->
+            <script src="/assets/js/pages/demo.datatable-init.js"></script>`)%>

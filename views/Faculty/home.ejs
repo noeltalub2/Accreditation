@@ -1,0 +1,175 @@
+<% layout('./Layout/layout.ejs') -%>
+
+  <div class="content">
+
+
+
+    <div class="row">
+      <div class="col-md-6 col-xl-3">
+        <a class="block block-rounded block-link-pop" href="javascript:void(0)">
+          <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+            <div>
+              <i class="far fa-2x fa-folder text-muted"></i>
+            </div>
+            <dl class="ms-3 text-end mb-0">
+              <dt class="h3 fw-extrabold mb-0">
+                <%= count_own_projects %>
+              </dt>
+              <dd class="fs-sm fw-medium text-muted mb-0">
+                Own Project
+              </dd>
+            </dl>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <a class="block block-rounded block-link-pop" href="javascript:void(0)">
+          <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+            <div>
+              <i class="fa fa-2x fa-folder-plus text-muted"></i>
+            </div>
+            <dl class="ms-3 text-end mb-0">
+              <dt class="h3 fw-extrabold mb-0">
+                <%= count_shared_projects %>
+              </dt>
+              <dd class="fs-sm fw-medium text-muted mb-0">
+                Shared Project
+              </dd>
+            </dl>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <a class="block block-rounded block-link-pop" href="javascript:void(0)">
+          <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+            <div>
+              <i class="far fa-2x fa-clock text-muted"></i>
+            </div>
+            <dl class="ms-3 text-end mb-0">
+              <dt class="h3 fw-extrabold mb-0">
+                <%= count_recent_activities || "0" %>
+              </dt>
+              <dd class="fs-sm fw-medium text-muted mb-0">
+                Recent Activities
+              </dd>
+            </dl>
+          </div>
+        </a>
+      </div>
+
+      <div class="col-md-6 col-xl-3">
+        <a class="block block-rounded block-link-pop" href="javascript:void(0)">
+          <div class="block-content block-content-full d-flex align-items-center justify-content-between">
+            <div>
+              <i class="far fa-2x fa-bell text-muted"></i>
+            </div>
+            <dl class="ms-3 text-end mb-0">
+              <dt class="h3 fw-extrabold mb-0">
+                <%= count_unread_notifications || "0" %>
+              </dt>
+              <dd class="fs-sm fw-medium text-muted mb-0">
+                Unread Notifications
+              </dd>
+            </dl>
+          </div>
+        </a>
+      </div>
+    </div>
+    <div class="block block-rounded">
+      <div class="block-header block-header-default">
+        <h3 class="block-title">Recent Activities</h3>
+       
+      </div>
+      <div class="block-content">
+        <table class="table table-hover table-vcenter">
+          <thead>
+            <tr>
+              <th class="text-center" style="width: 50px;">#</th>
+           
+              <th class="d-none d-sm-table-cell">Activity</th>
+              <th>Date</th>
+           
+            </tr>
+          </thead>
+          <tbody>
+            <%recent_activities.forEach((activity, index) => { %>
+
+            <tr>
+              <td class="text-center" style="width: 50px;">
+                <%= index + 1 %>
+              </td>
+              <td class="d-none d-sm-table-cell">
+                <%= activity.description %>
+              </td>
+              <td>
+                <%= new Date(activity.timestamp).toLocaleString('en-PH', {
+                  weekday: 'long', // "Monday"
+                  year: 'numeric', // "2024"
+                  month: 'long', // "September"
+                  day: 'numeric', // "30"
+                  hour: '2-digit', // "10"
+                  minute: '2-digit', // "47"
+                  second: '2-digit', // "54"
+                  hour12: false // 24-hour format
+                }) %>
+              </td>
+              
+            </tr>
+            <% }); %>
+          
+          </tbody>
+        </table>
+      </div>
+    </div>
+  <div class="block block-rounded">
+      <div class="block-header block-header-default">
+        <h3 class="block-title">All Notifications</h3>
+       
+      </div>
+      <div class="block-content">
+        <table class="table table-bordered table-striped table-vcenter js-dataTable-buttons">
+          <thead>
+            <tr>
+              <th class="text-center">#</th>
+              <th>Date</th>
+              <th>Message</th>
+              <th>Is Read</th>
+         
+
+            </tr>
+          </thead>
+          <tbody>
+
+            <% get_all_notifications.forEach((record, index)=> { %>
+              <tr>
+                <td class="text-center fs-sm">
+                  <%= index + 1 %>
+                </td>
+                <td class="fw-semibold fs-sm">
+                  <%= new Date(record.created_at).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) %> 
+                  <%= new Date(record.created_at).toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', hour12: true }) %>
+              </td>
+              
+                <td class="fs-sm">
+                  <%= record.message %>
+                </td>
+                <td class="fs-sm text-center">
+                  <span class="badge rounded-pill 
+                      <%= record.is_read ? 'bg-success' : 'bg-secondary' %>">
+                      <%= record.is_read ? 'Read' : 'N/A' %>
+                  </span>
+              </td>
+              
+              
+
+              </tr>
+              <% }) %>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>

@@ -1,0 +1,342 @@
+<% layout('./Layout/layout.ejs') -%>
+
+    <div class="row">
+        <div class="col-12">
+            <div class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+                <h4 class="page-title">
+                    <%=pagetitle%>
+                </h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+
+                    <li class="breadcrumb-item active">Edit User Profile</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <div class="row">
+                        <form id="employeeEditForm" class="profile3-validation" method="post"
+                            enctype="multipart/form-data" novalidate>
+
+
+                            <input type="hidden" name="uuid" value="<%= profile.uuid %>" id="uuid">
+
+
+
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <p class="fs-sm text-muted">
+                                        Please fill out the form below to update profile.
+                                    </p>
+
+                                    <!-- Name Fields -->
+                                    <div class="row">
+                                        <div class="mb-3 col-md-4">
+                                            <label for="firstname" class="form-label">First Name</label>
+                                            <input type="text" class="form-control " id="firstname" name="firstname"
+                                                placeholder="John" value="<%= profile.firstname %>" required>
+                                        </div>
+                                        <div class="mb-3 col-md-4">
+                                            <label for="middlename" class="form-label">Middle Name</label>
+                                            <input type="text" class="form-control " id="middlename" name="middlename"
+                                                placeholder="Exa" value="<%= profile.middlename %>" required>
+                                        </div>
+                                        <div class="mb-3 col-md-4">
+                                            <label for="lastname" class="form-label">Last Name</label>
+                                            <input type="text" class="form-control " id="lastname" name="lastname"
+                                                placeholder="Doe" value="<%= profile.lastname %>" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="mb-3 col-md-6">
+                                            <label for="phonenumber" class="form-label">Phone Number</label>
+                                            <input type="tel" class="form-control " id="phonenumber" name="phonenumber"
+                                                placeholder="09123456789" value="<%= profile.phonenumber %>" required>
+                                        </div>
+                                        <div class="mb-3 col-md-6">
+                                            <label for="email" class="form-label">Email</label>
+                                            <input type="email" class="form-control " id="email" name="email"
+                                                placeholder="john.doe@example.com" value="<%= profile.email %>"
+                                                required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="mb-3 col-md-6">
+                                            <label for="birthday" class="form-label">Birthday</label>
+                                            <input type="date" class="form-control " id="birthday" name="birthday"
+                                                value="<%= profile.birthday %>" required>
+                                        </div>
+                                        <div class="mb-3 col-md-6">
+                                            <label for="gender" class="form-label">Gender</label>
+                                            <select class="form-select " id="gender" name="gender" required>
+                                                <option value="" hidden>Choose...</option>
+                                                <option value="male" <%=profile.gender==='male' ? 'selected' : '' %>
+                                                    >Male</option>
+                                                <option value="female" <%=profile.gender==='female' ? 'selected' : '' %>
+                                                    >Female</option>
+                                            </select>
+                                        </div>
+
+                                    </div>
+
+
+
+                                    <div class="mb-3 col-md-6">
+                                        <div class="mt-3 text-center">
+                                            <img id="profile-image" src="/images/profile/<%= profile.profile_url %>"
+                                                alt="Profile Photo" class="img-avatar me-2"
+                                                style="width: 150px; height: 150px;">
+                                        </div>
+                                        <label class="form-label" for="profile">Upload Profile Photo</label>
+                                        <input class="form-control " type="file" id="profile" name="profile"
+                                            accept="image/*" onchange="updateProfileImage(event)">
+                                    </div>
+
+
+
+
+
+                                </div>
+                            </div>
+
+
+
+
+                            <button type="submit" class="btn btn-primary" id="submit-button">
+                                <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"
+                                    style="display: none;"></span>Update
+                            </button>
+
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+    </div>
+
+
+    <script>
+        function updateProfileImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById('profile-image').src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+    </script>
+
+
+    <%block('script').append(` <script>
+        !(function () {
+        "use strict";
+        class e {
+        static initValidation() {
+        // Initialize jQuery validation
+        jQuery(".profile3-validation").validate({
+        rules: {
+
+        firstname: {
+        required: true,
+        minlength: 2
+        },
+        middlename: {
+        required: true,
+        minlength: 2
+        },
+        lastname: {
+        required: true,
+        minlength: 2
+        },
+        gender: {
+        required: true
+        },
+
+
+        birthday: {
+        required: true,
+        date: true
+        },
+
+
+
+        profile: {
+        required: false
+        },
+
+        email: {
+        required: true,
+        email: true,
+        remote: {
+        url: '/admin/check-email',
+        type: 'POST',
+        data: {
+        email: function () {
+        return $("#email").val();
+        },
+        uuid: function () {
+        return $("#uuid").val(); // Adjust based on your UUID input
+        }
+        },
+        dataType: 'json',
+        async: true, // Ensures that the request is asynchronous
+        dataFilter: function (response) {
+        // Handle response to check if the email is available
+        var json = JSON.parse(response);
+        return json.available ? "true" : "false";
+        }
+        }
+        },
+        phonenumber: {
+        required: true,
+        minlength: 11,
+        remote: {
+        url: '/admin/check-phonenumber',
+        type: 'POST',
+        data: {
+        phonenumber: function () {
+        return $("#phonenumber").val();
+        },
+        uuid: function () {
+        return $("#uuid").val(); // Adjust based on your UUID input
+        }
+        },
+        dataType: 'json',
+        async: true, // Ensures that the request is asynchronous
+        dataFilter: function (response) {
+        // Handle response to check if the phone number is available
+        var json = JSON.parse(response);
+        return json.available ? "true" : "false";
+        }
+        }
+        },
+
+        },
+        messages: {
+
+        firstname: {
+        required: "Please enter your first name",
+        minlength: "Your first name must consist of at least 2 characters"
+        },
+        middlename: {
+        required: "Please enter your middle name",
+        minlength: "Your middle name must consist of at least 2 characters"
+        },
+        lastname: {
+        required: "Please enter your last name",
+        minlength: "Your last name must consist of at least 2 characters"
+        },
+        gender: {
+        required: "Please select your gender"
+        },
+
+
+        birthday: {
+        required: "Please select your birthday",
+        date: "Please enter a valid date"
+        },
+
+
+
+        email: {
+        remote: "Email is already taken.",
+        required: "Please enter your email address",
+        },
+        phonenumber: {
+        required: "Please enter your phone number",
+        minlength: "Please enter a valid phone number",
+        remote: "Phone number is already taken."
+        },
+
+
+        // Other messages
+        },
+        submitHandler: function (form) {
+        const submitButton =
+        document.getElementById("submit-button");
+        const spinner =
+        submitButton.querySelector(".spinner-border");
+        // Show spinner and disable button
+        spinner.style.display = "inline-block";
+        submitButton.disabled = true;
+        submitButton.innerHTML =
+        '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Updating...';
+        const formData = new FormData(form); // Collect form data
+
+        fetch('/admin/user/edit', {
+        method: 'POST',
+        body: formData,
+        })
+        .then(response => response.json())
+        .then(data => {
+        spinner.style.display = "none";
+        submitButton.disabled = false;
+        submitButton.innerHTML =
+        '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>Update';
+        if (data.success) {
+        $.notify({
+        type: 'success',
+        icon: 'fa fa-check me-1',
+        message: 'Account updated successfully!'
+        }, {
+        type: 'success', allow_dismiss: false,
+        });
+
+        setTimeout(function() {
+        window.location.href = '/admin/users';
+        }, 2500);
+
+        } else {
+        $.notify({
+        type: 'danger',
+        icon: 'fa fa-check me-1',
+        message: 'Failed to update user details. Please try again.'
+        }, {
+        type: 'danger', allow_dismiss: false,
+        });
+        }
+        })
+        .catch(error => {
+        spinner.style.display = "none";
+        submitButton.disabled = false;
+        submitButton.innerHTML =
+        '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true" style="display: none;"></span>Update';
+        $.notify({
+        type: 'danger',
+        icon: 'fa fa-times-circle me-1',
+        message: 'An error occurred. Please try again.'
+        }, {
+        type: 'danger', allow_dismiss: false,
+        });
+        console.error('Error:', error);
+        });
+        }
+        });
+        }
+
+        static init() {
+        this.initValidation();
+        }
+        }
+
+        // Call init function on document ready
+        $(document).ready(() => e.init());
+        })();
+        </script>
+
+        `)%>

@@ -1,0 +1,1809 @@
+<% layout('./Layout/layout.ejs') -%>
+    <%block('script').append(` <style>
+        /* Styles for the custom file input */
+        .custom-file-upload {
+        border: 2px dashed #dee2e6;
+        background: #fff;
+        border-radius: 6px;
+        cursor: pointer;
+        min-height: 150px;
+        padding: 20px;
+        text-align: center
+        }
+
+        .custom-file-upload:hover {
+        background-color: #f8f9fa;
+        }
+
+
+
+        /* Hidden file input */
+        #fileInput {
+        display: none;
+        }
+
+        .file-list {
+        margin-top: 10px;
+        }
+
+        .file-list-item {
+        padding: 5px;
+        border: 1px solid #ccc;
+        margin: 5px 0;
+        border-radius: 3px;
+        }
+        </style>
+        `)%>
+        <div class="row">
+            <div class="col-12">
+                <div
+                    class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+                    <h4 class="page-title">
+                        <%=pagetitle%> <span class="badge 
+                        <%= application.status === 'Approved' ? 'bg-success text-white' :
+                            application.status === 'Rejected' ? 'bg-danger text-white' :
+                            application.status === 'Pending' ? 'bg-warning text-white' :
+                            application.status === 'Under Review' ? 'bg-info text-white' :
+                            application.status === 'Additional Information Requested' ? 'bg-info text-white' :
+                            'bg-light text-dark' // Default case
+                        %> p-1">
+                                <%= application.status %>
+                            </span>
+                    </h4>
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item"><a href="/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/application">Applications</a></li>
+                        <li class="breadcrumb-item active">View Application</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="applicationForm">
+                            <h4>I. Personal Information</h4>
+
+                            <!-- Name Field -->
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Name (Last Name, First Name, Middle Name)</label>
+                                <input type="text" class="form-control" id="name" readonly name="name" required
+                                    value="<%= application.name %>">
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-6"> <!-- Address Field -->
+                                    <div class="mb-3">
+                                        <label for="address" class="form-label">Address</label>
+                                        <input type="text" class="form-control" id="address" readonly name="address"
+                                            required value="<%= application.address %>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6"> <!-- Zip Code Field -->
+                                    <div class="mb-3">
+                                        <label for="zip_code" class="form-label">Zip Code</label>
+                                        <input type="text" class="form-control" id="zip_code" readonly name="zip_code"
+                                            value="<%= application.zip_code %>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6"> <!-- Phonenumber and Email Fields -->
+                                    <div class="mb-3">
+                                        <label for="phonenumber" class="form-label">Phone Number(s)</label>
+                                        <input type="text" class="form-control" id="phonenumber" readonly
+                                            name="phonenumber" required value="<%= application.phonenumber %>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6">
+                                    <div class="mb-3">
+                                        <label for="email" class="form-label">Email</label>
+                                        <input type="email" class="form-control" id="email" readonly name="email"
+                                            required value="<%= application.email %>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6"> <!-- Birth Date Field -->
+                                    <div class="mb-3">
+                                        <label for="birth_date" class="form-label">Birth Date</label>
+                                        
+                                    
+                                            <input type="date" class="form-control" id="birth_date" readonly
+                                                name="birth_date" required 
+                                                value="<%= new Date(application.birth_date).toLocaleDateString('en-CA') %>">
+                                      
+                                    </div>
+                                </div>
+                                <div class="col-lg-6"> <!-- Birthplace Field -->
+                                    <div class="mb-3">
+                                        <label for="birthplace" class="form-label">Birthplace</label>
+                                        <input type="text" class="form-control" id="birthplace" readonly
+                                            name="birthplace" required value="<%= application.birthplace %>">
+                                    </div>
+                                </div>
+                                <div class="col-lg-6"> <!-- Civil Status Field -->
+                                    <div class="mb-3">
+                                        <label for="civil_status" class="form-label">Civil Status</label>
+                                        <select class="form-select" id="civil_status" readonly name="civil_status"
+                                            required>
+                                            <option value="" selected disabled>Select Status</option>
+                                            <option value="Single" <%=application.civil_status==='Single' ? 'selected'
+                                                : '' %>>Single</option>
+                                            <option value="Married" <%=application.civil_status==='Married' ? 'selected'
+                                                : '' %>>Married</option>
+                                            <option value="Separated" <%=application.civil_status==='Separated'
+                                                ? 'selected' : '' %>>Separated</option>
+                                            <option value="Widowed" <%=application.civil_status==='Widowed' ? 'selected'
+                                                : '' %>>Widowed</option>
+                                            <option value="Divorced" <%=application.civil_status==='Divorced'
+                                                ? 'selected' : '' %>>Divorced</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6"> <!-- Sex Field -->
+                                    <div class="mb-3">
+                                        <label for="sex" class="form-label">Sex</label>
+                                        <select class="form-select" id="sex" readonly name="sex" required>
+                                            <option value="" hidden>Choose...</option>
+                                            <option value="male" <%=application.sex==='male' ? 'selected' : '' %>>Male
+                                            </option>
+                                            <option value="female" <%=application.sex==='female' ? 'selected' : '' %>
+                                                >Female</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6"> <!-- Nationality Field -->
+                                    <div class="mb-3">
+                                        <label for="nationality" class="form-label">Nationality</label>
+                                        <input type="text" class="form-control" id="nationality" readonly
+                                            name="nationality" value="<%= application.nationality || 'Filipino' %>"
+                                            required>
+                                    </div>
+                                </div>
+                                <div class="col-lg-6"> <!-- Languages Spoken Field -->
+                                    <div class="mb-3">
+                                        <label for="languages" class="form-label">Languages and Dialects Spoken</label>
+                                        <input type="text" class="form-control" id="languages" readonly name="languages"
+                                            required value="<%= application.languages %>">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Learning Objectives -->
+                            <h4>Learning Objectives</h4>
+
+                            <div class="mb-3">
+                                <label for="first_priority" class="form-label">First Priority Degree Program</label>
+                                <select class="form-control" id="first_priority" name="first_priority">
+                                    <option value="" hidden selected>Choose Program</option>
+                                    <option value="Civil/Drafting Technology"
+                                        <%=application.first_priority==='Civil/Drafting Technology' ? 'selected' : '' %>
+                                        >Civil/Drafting Technology</option>
+                                    <option value="Computer Technology"
+                                        <%=application.first_priority==='Computer Technology' ? 'selected' : '' %>
+                                        >Computer Technology</option>
+                                    <option value="Electronics Technology"
+                                        <%=application.first_priority==='Electronics Technology' ? 'selected' : '' %>
+                                        >Electronics Technology</option>
+                                    <option value="Electrical Technology"
+                                        <%=application.first_priority==='Electrical Technology' ? 'selected' : '' %>
+                                        >Electrical Technology</option>
+                                    <option value="Food Technology" <%=application.first_priority==='Food Technology'
+                                        ? 'selected' : '' %>>Food Technology</option>
+                                    <option value="Garments Technology"
+                                        <%=application.first_priority==='Garments Technology' ? 'selected' : '' %>
+                                        >Garments Technology</option>
+                                    <option value="Refrigeration and Air-con Technology"
+                                        <%=application.first_priority==='Refrigeration and Air-con Technology'
+                                        ? 'selected' : '' %>>Refrigeration and Air-con Technology</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="second_priority" class="form-label">Second Priority Degree Program</label>
+                                <select class="form-control" id="second_priority" name="second_priority">
+                                    <option value="" hidden selected>Choose Program</option>
+                                    <option value="Civil/Drafting Technology"
+                                        <%=application.second_priority==='Civil/Drafting Technology' ? 'selected' : ''
+                                        %>>Civil/Drafting Technology</option>
+                                    <option value="Computer Technology"
+                                        <%=application.second_priority==='Computer Technology' ? 'selected' : '' %>
+                                        >Computer Technology</option>
+                                    <option value="Electronics Technology"
+                                        <%=application.second_priority==='Electronics Technology' ? 'selected' : '' %>
+                                        >Electronics Technology</option>
+                                    <option value="Electrical Technology"
+                                        <%=application.second_priority==='Electrical Technology' ? 'selected' : '' %>
+                                        >Electrical Technology</option>
+                                    <option value="Food Technology" <%=application.second_priority==='Food Technology'
+                                        ? 'selected' : '' %>>Food Technology</option>
+                                    <option value="Garments Technology"
+                                        <%=application.second_priority==='Garments Technology' ? 'selected' : '' %>
+                                        >Garments Technology</option>
+                                    <option value="Refrigeration and Air-con Technology"
+                                        <%=application.second_priority==='Refrigeration and Air-con Technology'
+                                        ? 'selected' : '' %>>Refrigeration and Air-con Technology</option>
+                                </select>
+                            </div>
+                            <div class="mb-3">
+                                <label for="third_priority" class="form-label">Third Priority Degree Program</label>
+                                <select class="form-control" id="third_priority" name="third_priority">
+                                    <option value="" hidden selected>Choose Program</option>
+                                    <option value="Civil/Drafting Technology"
+                                        <%=application.third_priority==='Civil/Drafting Technology' ? 'selected' : '' %>
+                                        >Civil/Drafting Technology</option>
+                                    <option value="Computer Technology"
+                                        <%=application.third_priority==='Computer Technology' ? 'selected' : '' %>
+                                        >Computer Technology</option>
+                                    <option value="Electronics Technology"
+                                        <%=application.third_priority==='Electronics Technology' ? 'selected' : '' %>
+                                        >Electronics Technology</option>
+                                    <option value="Electrical Technology"
+                                        <%=application.third_priority==='Electrical Technology' ? 'selected' : '' %>
+                                        >Electrical Technology</option>
+                                    <option value="Food Technology" <%=application.third_priority==='Food Technology'
+                                        ? 'selected' : '' %>>Food Technology</option>
+                                    <option value="Garments Technology"
+                                        <%=application.third_priority==='Garments Technology' ? 'selected' : '' %>
+                                        >Garments Technology</option>
+                                    <option value="Refrigeration and Air-con Technology"
+                                        <%=application.third_priority==='Refrigeration and Air-con Technology'
+                                        ? 'selected' : '' %>>Refrigeration and Air-con Technology</option>
+                                </select>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="cost_accreditation" class="form-label">Who will pay for the cost of
+                                    obtaining your accreditation?</label>
+                                <input class="form-control" id="cost_accreditation" name="cost_accreditation"
+                                    value="<%= application.cost_accreditation || '' %>">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="time_commitment" class="form-label">How soon do you need to complete
+                                    accreditation/equivalency?</label>
+                                <input class="form-control" id="time_commitment" name="time_commitment"
+                                    value="<%= application.time_commitment || '' %>">
+                            </div>
+                            <!-- Lifelong Learning Experiences -->
+                            <h4>II. Lifelong Learning Experiences</h4>
+
+                            <div class="mb-3">
+                                <label for="hobbies_leisure" class="form-label">A. Hobbies/Leisure Activities</label>
+                                <br><small>Include only those leisure activities which can be considered learning
+                                    opportunities.</small>
+                                <textarea class="form-control" id="hobbies_leisure" name="hobbies_leisure"
+                                    rows="5"><%= application.hobbies_leisure || '' %></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="special_skills" class="form-label">B. Special Skills</label>
+                                <br><small>A special skill can be considered as an acceptable substitute for a specific
+                                    credit requirement. Note down those special skills which you think must be related
+                                    to the field of study you want to pursue.</small>
+                                <textarea class="form-control" id="special_skills" name="special_skills"
+                                    rows="5"><%= application.special_skills || '' %></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="work_related_activities" class="form-label">C. Work-Related
+                                    Activities</label>
+                                <br><small>Some work-related activities are occasions for you to learn something new.
+                                    Identify those tasks that can be considered as new and through which you learned new
+                                    skills and knowledge. Please do not include, under this category, formal training.
+                                    However, you may include here experiences which can be classified as
+                                    on-the-job-training or apprenticeship.</small>
+                                <textarea class="form-control" id="work_related_activities"
+                                    name="work_related_activities"
+                                    rows="5"><%= application.work_related_activities || '' %></textarea>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="volunteer_activities" class="form-label">D. Volunteer Activities</label>
+                                <br><small>Choose only volunteer activities that also demonstrate learning
+                                    opportunities.</small>
+                                <textarea class="form-control" id="volunteer_activities" name="volunteer_activities"
+                                    rows="5"><%= application.volunteer_activities || '' %></textarea>
+                            </div>
+
+                            <!-- Education -->
+                            <h4>III. Education</h4>
+
+                            <div class="mb-3">
+                                <label for="qualification" class="form-label">Educational Qualification</label>
+                                <select id="qualification" name="qualification" class="form-control">
+                                    <option value="" disabled>Select Educational Qualification</option>
+                                    <option value="High School Graduate"
+                                        <%=application.qualification==='High School Graduate' ? 'selected' : '' %>>High
+                                        School Graduate</option>
+                                    <option value="One Year College" <%=application.qualification==='One Year College'
+                                        ? 'selected' : '' %>>One Year College</option>
+                                    <option value="Two Years College" <%=application.qualification==='Two Years College'
+                                        ? 'selected' : '' %>>Two Years College/Graduate of Vocational/Technical Course
+                                        of two years</option>
+                                    <option value="Three Years College"
+                                        <%=application.qualification==='Three Years College' ? 'selected' : '' %>>Three
+                                        Years College</option>
+                                    <option value="College Degree Holder"
+                                        <%=application.qualification==='College Degree Holder' ? 'selected' : '' %>
+                                        >College Degree Holder</option>
+                                </select>
+                            </div>
+
+                            <!-- Name of School -->
+                            <div class="mb-3">
+                                <label for="school_name" class="form-label">Name of School</label>
+                                <input type="text" class="form-control" id="school_name" name="school_name"
+                                    value="<%= application.school_name || '' %>" required>
+                            </div>
+
+                            <!-- Address of School -->
+                            <div class="mb-3">
+                                <label for="school_address" class="form-label">Address of School</label>
+                                <input type="text" class="form-control" id="school_address" name="school_address"
+                                    value="<%= application.school_address || '' %>" required>
+                            </div>
+
+                            <!-- Date First Attended -->
+                            <div class="mb-3">
+                                <label for="date_first_attended" class="form-label">Date First Attended</label>
+                                <input type="date" class="form-control" id="date_first_attended"
+                                    name="date_first_attended" value="<%= new Date(application.date_first_attended).toLocaleDateString('en-CA') || '' %>"
+                                    required>
+                            </div>
+
+                            <!-- Date Last Attended -->
+                            <div class="mb-3">
+                                <label for="date_last_attended" class="form-label">Date Last Attended</label>
+                                <input type="date" class="form-control" id="date_last_attended"
+                                    name="date_last_attended" value="<%= new Date(application.date_last_attended).toLocaleDateString('en-CA') || '' %>"
+                                    required>
+                            </div>
+
+                            <!-- Copy of TOR/Form 137 -->
+                            <div class="mb-3">
+                               
+                                <p class="fw-bold mb-1">Uploaded documents: TOR or Form 137</p>
+
+                                <% if (application.tor_file) { %>
+                                    <div class="card mb-2 shadow-none border">
+                                        <div class="p-1">
+                                            <div class="row align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="avatar-sm">
+                                                        <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                            PDF
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col ps-0">
+                                                    <a href="/uploads/<%=application.tor_file%>" class="text-muted fw-bold">
+                                                        <%=application.tor_file%>
+                                                    </a>
+                                                </div>
+                                                <div class="col-auto" id="tooltip-container">
+                                                    <!-- Download Button -->
+                                                    <a href="/uploads/<%=application.tor_file%>"
+                                                        data-bs-container="#tooltip-container"
+                                                        data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                        class="btn btn-link text-muted btn-lg p-0" aria-label="Download"
+                                                        data-bs-original-title="Download">
+                                                        <i class="ri-download-line"></i>
+                                                    </a>
+            
+                                                   
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                <%}%>
+                            </div>
+
+                            <h4>IV. Work Experiences</h4>
+                            <div class="mb-3">
+                                <label for="job_title" class="form-label">Position/Job Title</label>
+                                <select id="job_title" name="job_title" class="form-control"
+                                    onchange="showFields(this.value)">
+                                    <option value="" hidden selected>Select Job Title</option>
+                                    <option value="ordinary_employee" <%=application.job_title==='ordinary_employee'
+                                        ? 'selected' : '' %>>Ordinary Employee/Regular Employee</option>
+                                    <option value="supervisor" <%=application.job_title==='supervisor' ? 'selected' : ''
+                                        %>>Supervisor</option>
+                                    <option value="head_manager" <%=application.job_title==='head_manager' ? 'selected'
+                                        : '' %>>Head/Manager</option>
+                                </select>
+                            </div>
+
+                            <div id="ordinary_employee_fields" class="input-fields"
+                                style="display: <%= application.job_title === 'ordinary_employee' ? 'block' : 'none' %>;">
+                                <h5>Ordinary Employee/Regular Employee Details</h5>
+                                <div class="mb-3">
+                                    <label for="company_name_ordinary" class="form-label">Company Name</label>
+                                    <input type="text" class="form-control" id="company_name_ordinary"
+                                        name="company_name_ordinary"
+                                        value="<%= application.company_name_ordinary || '' %>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="company_address_ordinary" class="form-label">Company Address</label>
+                                    <input type="text" class="form-control" id="company_address_ordinary"
+                                        name="company_address_ordinary"
+                                        value="<%= application.company_address_ordinary || '' %>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="date_started_work_ordinary" class="form-label">Date Started</label>
+                                    <input type="date" class="form-control" id="date_started_work_ordinary"
+                                        name="date_started_work_ordinary"
+                                        value="<%= new Date(application.date_started_work_ordinary).toLocaleDateString('en-CA') || '' %>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="date_ended_work_ordinary" class="form-label">Date Ended</label>
+                                    <input type="date" class="form-control" id="date_ended_work_ordinary"
+                                        name="date_ended_work_ordinary"
+                                        value="<%= new Date(application.date_ended_work_ordinary).toLocaleDateString('en-CA') || '' %>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <p class="fw-bold mb-1">Uploaded documents:</p>
+
+                                    <% if(application.employment_file_ordinary) {%>    <div class="card mb-2 shadow-none border">
+                                        <div class="p-1">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <div class="avatar-sm">
+                                                    <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                        PDF
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col ps-0">
+                                                <a href="/uploads/<%=application.employment_file_ordinary%>"
+                                                    class="text-muted fw-bold">
+                                                    <%=application.employment_file_ordinary%>
+                                                </a>
+                                            </div>
+                                            <div class="col-auto" id="tooltip-container">
+                                                <!-- Download Button -->
+                                                <a href="/uploads/<%=application.employment_file_ordinary%>"
+                                                    data-bs-container="#tooltip-container"
+                                                    data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                    data-bs-original-title="Download">
+                                                    <i class="ri-download-line"></i>
+                                                </a>
+                                            </div>
+                                        </div></div></div>
+                                    <%}%>
+                                </div>
+                            </div>
+
+                            <div id="supervisor_fields" class="input-fields"
+                                style="display: <%= application.job_title === 'supervisor' ? 'block' : 'none' %>;">
+                                <h5>Supervisor Details</h5>
+                                <div class="mb-3">
+                                    <label for="company_name_supervisor" class="form-label">Company Name</label>
+                                    <input type="text" class="form-control" id="company_name_supervisor"
+                                        name="company_name_supervisor"
+                                        value="<%= application.company_name_supervisor || '' %>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="company_address_supervisor" class="form-label">Company Address</label>
+                                    <input type="text" class="form-control" id="company_address_supervisor"
+                                        name="company_address_supervisor"
+                                        value="<%= application.company_address_supervisor || '' %>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="date_started_work_supervisor" class="form-label">Date Started</label>
+                                    <input type="date" class="form-control" id="date_started_work_supervisor"
+                                        name="date_started_work_supervisor"
+                                        value="<%= new Date(application.date_started_work_supervisor).toLocaleDateString('en-CA') || '' %>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="date_ended_work_supervisor" class="form-label">Date Ended</label>
+                                    <input type="date" class="form-control" id="date_ended_work_supervisor"
+                                        name="date_ended_work_supervisor"
+                                        value="<%= new Date(application.date_ended_work_supervisor).toLocaleDateString('en-CA') || '' %>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <p class="fw-bold mb-1">Uploaded documents:</p>
+
+                                    <% if(application.employment_file_supervisor) {%>    <div class="card mb-2 shadow-none border">
+                                        <div class="p-1">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <div class="avatar-sm">
+                                                    <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                        PDF
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col ps-0">
+                                                <a href="/uploads/<%=application.employment_file_supervisor%>"
+                                                    class="text-muted fw-bold">
+                                                    <%=application.employment_file_supervisor%>
+                                                </a>
+                                            </div>
+                                            <div class="col-auto" id="tooltip-container">
+                                                <!-- Download Button -->
+                                                <a href="/uploads/<%=application.employment_file_supervisor%>"
+                                                    data-bs-container="#tooltip-container"
+                                                    data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                    data-bs-original-title="Download">
+                                                    <i class="ri-download-line"></i>
+                                                </a>
+                                            </div>
+                                        </div></div></div>
+                                    <%}%>
+                                </div>
+                            </div>
+
+                            <div id="head_manager_fields" class="input-fields"
+                                style="display: <%= application.job_title === 'head_manager' ? 'block' : 'none' %>;">
+                                <h5>Head/Manager Details</h5>
+                                <div class="mb-3">
+                                    <label for="company_name_manager" class="form-label">Company Name</label>
+                                    <input type="text" class="form-control" id="company_name_manager"
+                                        name="company_name_manager"
+                                        value="<%= application.company_name_manager || '' %>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="company_address_manager" class="form-label">Company Address</label>
+                                    <input type="text" class="form-control" id="company_address_manager"
+                                        name="company_address_manager"
+                                        value="<%= application.company_address_manager || '' %>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="date_started_work_manager" class="form-label">Date Started</label>
+                                    <input type="date" class="form-control" id="date_started_work_manager"
+                                        name="date_started_work_manager"
+                                        value="<%= new Date(application.date_started_work_manager).toLocaleDateString('en-CA') || '' %>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="date_ended_work_manager" class="form-label">Date Ended</label>
+                                    <input type="date" class="form-control" id="date_ended_work_manager"
+                                        name="date_ended_work_manager"
+                                        value="<%= new Date(application.date_ended_work_manager).toLocaleDateString('en-CA') || '' %>" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <p class="fw-bold mb-1">Uploaded documents:</p>
+
+                                    <% if(application.employment_file_manager) {%>    <div class="card mb-2 shadow-none border">
+                                        <div class="p-1">
+                                        <div class="row align-items-center">
+                                            <div class="col-auto">
+                                                <div class="avatar-sm">
+                                                    <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                        PDF
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div class="col ps-0">
+                                                <a href="/uploads/<%=application.employment_file_manager%>"
+                                                    class="text-muted fw-bold">
+                                                    <%=application.employment_file_manager%>
+                                                </a>
+                                            </div>
+                                            <div class="col-auto" id="tooltip-container">
+                                                <!-- Download Button -->
+                                                <a href="/uploads/<%=application.employment_file_manager%>"
+                                                    data-bs-container="#tooltip-container"
+                                                    data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                    data-bs-original-title="Download">
+                                                    <i class="ri-download-line"></i>
+                                                </a>
+                                            </div>
+                                        </div></div></div>
+                                    <%}%>
+                                </div>
+                            </div>
+
+
+
+
+
+
+                            <h4>V. PROFESSIONAL ACHIEVEMENTS</h4>
+
+                            <!-- Level of Training/Seminar -->
+                            <h6>A. Trainings and Seminars</h6>
+                            <div class="">
+                                <div class="mb-3">
+                                    <label for="training_level" class="form-label">Level of Training/Seminar</label>
+                                    <select id="training_level" name="training_level" class="form-control"
+                                        onchange="showTrainingFields(this.value)">
+                                        <option value="" selected>Select Level of Training/Seminar</option>
+                                        <option value="local_regional" <%=application.training_level==='local_regional'
+                                            ? 'selected' : '' %>>Local/Regional</option>
+                                        <option value="national" <%=application.training_level==='national' ? 'selected'
+                                            : '' %>>National</option>
+                                        <option value="international" <%=application.training_level==='international'
+                                            ? 'selected' : '' %>>International</option>
+                                    </select>
+                                </div>
+                                <!-- Local/Regional -->
+                                <div id="local_regional_fields" class="input-fields" style="display: none;">
+                                    <h5>Local/Regional Seminar Details</h5>
+                                    <div class="mb-3">
+                                        <label for="title_local" class="form-label">Title of Training/Seminar</label>
+                                        <input type="text" class="form-control" id="title_local" name="title_local"
+                                            value="<%= application.title_local %>" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="organization_local" class="form-label">Sponsoring
+                                            Organization</label>
+                                        <input type="text" class="form-control" id="organization_local"
+                                            name="organization_local" value="<%= application.organization_local %>"
+                                            required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="date_local" class="form-label">Inclusive Date</label>
+                                        <input type="date" class="form-control" id="date_local" name="date_local"
+                                            value="<%= new Date(application.date_local).toLocaleDateString('en-CA') %>" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <p class="fw-bold mb-1">Uploaded documents:</p>
+
+                                            <% if(application.certificate_file_local) {%>    <div class="card mb-2 shadow-none border">
+                                                <div class="p-1">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <div class="avatar-sm">
+                                                            <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                                PDF
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col ps-0">
+                                                        <a href="/uploads/<%=application.certificate_file_local%>"
+                                                            class="text-muted fw-bold">
+                                                            <%=application.certificate_file_local%>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-auto" id="tooltip-container">
+                                                        <!-- Download Button -->
+                                                        <a href="/uploads/<%=application.certificate_file_local%>"
+                                                            data-bs-container="#tooltip-container"
+                                                            data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                            data-bs-original-title="Download">
+                                                            <i class="ri-download-line"></i>
+                                                        </a>
+                                                    </div>
+                                                </div></div></div>
+                                            <%}%>
+                                    </div>
+                                </div>
+
+                                <!-- National -->
+                                <div id="national_fields" class="input-fields" style="display: none;">
+                                    <h5>National Seminar Details</h5>
+                                    <div class="mb-3">
+                                        <label for="title_national" class="form-label">Title of Training/Seminar</label>
+                                        <input type="text" class="form-control" id="title_national"
+                                            name="title_national" value="<%= application.title_national %>" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="organization_national" class="form-label">Sponsoring
+                                            Organization</label>
+                                        <input type="text" class="form-control" id="organization_national"
+                                            name="organization_national"
+                                            value="<%= application.organization_national %>" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="date_national" class="form-label">Inclusive Date</label>
+                                        <input type="date" class="form-control" id="date_national" name="date_national"
+                                            value="<%= new Date(application.date_national).toLocaleDateString('en-CA') %>" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <p class="fw-bold mb-1">Uploaded documents:</p>
+
+
+                                            <% if(application.certificate_file_national) {%>    <div class="card mb-2 shadow-none border">
+                                                <div class="p-1">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <div class="avatar-sm">
+                                                            <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                                PDF
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col ps-0">
+                                                        <a href="/uploads/<%=application.certificate_file_national%>"
+                                                            class="text-muted fw-bold">
+                                                            <%=application.certificate_file_national%>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-auto" id="tooltip-container">
+                                                        <!-- Download Button -->
+                                                        <a href="/uploads/<%=application.certificate_file_local%>"
+                                                            data-bs-container="#tooltip-container"
+                                                            data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                            data-bs-original-title="Download">
+                                                            <i class="ri-download-line"></i>
+                                                        </a>
+                                                    </div>
+                                                </div></div></div>
+                                            <%}%>
+                                    </div>
+                                </div>
+
+                                <!-- International -->
+                                <div id="international_fields" class="input-fields" style="display: none;">
+                                    <h5>International Seminar Details</h5>
+                                    <div class="mb-3">
+                                        <label for="title_international" class="form-label">Title of
+                                            Training/Seminar</label>
+                                        <input type="text" class="form-control" id="title_international"
+                                            name="title_international" value="<%= application.title_international %>"
+                                            required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="organization_international" class="form-label">Sponsoring
+                                            Organization</label>
+                                        <input type="text" class="form-control" id="organization_international"
+                                            name="organization_international"
+                                            value="<%= application.organization_international %>" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="date_international" class="form-label">Inclusive Date</label>
+                                        <input type="date" class="form-control" id="date_international"
+                                            name="date_international" value="<%= new Date(application.date_international).toLocaleDateString('en-CA') || '' %>"
+                                            required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <p class="fw-bold mb-1">Uploaded documents:</p>
+
+
+                                            <% if(application.certificate_file_international) {%>    <div class="card mb-2 shadow-none border">
+                                                <div class="p-1">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <div class="avatar-sm">
+                                                            <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                                PDF
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col ps-0">
+                                                        <a href="/uploads/<%=application.certificate_file_international%>"
+                                                            class="text-muted fw-bold">
+                                                            <%=application.certificate_file_international%>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-auto" id="tooltip-container">
+                                                        <!-- Download Button -->
+                                                        <a href="/uploads/<%=application.certificate_file_international%>"
+                                                            data-bs-container="#tooltip-container"
+                                                            data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                            data-bs-original-title="Download">
+                                                            <i class="ri-download-line"></i>
+                                                        </a>
+                                                    </div>
+                                                </div></div></div>
+                                            <%}%>
+                                    </div>
+                                </div>
+                            </div>
+                            <h6>B. Professional Development</h6>
+                            <div>
+                                <div class="mb-3">
+                                    <label for="professional_dev_level" class="form-label">Level</label>
+                                    <select id="professional_dev_level" name="professional_dev_level"
+                                        class="form-control" onchange="showProfessionalDevFields(this.value)">
+                                        <option value="" hidden selected>Select Level</option>
+                                        <option value="local_regional"
+                                            <%=application.professional_dev_level==='local_regional' ? 'selected' : ''
+                                            %>>Local/Regional</option>
+                                        <option value="national" <%=application.professional_dev_level==='national'
+                                            ? 'selected' : '' %>>National</option>
+                                        <option value="international"
+                                            <%=application.professional_dev_level==='international' ? 'selected' : '' %>
+                                            >International</option>
+                                    </select>
+                                </div>
+
+                                <!-- Local/Regional -->
+                                <div id="local_regional_dev_fields" class="input-fields"
+                                    style="display: <%= application.professional_dev_level === 'local_regional' ? 'block' : 'none' %>;">
+                                    <h5>Local/Regional Professional Development Details</h5>
+                                    <div class="mb-3">
+                                        <label for="organization_local_dev" class="form-label">Name of
+                                            Organization/Scholarship</label>
+                                        <input type="text" class="form-control" id="organization_local_dev"
+                                            name="organization_local_dev"
+                                            value="<%= application.organization_local_dev %>" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="description_local_dev" class="form-label">Description</label>
+                                        <textarea class="form-control" id="description_local_dev"
+                                            name="description_local_dev"
+                                            required><%= application.description_local_dev %></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <p class="fw-bold mb-1">Uploaded documents:</p>
+
+
+                                        
+                                            <% if(application.certificate_file_local_dev) {%>    <div class="card mb-2 shadow-none border">
+                                                <div class="p-1">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <div class="avatar-sm">
+                                                            <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                                PDF
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col ps-0">
+                                                        <a href="/uploads/<%=application.certificate_file_local_dev%>"
+                                                            class="text-muted fw-bold">
+                                                            <%=application.certificate_file_local_dev%>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-auto" id="tooltip-container">
+                                                        <!-- Download Button -->
+                                                        <a href="/uploads/<%=application.certificate_file_local_dev%>"
+                                                            data-bs-container="#tooltip-container"
+                                                            data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                            data-bs-original-title="Download">
+                                                            <i class="ri-download-line"></i>
+                                                        </a>
+                                                    </div>
+                                                </div></div></div>
+                                            <%}%>
+                                    </div>
+                                </div>
+
+                                <!-- National -->
+                                <div id="national_dev_fields" class="input-fields"
+                                    style="display: <%= application.professional_dev_level === 'national' ? 'block' : 'none' %>;">
+                                    <h5>National Professional Development Details</h5>
+                                    <div class="mb-3">
+                                        <label for="organization_national_dev" class="form-label">Name of
+                                            Organization/Scholarship</label>
+                                        <input type="text" class="form-control" id="organization_national_dev"
+                                            name="organization_national_dev"
+                                            value="<%= application.organization_national_dev %>" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="description_national_dev" class="form-label">Description</label>
+                                        <textarea class="form-control" id="description_national_dev"
+                                            name="description_national_dev"
+                                            required><%= application.description_national_dev %></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <p class="fw-bold mb-1">Uploaded documents:</p>
+
+
+                                            <% if(application.certificate_file_national_dev) {%>    <div class="card mb-2 shadow-none border">
+                                                <div class="p-1">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <div class="avatar-sm">
+                                                            <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                                PDF
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col ps-0">
+                                                        <a href="/uploads/<%=application.certificate_file_national_dev%>"
+                                                            class="text-muted fw-bold">
+                                                            <%=application.certificate_file_national_dev%>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-auto" id="tooltip-container">
+                                                        <!-- Download Button -->
+                                                        <a href="/uploads/<%=application.certificate_file_national_dev%>"
+                                                            data-bs-container="#tooltip-container"
+                                                            data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                            data-bs-original-title="Download">
+                                                            <i class="ri-download-line"></i>
+                                                        </a>
+                                                    </div>
+                                                </div></div></div>
+                                            <%}%>
+                                    </div>
+                                </div>
+
+                                <!-- International -->
+                                <div id="international_dev_fields" class="input-fields"
+                                    style="display: <%= application.professional_dev_level === 'international' ? 'block' : 'none' %>;">
+                                    <h5>International Professional Development Details</h5>
+                                    <div class="mb-3">
+                                        <label for="organization_international_dev" class="form-label">Name of
+                                            Organization/Scholarship</label>
+                                        <input type="text" class="form-control" id="organization_international_dev"
+                                            name="organization_international_dev"
+                                            value="<%= application.organization_international_dev %>" required>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <label for="description_international_dev"
+                                            class="form-label">Description</label>
+                                        <textarea class="form-control" id="description_international_dev"
+                                            name="description_international_dev"
+                                            required><%= application.description_international_dev %></textarea>
+                                    </div>
+
+                                    <div class="mb-3">
+                                        <p class="fw-bold mb-1">Uploaded documents:</p>
+
+
+                                            <% if(application.certificate_file_international_dev) {%>    <div class="card mb-2 shadow-none border">
+                                                <div class="p-1">
+                                                <div class="row align-items-center">
+                                                    <div class="col-auto">
+                                                        <div class="avatar-sm">
+                                                            <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                                PDF
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col ps-0">
+                                                        <a href="/uploads/<%=application.certificate_file_international_dev%>"
+                                                            class="text-muted fw-bold">
+                                                            <%=application.certificate_file_international_dev%>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-auto" id="tooltip-container">
+                                                        <!-- Download Button -->
+                                                        <a href="/uploads/<%=application.certificate_file_international_dev%>"
+                                                            data-bs-container="#tooltip-container"
+                                                            data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                            data-bs-original-title="Download">
+                                                            <i class="ri-download-line"></i>
+                                                        </a>
+                                                    </div>
+                                                </div></div></div>
+                                            <%}%>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <h6>C. Eligibilities/Awards</h6>
+
+                            <!-- Eligibilities -->
+                            <div class="mb-3">
+                                <label for="eligibility" class="form-label">Eligibilities</label>
+                                <select id="eligibility" name="eligibility" class="form-control"
+                                    onchange="showEligibilityFields(this.value)">
+                                    <option value="" hidden selected>Select Eligibility</option>
+                                    <option value="sub_professional" <%=application.eligibility==='sub_professional'
+                                        ? 'selected' : '' %>>CSC Sub-Professional</option>
+                                    <option value="technical_nc" <%=application.eligibility==='technical_nc'
+                                        ? 'selected' : '' %>>Technical (NC)</option>
+                                    <option value="professional_prc_csc"
+                                        <%=application.eligibility==='professional_prc_csc' ? 'selected' : '' %>
+                                        >Professional (PRC) (CSC)</option>
+                                </select>
+                            </div>
+
+                            <!-- Sub-Professional Eligibility Details -->
+                            <div id="sub_professional_fields" class="input-fields"
+                                style="display: <%= application.eligibility === 'sub_professional' ? 'block' : 'none' %>;">
+                                <h5>CSC Sub-Professional Details</h5>
+                                <div class="mb-3">
+                                    <p class="fw-bold mb-1">Uploaded documents:</p>
+
+
+                                    
+                                        <% if(application.certificate_file_sub_professional) {%>    <div class="card mb-2 shadow-none border">
+                                            <div class="p-1">
+                                            <div class="row align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="avatar-sm">
+                                                        <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                            PDF
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col ps-0">
+                                                    <a href="/uploads/<%=application.certificate_file_sub_professional%>"
+                                                        class="text-muted fw-bold">
+                                                        <%=application.certificate_file_sub_professional%>
+                                                    </a>
+                                                </div>
+                                                <div class="col-auto" id="tooltip-container">
+                                                    <!-- Download Button -->
+                                                    <a href="/uploads/<%=application.certificate_file_sub_professional%>"
+                                                        data-bs-container="#tooltip-container"
+                                                        data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                        data-bs-original-title="Download">
+                                                        <i class="ri-download-line"></i>
+                                                    </a>
+                                                </div>
+                                            </div></div></div>
+                                        <%}%>
+                                </div>
+                            </div>
+
+                            <!-- Technical (NC) Eligibility Details -->
+                            <div id="technical_nc_fields" class="input-fields"
+                                style="display: <%= application.eligibility === 'technical_nc' ? 'block' : 'none' %>;">
+                                <h5>Technical (NC) Details</h5>
+                                <div class="mb-3">
+                                    <p class="fw-bold mb-1">Uploaded documents:</p>
+
+                                     
+                                        <% if(application.certificate_file_technical_nc) {%>
+                                            <div class="card mb-2 shadow-none border">
+                                                <div class="p-1">
+                                            <div class="row align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="avatar-sm">
+                                                        <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                            PDF
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col ps-0">
+                                                    <a href="/uploads/<%=application.certificate_file_technical_nc%>"
+                                                        class="text-muted fw-bold">
+                                                        <%=application.certificate_file_technical_nc%>
+                                                    </a>
+                                                </div>
+                                                <div class="col-auto" id="tooltip-container">
+                                                    <!-- Download Button -->
+                                                    <a href="/uploads/<%=application.certificate_file_technical_nc%>"
+                                                        data-bs-container="#tooltip-container"
+                                                        data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                        data-bs-original-title="Download">
+                                                        <i class="ri-download-line"></i>
+                                                    </a>
+                                                </div>
+                                            </div></div></div>
+                                        <%}%>
+                                </div>
+                            </div>
+
+                            <!-- Professional (PRC) (CSC) Eligibility Details -->
+                            <div id="professional_prc_csc_fields" class="input-fields"
+                                style="display: <%= application.eligibility === 'professional_prc_csc' ? 'block' : 'none' %>;">
+                                <h5>Professional (PRC) (CSC) Details</h5>
+                                <div class="mb-3">
+                                    <p class="fw-bold mb-1">Uploaded documents:</p>
+
+
+                                        <% if(application.certificate_file_professional_prc_csc) {%>
+                                            <div class="card mb-2 shadow-none border">
+                                                <div class="p-1">
+                                            <div class="row align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="avatar-sm">
+                                                        <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                            PDF
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col ps-0">
+                                                    <a href="/uploads/<%=application.certificate_file_professional_prc_csc%>"
+                                                        class="text-muted fw-bold">
+                                                        <%=application.certificate_file_professional_prc_csc%>
+                                                    </a>
+                                                </div>
+                                                <div class="col-auto" id="tooltip-container">
+                                                    <!-- Download Button -->
+                                                    <a href="/uploads/<%=application.certificate_file_professional_prc_csc%>"
+                                                        data-bs-container="#tooltip-container"
+                                                        data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                        data-bs-original-title="Download">
+                                                        <i class="ri-download-line"></i>
+                                                    </a>
+                                                </div>
+                                            </div></div></div>
+                                        <%}%>
+                                </div>
+                            </div>
+
+                            <!-- Awards -->
+                            <div class="mb-3">
+                                <label for="award_level" class="form-label">Awards</label>
+                                <select id="award_level" name="award_level" class="form-control"
+                                    onchange="showAwardFields(this.value)">
+                                    <option value="" hidden selected>Select Award Level</option>
+                                    <option value="local_regional" <%=application.award_level==='local_regional'
+                                        ? 'selected' : '' %>>Local/Regional</option>
+                                    <option value="national_international"
+                                        <%=application.award_level==='national_international' ? 'selected' : '' %>
+                                        >National/International</option>
+                                </select>
+                            </div>
+
+                            <!-- Local/Regional Award Details -->
+                            <div id="local_regional_fields_award" class="input-fields"
+                                style="display: <%= application.award_level === 'local_regional' ? 'block' : 'none' %>;">
+                                <h5>Local/Regional Award Details</h5>
+                                <div class="mb-3">
+                                    <p class="fw-bold mb-1">Uploaded documents:</p>
+
+
+                                        <% if(application.certificate_file_local_regional) {%>
+                                            <div class="card mb-2 shadow-none border">
+                                                <div class="p-1">
+                                            <div class="row align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="avatar-sm">
+                                                        <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                            PDF
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col ps-0">
+                                                    <a href="/uploads/<%=application.certificate_file_local_regional%>"
+                                                        class="text-muted fw-bold">
+                                                        <%=application.certificate_file_local_regional%>
+                                                    </a>
+                                                </div>
+                                                <div class="col-auto" id="tooltip-container">
+                                                    <!-- Download Button -->
+                                                    <a href="/uploads/<%=application.certificate_file_local_regional%>"
+                                                        data-bs-container="#tooltip-container"
+                                                        data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                        data-bs-original-title="Download">
+                                                        <i class="ri-download-line"></i>
+                                                    </a>
+                                                </div>
+                                            </div></div></div>
+                                        <%}%>
+                                </div>
+                            </div>
+
+                            <!-- National/International Award Details -->
+                            <div id="national_international_fields" class="input-fields"
+                                style="display: <%= application.award_level === 'national_international' ? 'block' : 'none' %>;">
+                                <h5>National/International Award Details</h5>
+                                <div class="mb-3">
+                                    <p class="fw-bold mb-1">Uploaded documents:</p>
+
+                                        <% if(application.certificate_file_national_international) {%>
+                                            <div class="card mb-2 shadow-none border">
+                                                <div class="p-1">
+                                            <div class="row align-items-center">
+                                                <div class="col-auto">
+                                                    <div class="avatar-sm">
+                                                        <span class="avatar-title rounded" style="background-color: #f7473a;">
+                                                            PDF
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div class="col ps-0">
+                                                    <a href="/uploads/<%=application.certificate_file_national_international%>"
+                                                        class="text-muted fw-bold">
+                                                        <%=application.certificate_file_national_international%>
+                                                    </a>
+                                                </div>
+                                                <div class="col-auto" id="tooltip-container">
+                                                    <!-- Download Button -->
+                                                    <a href="/uploads/<%=application.certificate_file_national_international%>"
+                                                        data-bs-container="#tooltip-container"
+                                                        data-bs-toggle="tooltip" data-bs-placement="bottom"
+                                                        data-bs-original-title="Download">
+                                                        <i class="ri-download-line"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                                </div>
+                                            </div>
+                                        <%}%>
+                                </div>
+                            </div>
+
+
+                            <!-- Final Essay -->
+                            <h4>VII. Final Essay</h4>
+                            <div class="mb-3">
+                                <label for="final_essay" class="form-label">If you finish your degree, how will this
+                                    contribute to your personal development to the development of your community, your
+                                    work place, society and country?</label>
+                                <textarea class="form-control" id="final_essay" readonly name="final_essay"
+                                    rows="5"><%= application.final_essay %></textarea>
+                            </div>
+
+
+                            <!-- <button type="submit" class="btn btn-primary" id="submit-button"><span
+                                    class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"
+                                    style="display: none;"></span>Submit</button> -->
+                        </div>
+                     
+
+                   
+                
+                            <% if (evaluations.length> 0) { %>
+                                <h4>Evaluation Results</h4>
+                                <table class="table table-bordered">
+                                    <thead>
+                                        <tr>
+                                            <th>Educational Points</th>
+                                            <th>Work Experience Points</th>
+                                            <th>Professional Achievement Points</th>
+                                            <th>Interview Points</th>
+                                            <th>Total Points</th>
+                                            <th>Qualification Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% evaluations.forEach(evaluation=> {
+                                            // Calculate the total score for the current evaluation
+                                            const totalPoints = evaluation.educational_points +
+                                            evaluation.work_experience_points +
+                                            evaluation.training_points +
+                                            evaluation.professional_development_points +
+                                            evaluation.eligibility_points +
+                                            evaluation.interview_chief_points +
+                                            evaluation.interview_assessor_points;
+                                            %>
+                                            <tr>
+                                                <td>
+                                                    <%= evaluation.educational_points %>
+                                                </td>
+                                                <td>
+                                                    <%= evaluation.work_experience_points %>
+                                                </td>
+                                                <td>
+                                                    <%= evaluation.training_points +
+                                                        evaluation.professional_development_points +
+                                                        evaluation.eligibility_points %>
+                                                </td>
+                                                <td>
+                                                    <%= evaluation.interview_chief_points +
+                                                        evaluation.interview_assessor_points %>
+                                                </td>
+                                                <td>
+                                                    <%= totalPoints %>
+                                                </td>
+                                                <td>
+                                                    <%= evaluation.status %>
+                                                </td>
+                                            </tr>
+                                            <% }); %>
+                                    </tbody>
+                                </table>
+
+                                <% } else { %>
+                                
+                                            <% if (application.status==='Approved' ) { %>
+
+                                                <p class="text-success mb-1">This application is approved</p>
+                                                <p class=" text-success">Please have your original submitted documents
+                                                    for passing in the application</p>
+                                                <%if (interview.length !==0){%>
+                                                    <% if (interview.status==='Accepted' ||
+                                                        interview.status==='Completed' || interview.status==='Pending'
+                                                        || interview.status==='Rejected' ||
+                                                        interview.status==='Cancelled' ) { %>
+                                                        <div class="div">
+                                                            <!-- Change title based on interview status -->
+                                                            <h5 class="card-title mb-3">
+                                                                <%= interview.status==='Rejected' ? 'Interview Status'
+                                                                    : 'Upcoming Interview' %>
+                                                            </h5>
+
+                                                            <p class="mb-1 text-muted">
+                                                                <span class="badge 
+                                              <%= interview.status === 'Pending' ? 'bg-warning' : '' %>
+                                              <%= interview.status === 'Accepted' ? 'bg-success' : '' %>
+                                              <%= interview.status === 'Rejected' ? 'bg-danger' : '' %>
+                                              <%= interview.status === 'Completed' ? 'bg-info' : '' %>
+                                              <%= interview.status === 'Cancelled' ? 'bg-danger' : '' %> <!-- Added for Cancelled -->
+                                            " class="me-1">
+                                                                    <%= interview.status %>
+                                                                </span>
+                                                                <span class="text-nowrap">
+                                                                    <%= interview.status !=='Rejected' &&
+                                                                        interview.status !=='Cancelled' ? 'On ' + new
+                                                                        Date(interview.interview_date).toLocaleDateString()
+                                                                        + ' at ' + new Date('1970-01-01T' +
+                                                                        interview.interview_time).toLocaleString('en-US',
+                                                                        { hour: 'numeric' , minute: 'numeric' ,
+                                                                        second: 'numeric' , hour12: true }) : '' %>
+                                                                </span>
+                                                            </p>
+
+                                                            <p class="card-text">
+                                                                <small class="text-muted">
+                                                                    <%= interview.status==='Rejected'
+                                                                        ? 'Unfortunately, this interview has been rejected.'
+                                                                        : interview.status==='Cancelled'
+                                                                        ? 'This interview has been cancelled.' :
+                                                                        interview.status==='Completed'
+                                                                        ? 'Interview has been completed. Thank you!. Please wait for the result.'
+                                                                        : 'Please prepare to submit personality and work aptitude tests.'
+                                                                        %>
+                                                                </small>
+
+                                                            </p>
+
+                                                            <!-- Conditionally render buttons based on interview status -->
+                                                            <% if (interview.status==='Pending' ) { %>
+                                                                <p class="text-success mt-3">Interview Pending.</p>
+                                                                <% } else if (interview.status==='Accepted' ) { %>
+                                                                    <p class="text-success mt-3">Interview Accepted.
+                                                                        Prepare accordingly!</p>
+                                                                    <% } else if (interview.status==='Rejected' ) { %>
+                                                                        <p class="text-danger mt-3">Interview Rejected.
+                                                                        </p>
+                                                                        <% } else if (interview.status==='Completed' ) {
+                                                                            %>
+                                                                            <p class="text-info mt-3">Interview
+                                                                                Completed. Thank you!</p>
+                                                                            <% } else if (interview.status==='Cancelled'
+                                                                                ) { %>
+                                                                                <!-- Added condition for Cancelled -->
+                                                                                <p class="text-secondary mt-3">Interview
+                                                                                    Cancelled.</p>
+                                                                                <% } %>
+                                                        </div>
+
+                                                        <%} else if ( interview.status==='Rejected' ||
+                                                            interview.status==='Cancelled' ) {%>
+                                                            <div class="text-center">
+                                                                <button type="button" class="btn btn-primary mb-2"
+                                                                    data-bs-toggle="modal"
+                                                                    data-bs-target="#modal-schedule-new-interview">
+                                                                    Schedule New Interview
+                                                                </button>
+                                                            </div>
+                                                            <%}%>
+
+                                                                <% if ( interview.status==='Rejected' ||
+                                                                    interview.status==='Cancelled' ) {%>
+                                                                    <div class="text-center">
+                                                                        <button type="button"
+                                                                            class="btn btn-primary mb-2"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#modal-schedule-new-interview">
+                                                                            Schedule New Interview
+                                                                        </button>
+                                                                    </div>
+                                                                    <%}%>
+                                                                        <%} else {%>
+                                                                            <div class="text-center">
+                                                                                <button type="button"
+                                                                                    class="btn btn-primary mb-2"
+                                                                                    data-bs-toggle="modal"
+                                                                                    data-bs-target="#modal-schedule-new-interview">
+                                                                                    Schedule New Interview
+                                                                                </button>
+                                                                            </div>
+                                                                            <%}%>
+
+                                                                                <% } else if
+                                                                                    (application.status==='Rejected' ) {
+                                                                                    %>
+                                                                                  
+
+
+
+                                                                                    <% } %>
+
+                                                                                        <% } %>
+                      
+
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirm Deletion</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Are you sure you want to delete <span id="file-name"></span>?
+                    </div>
+                    <div class="modal-footer">
+                        <form id="delete-form" method="POST" action="">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Schedule New Interview Modal -->
+        <div class="modal fade" id="modal-schedule-new-interview" tabindex="-1"
+            aria-labelledby="modal-schedule-new-interview-label" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <form id="newInterviewForm" method="POST">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="modal-schedule-new-interview-label">Schedule New Interview</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+
+                            <input type="hidden" name="application_id" value="<%= application.id %>"
+                                id="application_id">
+                            <!-- Interview Date Input -->
+                            <div class="mb-3">
+                                <label for="interview_date" class="form-label">Interview Date</label>
+                                <input type="date" name="interview_date" id="interview_date" class="form-control"
+                                    required>
+                            </div>
+
+                            <!-- Interview Time Input -->
+                            <div class="mb-3">
+                                <label for="interview_time" class="form-label">Interview Time</label>
+                                <input type="time" name="interview_time" id="interview_time" class="form-control"
+                                    required>
+                            </div>
+
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-primary">Schedule Interview</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <script>
+            const deleteModal = document.getElementById('deleteModal');
+            deleteModal.addEventListener('show.bs.modal', function (event) {
+                // Button that triggered the modal
+                const button = event.relatedTarget;
+                const documentId = button.getAttribute('data-id');
+                const fileName = button.getAttribute('data-filename');
+
+                // Update the modal content with the file name
+                const fileNameElement = document.getElementById('file-name');
+                fileNameElement.textContent = fileName;
+
+                // Update the form action URL
+                const form = document.getElementById('delete-form');
+                form.action = '/delete-document/' + documentId;
+            });
+        </script>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Handle interview scheduling form submission
+                document.getElementById('newInterviewForm').addEventListener('submit', async function (event) {
+                    event.preventDefault(); // Prevent default form submission behavior
+
+                    const applicationId = document.getElementById('application_id').value; // Get user ID from the select
+                    const interviewDate = document.getElementById('interview_date').value;
+                    const interviewTime = document.getElementById('interview_time').value;
+                    console.log(applicationId, interviewDate, interviewTime);
+
+                    try {
+                        // Send the interview data via POST request
+                        const response = await fetch('/interview', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                application_id: applicationId,
+                                interview_date: interviewDate,
+                                interview_time: interviewTime,
+
+                            })
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            // Close the modal
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('modal-schedule-new-interview'));
+                            modal.hide();
+
+                            $.notify({
+                                icon: 'fa fa-check me-1',
+                                message: result.message
+                            }, {
+                                type: 'success', allow_dismiss: false,
+                            });
+
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000);
+                        } else {
+                            // Close the modal
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('modal-schedule-new-interview'));
+                            modal.hide();
+                            $.notify({
+                                icon: 'fa fa-times-circle me-1',
+                                message: result.message
+                            }, {
+                                type: 'danger', allow_dismiss: false,
+                            });
+                        }
+                    } catch (error) {
+                        $.notify({
+                            icon: 'fa fa-times-circle me-1',
+                            message: 'An error occurred. Please try again.'
+                        }, {
+                            type: 'danger'
+                        });
+                        console.error('Error:', error);
+                    }
+                });
+            });
+
+        </script>
+        <%block('script').append(` <script>
+            (function () {
+            "use strict";
+
+            class DocumentUpload {
+            static initValidation() {
+            // Initialize jQuery validation
+            jQuery(".uploadDocumentForm").validate({
+            rules: {
+            description: {
+            required: true,
+            minlength: 3,
+            },
+            title: {
+            required: true,
+            minlength: 3,
+            },
+            file_document: {
+            required: false,
+            },
+            },
+            messages: {
+            title: {
+            required: "Please enter a title",
+            minlength: "Title must be at least 3 characters long",
+            },
+            description: {
+            required: "Please enter a description",
+            minlength:
+            "Description must be at least 3 characters long",
+            },
+            file_document: {
+            required: "Please upload a file",
+            extension: "Allowed file types: PDF, Word, JPG, PNG",
+            filesize: "File size must not exceed 5 MB",
+            },
+            },
+            submitHandler: function (form) {
+            const submitButton =
+            document.getElementById("submit-button");
+            const spinner =
+            submitButton.querySelector(".spinner-border");
+
+            // Show spinner and disable button
+            spinner.style.display = "inline-block";
+            submitButton.disabled = true;
+
+            // Change button text to 'Uploading...'
+            submitButton.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Uploading...';
+
+            const formData = new FormData(form); // Collect form data
+            // Show loader or header loader (custom logic can be added here)
+
+            // Send the FormData directly
+            fetch("/application/upload", {
+            method: "POST",
+            body: formData, // Send FormData containing file
+            })
+            .then((response) => response.json())
+            .then((data) => {
+            spinner.style.display = "none";
+            submitButton.disabled = false;
+            submitButton.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"
+                style="display: none;"></span>Upload';
+            // Hide loader or header loader (custom logic can be added here)
+            if (data.success) {
+            // Reset the form
+
+            $.notify(
+            {
+            icon: "fa fa-check me-1",
+            message: data.message,
+            },
+            {
+            type: "success",
+            allow_dismiss: false,
+            }
+            );
+
+            // Delay the reload to allow the notification to be seen
+            setTimeout(() => {
+            window.location.reload(); // Reload the current page
+            }, 1800); // Adjust delay as needed
+            } else {
+            $.notify(
+            {
+            icon: "fa fa-times-circle me-1",
+            message: data.message,
+            },
+            {
+            type: "danger",
+            allow_dismiss: false,
+            }
+            );
+            }
+            })
+            .catch((error) => {
+            spinner.style.display = "none";
+            submitButton.disabled = false;
+            submitButton.innerHTML =
+            '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"
+                style="display: none;"></span>Upload';
+            // Hide loader or header loader (custom logic can be added here)
+            $.notify(
+            {
+            icon: "fa fa-times-circle me-1",
+            message:
+            "An error occurred. Please try again.",
+            },
+            {
+            type: "danger",
+            allow_dismiss: false,
+            }
+            );
+            console.error("Error:", error);
+            });
+            },
+            });
+            }
+
+            static init() {
+            this.initValidation();
+            }
+            }
+
+            // Call init function on document ready
+            $(document).ready(() => DocumentUpload.init());
+            })();
+
+            </script>
+            <script>
+                // Get references to the elements
+                const dropzone = document.getElementById("dropzone");
+                const fileInput = document.getElementById("fileInput");
+                const filePreviewContainer = document.getElementById("filePreviewContainer");
+
+                // Allow clicking the dropzone to open the file input
+                dropzone.addEventListener("click", () => fileInput.click());
+
+                // Handle file selection
+                fileInput.addEventListener("change", () => {
+                    const files = fileInput.files;
+                    handleFiles(files);
+                });
+
+                // Handle dropping files onto the dropzone
+                dropzone.addEventListener("dragover", (event) => {
+                    event.preventDefault();
+                });
+
+                dropzone.addEventListener("drop", (event) => {
+                    event.preventDefault();
+                    const files = event.dataTransfer.files;
+                    handleFiles(files);
+                });
+
+                // Function to handle files
+                function handleFiles(files) {
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
+                        const listItem = createFilePreview(file);
+                        filePreviewContainer.appendChild(listItem);
+                    }
+                }
+
+                // Create file preview card
+                function createFilePreview(file) {
+                    const card = document.createElement("div");
+                    card.className = "card mb-1 mb-0 shadow-none border file-preview-card";
+
+                    // Create a thumbnail (replace this with actual file icons if needed)
+                    const thumbnail = document.createElement("div");
+                    thumbnail.className = "avatar-sm";
+                    thumbnail.innerHTML = '<span class="avatar-title bg-primary-subtle text-primary rounded">' + file.name.split('.').pop().toUpperCase() + '</span>';
+
+
+                    card.innerHTML =
+                        '<div class="p-2">' +
+                        '<div class="row align-items-center">' +
+                        '<div class="col-auto">' +
+                        thumbnail.outerHTML +
+                        '</div>' +
+                        '<div class="col ps-0">' +
+                        '<a href="javascript:void(0);" class="text-muted fw-bold">' + file.name + '</a>' +
+                        '<p class="mb-0"><strong>' + (file.size / 1024).toFixed(2) + '</strong> KB</p>' +
+                        '</div>' +
+                        '<div class="col-auto">' +
+                        '<a href="javascript:void(0);" class="btn btn-link btn-lg text-muted" onclick="deleteFile(this)">' +
+                        '<i class="ri-close-line"></i>' +
+                        '</a>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
+
+                    return card;
+                }
+
+                // Function to delete file preview
+                function deleteFile(button) {
+                    const card = button.closest('.file-preview-card');
+                    filePreviewContainer.removeChild(card);
+                }
+
+
+            </script>
+
+            `)%>
+
+            <script>
+                function showEligibilityFields(value) {
+                    // Hide all eligibility fields
+                    document.getElementById("sub_professional_fields").style.display = "none";
+                    document.getElementById("technical_nc_fields").style.display = "none";
+                    document.getElementById("professional_prc_csc_fields").style.display = "none";
+
+                    // Show relevant fields based on the selected eligibility
+                    if (value === "sub_professional") {
+                        document.getElementById("sub_professional_fields").style.display = "block";
+                    } else if (value === "technical_nc") {
+                        document.getElementById("technical_nc_fields").style.display = "block";
+                    } else if (value === "professional_prc_csc") {
+                        document.getElementById("professional_prc_csc_fields").style.display = "block";
+                    }
+                }
+
+                function showAwardFields(value) {
+                    // Hide all award fields
+                    document.getElementById("local_regional_fields_award").style.display = "none";
+                    document.getElementById("national_international_fields").style.display = "none";
+
+                    // Show relevant fields based on the selected award level
+                    if (value === "local_regional") {
+                        document.getElementById("local_regional_fields_award").style.display = "block";
+                    } else if (value === "national_international") {
+                        document.getElementById("national_international_fields").style.display = "block";
+                    }
+                }
+
+                function showProfessionalDevFields(value) {
+                    document.getElementById('local_regional_dev_fields').style.display = (value === 'local_regional') ? 'block' : 'none';
+                    document.getElementById('national_dev_fields').style.display = (value === 'national') ? 'block' : 'none';
+                    document.getElementById('international_dev_fields').style.display = (value === 'international') ? 'block' : 'none';
+                } function showTrainingFields(value) {
+                    document.getElementById('local_regional_fields').style.display = (value === 'local_regional') ? 'block' : 'none';
+                    document.getElementById('national_fields').style.display = (value === 'national') ? 'block' : 'none';
+                    document.getElementById('international_fields').style.display = (value === 'international') ? 'block' : 'none';
+                } function showFields(selectedValue) {
+                    // Hide all input fields initially
+                    document.querySelectorAll('.input-fields').forEach(function (field) {
+                        field.style.display = 'none';
+                    });
+
+                    // Show the relevant input fields based on the selected job title
+                    if (selectedValue) {
+                        document.getElementById(selectedValue + '_fields').style.display = 'block';
+                    }
+                }
+            </script>

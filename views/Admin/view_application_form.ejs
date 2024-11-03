@@ -1,0 +1,58 @@
+<% layout('./Layout/layout.ejs') -%>
+  
+        <div class="row">
+            <div class="col-12">
+                <div
+                    class="page-title-box justify-content-between d-flex align-items-md-center flex-md-row flex-column">
+                    <h4 class="page-title">
+                        <%=pagetitle%>
+                    </h4>
+                    <ol class="breadcrumb m-0">
+                        <li class="breadcrumb-item"><a href="/admin/dashboard">Dashboard</a></li>
+                        <li class="breadcrumb-item"><a href="/admin/applications">Applications</a></li>
+                        <li class="breadcrumb-item active">Current</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8">
+                <div class="card d-block">
+                    <div class="card-body">
+                        <h4 class="mb-4 mt-0 fs-16">Total Documents Uploaded (<%= documents.length %>)</h4>
+        
+                        <% documents.forEach(document => { %>
+                            <div class="border p-1 rounded-2 mb-2">
+                                <a href="/admin/application/<%= uuid %>/view/<%= document.id %>" class="text-decoration-none">
+                                <div class="d-flex justify-content-center align-items-center">
+                                    <i class="ri-file-text-line me-2 fs-36"></i> <!-- Added margin to icon -->
+                                    <div class="flex-grow-1">
+                                        <h5 class="mt-0 mb-0"><%= document.title %></h5>
+                                        <small class="text-muted">
+                                            <%= new Date(document.created_at).toLocaleString('en-US', { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', hour12: true }) %>
+                                        </small>
+                                    </div>
+                                    <div class="ms-auto"> <!-- Added ms-auto to push badge to the right -->
+                                        <% if (document.status === 'pending') { %>
+                                            <span class="badge bg-warning">Submitted for Review</span>
+                                        <% } else if (document.status === 'request_changes') { %>
+                                            <span class="badge bg-info text-white">Request Changes</span>
+                                        <% } else if (document.status === 'rejected') { %>
+                                            <span class="badge bg-danger text-white">Rejected</span>
+                                        <% } else if (document.status === 'approved') { %>
+                                            <span class="badge bg-success text-white">Approved</span>
+                                        <% } %>
+                                    </div>
+                                </div>
+                            </a>
+                            </div>
+                            
+                        <% }); %>
+                    </div>
+                </div>
+            </div>
+        
+           
+        </div>
+
+    

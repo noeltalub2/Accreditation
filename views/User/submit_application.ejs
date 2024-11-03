@@ -128,6 +128,8 @@
                           >Male</option>
                         <option value="female" <%=userProfile.gender==='female' ? 'selected' : '' %>
                           >Female</option>
+
+                          <option value="other" <%=userProfile.gender==='other' ? 'selected' : '' %>>Other</option>
                       </select>
                     </div>
                   </div>
@@ -446,7 +448,7 @@
   
                     <div class="mb-3">
                       <label for="date_local" class="form-label">Inclusive Date</label>
-                      <input type="date" class="form-control" id="date_local" name="date_local" required>
+                      <input type="text" class="form-control" id="date_local" name="date_local" required placeholder="2018-10-03 to 2018-10-10">
                     </div>
   
                     <div class="mb-3">
@@ -472,7 +474,7 @@
   
                     <div class="mb-3">
                       <label for="date_national" class="form-label">Inclusive Date</label>
-                      <input type="date" class="form-control" id="date_national" name="date_national" required>
+                      <input type="text" class="form-control" id="date_national" name="date_national" required placeholder="2018-10-03 to 2018-10-10">
                     </div>
   
                     <div class="mb-3">
@@ -499,7 +501,7 @@
   
                     <div class="mb-3">
                       <label for="date_international" class="form-label">Inclusive Date</label>
-                      <input type="date" class="form-control" id="date_international" name="date_international" required>
+                      <input type="text" class="form-control" id="date_international" name="date_international" required placeholder="2018-10-03 to 2018-10-10">
                     </div>
   
                     <div class="mb-3">
@@ -684,6 +686,15 @@
 
 <%block('script').append(`
 <script>
+  $("#date_local").flatpickr({
+    mode: "range"
+})
+$("#date_national").flatpickr({
+    mode: "range"
+})
+$("#date_international").flatpickr({
+    mode: "range"
+})
     (function () {
 "use strict";
 

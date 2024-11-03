@@ -35,7 +35,12 @@
                 <%= interview.status === 'Cancelled' ? 'bg-danger' : '' %> <!-- Added for Cancelled -->
               " class="me-1"><%= interview.status %></span>
               <span class="text-nowrap">
-                <%= interview.status !== 'Rejected' && interview.status !== 'Cancelled' ? 'On ' + new Date(interview.interview_date).toLocaleDateString() + ' at ' + new Date(interview.interview_date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '' %>
+                <%= interview.status !== 'Rejected' && interview.status !== 'Cancelled' ? 'On ' + new
+                Date(interview.interview_date).toLocaleDateString() + ' at '
+                + new Date('1970-01-01T' +
+                interview.interview_time).toLocaleString('en-US', {
+                hour: 'numeric' , minute: 'numeric' , second: 'numeric' ,
+                hour12: true }) : '' %>
               </span>
             </p>
             

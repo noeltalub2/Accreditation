@@ -31,7 +31,15 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                
+                    <div class="card-title">
+                        <div class="ms-auto">
+                            <button type="button" class="btn btn-primary"
+                            data-bs-toggle="modal"
+                            data-bs-target="#modal-schedule-new-interview">
+                            Schedule New Interview
+                        </button>
+                        </div>
+                    </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-vcenter js-dataTable-full"
                             id="datatable-buttons">
@@ -117,23 +125,7 @@
                                                     <% } else if (record.status === 'Cancel') { %>
                                                         <span class="fw-bold">Cancelled</span>
                                                 <% } else if (record.status === 'Pending') { %>
-                                                    <!-- Accept Interview Button -->
-                                                <button type="button"
-                                                class="btn btn-sm btn-success js-bs-tooltip-enabled w-100"
-                                                data-bs-toggle="tooltip" aria-label="Accept Interview"
-                                                onclick="confirmAccept('<%= record.id %>')"
-                                                data-bs-original-title="Accept Interview">
-                                                <i class="fa fa-fw fa-check"></i>Accept
-                                                </button>
-
-                                                <!-- Reject Interview Button -->
-                                                <button type="button"
-                                                class="btn btn-sm btn-danger js-bs-tooltip-enabled w-100"
-                                                data-bs-toggle="tooltip" aria-label="Reject Interview"
-                                                onclick="confirmReject('<%= record.id %>')"
-                                                data-bs-original-title="Reject Interview">
-                                                <i class="fa fa-fw fa-times"></i>Reject
-                                                </button>
+                                                   <p class="fw-bold">Waiting for approval</p>
                                                                                                 <% } %>
                                             </div>
                                             
@@ -154,7 +146,52 @@
         </div>
     </div>
 
-   
+    <div class="modal fade" id="modal-schedule-new-interview" tabindex="-1"
+    aria-labelledby="modal-schedule-new-interview-label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="newInterviewForm" method="POST">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modal-schedule-new-interview-label">Schedule New Interview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="application_id" class="form-label">Select Application</label>
+                        <select name="application_id" id="application_id" class="form-control" required>
+                            <option value="">Select an application</option>
+                            <% approved_application.forEach(application => { %>
+                                <option value="<%= application.id %>">
+                                    <%= application.name %> (Application ID: <%= application.id %>)
+                                </option>
+                            <% }); %>
+                        </select>
+                    </div>
+                    
+                    <!-- Interview Date Input -->
+                    <div class="mb-3">
+                        <label for="interview_date" class="form-label">Interview Date</label>
+                        <input type="date" name="interview_date" id="interview_date" class="form-control"
+                            required>
+                    </div>
+
+                    <!-- Interview Time Input -->
+                    <div class="mb-3">
+                        <label for="interview_time" class="form-label">Interview Time</label>
+                        <input type="time" name="interview_time" id="interview_time" class="form-control"
+                            required>
+                    </div>
+
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Schedule Interview</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
@@ -422,7 +459,73 @@
         
         </script>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Handle interview scheduling form submission
+        document.getElementById('newInterviewForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent default form submission behavior
 
+            const applicationId = document.getElementById('application_id').value; // Get user ID from the select
+            const interviewDate = document.getElementById('interview_date').value;
+            const interviewTime = document.getElementById('interview_time').value;
+            console.log(applicationId, interviewDate, interviewTime);
+
+            try {
+                // Send the interview data via POST request
+                const response = await fetch('/admin/interview', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        application_id: applicationId,
+                        interview_date: interviewDate,
+                        interview_time: interviewTime,
+
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Close the modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modal-schedule-new-interview'));
+                    modal.hide();
+
+                    $.notify({
+                        icon: 'fa fa-check me-1',
+                        message: result.message
+                    }, {
+                        type: 'success', allow_dismiss: false,
+                    });
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    // Close the modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modal-schedule-new-interview'));
+                    modal.hide();
+                    $.notify({
+                        icon: 'fa fa-times-circle me-1',
+                        message: result.message
+                    }, {
+                        type: 'danger', allow_dismiss: false,
+                    });
+                }
+            } catch (error) {
+                $.notify({
+                    icon: 'fa fa-times-circle me-1',
+                    message: 'An error occurred. Please try again.'
+                }, {
+                    type: 'danger'
+                });
+                console.error('Error:', error);
+            }
+        });
+    });
+
+</script>
    
 
         <%block('script').append(`<script src="/assets/vendor/datatables.net/js/jquery.dataTables.min.js">

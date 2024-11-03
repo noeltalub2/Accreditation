@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 23, 2024 at 01:11 PM
+-- Generation Time: Nov 03, 2024 at 04:55 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -97,13 +97,13 @@ CREATE TABLE `application` (
   `training_level` varchar(50) DEFAULT NULL,
   `title_local` varchar(100) DEFAULT NULL,
   `organization_local` varchar(100) DEFAULT NULL,
-  `date_local` date DEFAULT NULL,
+  `date_local` text DEFAULT NULL,
   `title_national` varchar(100) DEFAULT NULL,
   `organization_national` varchar(100) DEFAULT NULL,
-  `date_national` date DEFAULT NULL,
+  `date_national` text DEFAULT NULL,
   `title_international` varchar(100) DEFAULT NULL,
   `organization_international` varchar(100) DEFAULT NULL,
-  `date_international` date DEFAULT NULL,
+  `date_international` text DEFAULT NULL,
   `professional_dev_level` varchar(50) DEFAULT NULL,
   `organization_local_dev` varchar(100) DEFAULT NULL,
   `description_local_dev` text DEFAULT NULL,
@@ -165,6 +165,21 @@ CREATE TABLE `assessor` (
   `profile_url` varchar(255) NOT NULL,
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `modified_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `comments`
+--
+
+CREATE TABLE `comments` (
+  `id` int(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  `author` varchar(255) NOT NULL DEFAULT 'Administrator',
+  `text` text NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -271,6 +286,12 @@ ALTER TABLE `assessor`
   ADD UNIQUE KEY `uuid` (`uuid`);
 
 --
+-- Indexes for table `comments`
+--
+ALTER TABLE `comments`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `evaluations`
 --
 ALTER TABLE `evaluations`
@@ -323,6 +344,12 @@ ALTER TABLE `application_assessors`
 --
 ALTER TABLE `assessor`
   MODIFY `assessor_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `comments`
+--
+ALTER TABLE `comments`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `evaluations`

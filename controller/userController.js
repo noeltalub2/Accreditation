@@ -486,7 +486,7 @@ const getHome = async (req, res) => {
 	))[0].total_applications;
 	
 	const interview = await query(
-		"SELECT * FROM interviews WHERE user_id = ? ORDER BY id DESC",
+		"SELECT * FROM interviews WHERE user_id = ? ORDER BY id DESC LIMIT 1",
 		[userId]
 	);
 	res.render("User/home", {
@@ -789,7 +789,10 @@ const getSubmitApplicationView = async (req, res) => {
 			req.params.id,
 		])
 	)[0];
-
+	const comments = await query(
+		"SELECT * FROM comments WHERE application_id = ? ORDER BY id DESC",
+		[req.params.id]
+	)
 	const interview_ = await query(
 		"SELECT * FROM interviews WHERE user_id = ? AND application_id = ? ORDER BY id DESC",
 		[res.locals.user.id, req.params.id]
@@ -809,7 +812,7 @@ const getSubmitApplicationView = async (req, res) => {
 		page: "application_form",
 		pagetitle: "View Submitted Application Form",
 		application,
-		
+		comments,
 		interview,
 		evaluations,
 	});

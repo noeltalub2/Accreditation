@@ -243,7 +243,10 @@ const getApplicationReviewId = async (req, res) => {
 	const application = (
 		await query("SELECT * FROM application WHERE id = ?", [document_id])
 	)[0];
-
+	const comments = await query(
+		"SELECT * FROM comments WHERE application_id = ? ORDER BY id DESC",
+		[document_id]
+	)
 
 	// Render the page with updated project data
 	res.render("Admin/application_review_document", {
@@ -251,30 +254,38 @@ const getApplicationReviewId = async (req, res) => {
 		page: "application_form",
 		pagetitle: "Application Document Review",
 		application,
-	
+		comments
 	});
 };
 
 const postApplicationReviewId = async (req, res) => {
-	const { id, status } = req.body;
-	try {
-		const query_documents = await query(
-			`UPDATE application SET status = ? WHERE id = ?`,
-			[status, id]
-		);
+    const { id, status, comment } = req.body; // Extract comment from request body
+    try {
+        // Update application status
+        const query_documents = await query(
+            `UPDATE application SET status = ? WHERE id = ?`,
+            [status, id]
+        );
 
-		return res.json({
-			success: true,
-			message: "Application status updated successfully",
-		});
-	} catch (err) {
-		console.error(err);
-		return res.status(500).json({
-			success: false,
-			message: "Failed to update application status",
-		});
-	}
+        // Insert comment into comments table
+        const query_comments = await query(
+            `INSERT INTO comments (application_id, author, text) VALUES (?, ?, ?)`,
+            [id, 'Admin', `${status}: ${comment}`] // Replace 'Admin' with appropriate author if needed
+        );
+
+        return res.json({
+            success: true,
+            message: "Application status updated successfully, and comment added.",
+        });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to update application status and add comment",
+        });
+    }
 };
+
 
 const getInterview = async (req, res) => {
 	try {
@@ -290,13 +301,17 @@ const getInterview = async (req, res) => {
 			"SELECT users.*, application.status FROM users left join application on application.uuid = users.uuid"
 		);
 
+		const approved_application = await query(
+			"SELECT name,uuid,id FROM application WHERE status = 'Approved'"
+		)
+		
 		// Render the interview page with the fetched data
 		res.render("Admin/interviews", {
 			title: "Interviews",
 			page: "interviews",
 			pagetitle: "All Scheduled Interviews",
 			users,
-			approved_users,
+			approved_users,approved_application
 		});
 	} catch (error) {
 		console.error("Error fetching interviews:", error);
@@ -304,16 +319,24 @@ const getInterview = async (req, res) => {
 	}
 };
 const postInterview = async (req, res) => {
-	const { user_id, interview_date, interview_time } = req.body;
+	const { application_id, interview_date, interview_time } = req.body;
 	try {
+		const user_id = (
+			await query(
+				"SELECT uuid FROM application WHERE id = ?",
+				[application_id]
+			)
+		)[0].uuid;
+
+	
 		// Check for existing pending interviews on the same date for the same user
 		const existingInterviews = await query(
 			`SELECT COUNT(*) as count FROM interviews 
-             WHERE user_id = ? AND status = 'Pending'`,
+             WHERE user_id = ? AND status = 'Pending' AND status = 'Accepted'`,
 			[user_id]
 		);
 
-		console.log(existingInterviews);
+	
 		// If there are existing pending interviews, send an error response
 		if (existingInterviews[0].count > 0) {
 			return res.status(400).json({
@@ -322,8 +345,8 @@ const postInterview = async (req, res) => {
 			});
 		}
 		const query_documents = await query(
-			`INSERT INTO interviews (user_id, interview_date, interview_time) VALUES ( ?, ?, ?)`,
-			[user_id, interview_date, interview_time]
+			`INSERT INTO interviews (application_id,user_id, interview_date, interview_time) VALUES (?, ?, ?, ?)`,
+			[application_id,user_id, interview_date, interview_time]
 		);
 
 		return res.json({
@@ -896,7 +919,7 @@ const deleteInstitute = async (req, res) => {
 
 const getEvaluation = async (req, res) => {
 	const usersForEvaluation = await query(
-		"SELECT ap.name, i.application_id, interview_date, interview_time FROM interviews i LEFT JOIN application ap ON ap.id = i.application_id WHERE ap.status = 'Approved' AND i.status = 'Completed';"
+		"SELECT ap.name, ap.id AS application_id FROM application ap WHERE ap.status = 'Approved';"
 	);
 	res.render("Admin/evaluation", {
 		title: "For Evaluation",

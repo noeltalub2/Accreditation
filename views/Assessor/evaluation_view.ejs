@@ -31,6 +31,523 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
+
+                    <div class="applicationForm">
+                        
+
+                        <!-- Education -->
+                        <h4>Education</h4>
+                        <!-- Educational Qualifications -->
+                        <h6>A. Educational Qualifications</h6>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Educational Qualification</th>
+                                    <th>Name of School</th>
+                                    <th>Address</th>
+                                    <th>Date First Attended</th>
+                                    <th>Date Last Attended</th>
+                                    <th>Copy of TOR/Form 137</th>
+                             
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><%=application.qualification%></td> <!-- Replace with the actual qualification level -->
+                                    <td>
+                                        <%= application.school_name || 'N/A' %>
+                                    </td>
+                                    <td>
+                                        <%= application.school_address || 'N/A' %>
+                                    </td>
+                                    <td>
+                                        <%= application.date_first_attended ? new
+                                            Date(application.date_first_attended).toLocaleDateString('en-CA')
+                                            : 'N/A' %>
+                                    </td>
+                                    <td>
+                                        <%= application.date_last_attended ? new
+                                            Date(application.date_last_attended).toLocaleDateString('en-CA') : 'N/A'
+                                            %>
+                                    </td>
+                                    <td class="align-middle">
+                                        <% if (application.tor_file) { %>
+                                            <div>
+                                                <%= application.tor_file %>
+                                                <a href="/uploads/<%= application.tor_file %>"
+                                                    class="btn btn-sm btn-primary"> 
+                                                    <i class="ri-eye-line me-1"></i>View
+                                               
+                                                </a>
+                                                <div>
+                                                    <a href="/uploads/<%= application.tor_file %>"
+                                                        class="btn btn-sm btn-primary" download>
+                                                        <i class="ri-download-line"></i> Download
+                                                    </a>
+                                                </div>
+                                            </div>
+                                            <% } else { %>
+                                                <span class="text-muted">No document uploaded.</span>
+                                                <% } %>
+                                    </td>
+
+                                </tr>
+                                <!-- Additional rows for more educational qualifications can be added here -->
+                            </tbody>
+                        </table>
+
+
+                        <h4>Work Experiences</h4>
+
+
+                        <div id="ordinary_employee_fields" class="input-fields">
+
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Position/Job Title</th>
+                                        <th>Company Name</th>
+                                        <th>Address</th>
+                                        <th>Date Started</th>
+                                        <th>Date Ended</th>
+                                        <th>Copy of Certificate of Enrollment</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if(application.employment_file_ordinary) {%>
+                                        <tr>
+                                            <td>
+
+                                                Ordinary Employee
+
+                                            </td>
+                                            <td>
+                                                <%= application.company_name_ordinary || '' %>
+                                            </td>
+                                            <td>
+                                                <%= application.company_address_ordinary || '' %>
+                                            </td>
+                                            <td>
+                                                <%= new
+                                                    Date(application.date_started_work_ordinary).toLocaleDateString('en-CA')
+                                                    || '' %>
+                                            </td>
+                                            <td>
+                                                <%= new
+                                                    Date(application.date_ended_work_ordinary).toLocaleDateString('en-CA')
+                                                    || '' %>
+                                            </td>
+                                            <td>
+                                                <%=application.employment_file_ordinary%>
+                                                    <a href="/uploads/<%=application.employment_file_ordinary%>"
+                                                        class="btn btn-sm  btn-primary">
+                                                        <i class="ri-eye-line me-1"></i>View
+                                                    </a>
+
+                                                    <a href="/uploads/<%=application.employment_file_ordinary%>"
+                                                        class="btn btn-sm  btn-primary" download>
+                                                        <i class="ri-download-line"></i> Download
+                                                    </a>
+
+                                            </td>
+
+                                        </tr>
+                                        <%}%>
+                                            <!-- Supervisor Row (shown only if job title is 'supervisor') -->
+                                            <% if (application.employment_file_supervisor) { %>
+                                                <tr>
+                                                    <td>Supervisor</td>
+                                                    <td>
+                                                        <%= application.company_name_supervisor || '' %>
+                                                    </td>
+                                                    <td>
+                                                        <%= application.company_address_supervisor || '' %>
+                                                    </td>
+                                                    <td>
+                                                        <%= application.date_started_work_supervisor ? new
+                                                            Date(application.date_started_work_supervisor).toLocaleDateString('en-CA')
+                                                            : '' %>
+                                                    </td>
+                                                    <td>
+                                                        <%= application.date_ended_work_supervisor ? new
+                                                            Date(application.date_ended_work_supervisor).toLocaleDateString('en-CA')
+                                                            : '' %>
+                                                    </td>
+                                                    <td>
+
+                                                        <%=application.employment_file_supervisor%>
+                                                            <a href="/uploads/<%= application.employment_file_supervisor %>"
+                                                                class="btn btn-sm btn-primary">
+                                                                <i class="ri-eye-line me-1"></i> View
+                                                            </a>
+                                                            <a href="/uploads/<%= application.employment_file_supervisor %>"
+                                                                class="btn btn-sm btn-primary" download>
+                                                                <i class="ri-download-line"></i> Download
+                                                            </a>
+
+                                                    </td>
+                                                </tr>
+                                                <% } %>
+
+
+                                                    <% if (application.employment_file_manager) { %>
+                                                        <tr>
+                                                            <td>Head/Manager</td>
+                                                            <td>
+                                                                <%= application.company_name_manager || '' %>
+                                                            </td>
+                                                            <td>
+                                                                <%= application.company_address_manager || '' %>
+                                                            </td>
+                                                            <td>
+                                                                <%= application.date_started_work_manager ? new
+                                                                    Date(application.date_started_work_manager).toLocaleDateString('en-CA')
+                                                                    : '' %>
+                                                            </td>
+                                                            <td>
+                                                                <%= application.date_ended_work_manager ? new
+                                                                    Date(application.date_ended_work_manager).toLocaleDateString('en-CA')
+                                                                    : '' %>
+                                                            </td>
+                                                            <td>
+                                                                <%=application.employment_file_manager%>
+                                                                    <a href="/uploads/<%= application.employment_file_manager %>"
+                                                                        class="btn btn-sm btn-primary">
+                                                                        <i class="ri-eye-line me-1"></i> View
+                                                                    </a>
+                                                                    <a href="/uploads/<%= application.employment_file_manager %>"
+                                                                        class="btn btn-sm btn-primary" download>
+                                                                        <i class="ri-download-line"></i> Download
+                                                                    </a>
+
+                                                            </td>
+                                                        </tr>
+                                                        <% } %>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+
+                        <h4>Professional Achievements</h4>
+
+                        <!-- Level of Training/Seminar -->
+                        <h6>A. Trainings and Seminars</h6>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Level</th>
+                                    <th>Title of Training/Seminar</th>
+                                    <th>Sponsoring Organization</th>
+                                    <th>Inclusive Date</th>
+                                    <th>Copy of Certificate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Local/Regional Training -->
+                                <% if (application.certificate_file_local) { %>
+                                    <tr>
+                                        <td>Local/Regional</td>
+                                        <td>
+                                            <%= application.title_local %>
+                                        </td>
+                                        <td>
+                                            <%= application.organization_local %>
+                                        </td>
+                                        <td>
+                                            <%= application.date_local %>
+                                        </td>
+                                        <td>
+                                            <%= application.certificate_file_local %>
+                                                <a href="/uploads/<%= application.certificate_file_local %>"
+                                                    class="btn btn-sm btn-primary">
+                                                    <i class="ri-eye-line me-1"></i>View
+                                                </a>
+                                                <a href="/uploads/<%= application.certificate_file_local %>"
+                                                    class="btn btn-sm btn-primary" download>
+                                                    <i class="ri-download-line"></i> Download
+                                                </a>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+
+                                        <!-- National Training -->
+                                        <% if (application.certificate_file_national) { %>
+                                            <tr>
+                                                <td>National</td>
+                                                <td>
+                                                    <%= application.title_national %>
+                                                </td>
+                                                <td>
+                                                    <%= application.organization_national %>
+                                                </td>
+                                                <td>
+                                                    <%= application.date_national
+                                                        %>
+                                                </td>
+                                                <td>
+                                                    <%= application.certificate_file_national %>
+                                                        <a href="/uploads/<%= application.certificate_file_national %>"
+                                                            class="btn btn-sm btn-primary">
+                                                            <i class="ri-eye-line me-1"></i>View
+                                                        </a>
+                                                        <a href="/uploads/<%= application.certificate_file_national %>"
+                                                            class="btn btn-sm btn-primary" download>
+                                                            <i class="ri-download-line"></i> Download
+                                                        </a>
+                                                </td>
+                                            </tr>
+                                            <% } %>
+
+                                                <!-- International Training -->
+                                                <% if (application.certificate_file_international) { %>
+                                                    <tr>
+                                                        <td>International</td>
+                                                        <td>
+                                                            <%= application.title_international %>
+                                                        </td>
+                                                        <td>
+                                                            <%= application.organization_international %>
+                                                        </td>
+                                                        <td>
+                                                            <%=application.date_international
+                                                                %>
+                                                        </td>
+                                                        <td>
+                                                            <%= application.certificate_file_international %>
+                                                                <a href="/uploads/<%= application.certificate_file_international %>"
+                                                                    class="btn btn-sm btn-primary">
+                                                                    <i class="ri-eye-line me-1"></i>View
+                                                                </a>
+                                                                <a href="/uploads/<%= application.certificate_file_international %>"
+                                                                    class="btn btn-sm btn-primary" download>
+                                                                    <i class="ri-download-line"></i> Download
+                                                                </a>
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                            </tbody>
+                        </table>
+
+
+                        <h6>B. Professional Development</h6>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Level</th>
+                                    <th>Name of Organization/Scholarship</th>
+                                    <th>Description</th>
+                                    <th>Copy of Certificate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Local/Regional -->
+                                <% if (application.certificate_file_local_dev) { %>
+                                    <tr>
+                                        <td>Local/Regional</td>
+                                        <td>
+                                            <%= application.organization_local_dev %>
+                                        </td>
+                                        <td>
+                                            <%= application.description_local_dev %>
+                                        </td>
+                                        <td>
+                                            <%= application.certificate_file_local_dev %>
+                                                <a href="/uploads/<%= application.certificate_file_local_dev %>"
+                                                    class="btn btn-sm btn-primary">
+                                                    <i class="ri-eye-line me-1"></i>View
+                                                </a>
+                                                <a href="/uploads/<%= application.certificate_file_local_dev %>"
+                                                    class="btn btn-sm btn-primary" download>
+                                                    <i class="ri-download-line"></i> Download
+                                                </a>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+
+                                        <!-- National -->
+                                        <% if (application.certificate_file_national_dev) { %>
+                                            <tr>
+                                                <td>National</td>
+                                                <td>
+                                                    <%= application.organization_national_dev %>
+                                                </td>
+                                                <td>
+                                                    <%= application.description_national_dev %>
+                                                </td>
+                                                <td>
+                                                    <%= application.certificate_file_national_dev %>
+                                                        <a href="/uploads/<%= application.certificate_file_national_dev %>"
+                                                            class="btn btn-sm btn-primary">
+                                                            <i class="ri-eye-line me-1"></i>View
+                                                        </a>
+                                                        <a href="/uploads/<%= application.certificate_file_national_dev %>"
+                                                            class="btn btn-sm btn-primary" download>
+                                                            <i class="ri-download-line"></i> Download
+                                                        </a>
+                                                </td>
+                                            </tr>
+                                            <% } %>
+
+                                                <!-- International -->
+                                                <% if (application.certificate_file_international_dev) { %>
+                                                    <tr>
+                                                        <td>International</td>
+                                                        <td>
+                                                            <%= application.organization_international_dev %>
+                                                        </td>
+                                                        <td>
+                                                            <%= application.description_international_dev %>
+                                                        </td>
+                                                        <td>
+                                                            <%= application.certificate_file_international_dev %>
+                                                                <a href="/uploads/<%= application.certificate_file_international_dev %>"
+                                                                    class="btn btn-sm btn-primary">
+                                                                    <i class="ri-eye-line me-1"></i>View
+                                                                </a>
+                                                                <a href="/uploads/<%= application.certificate_file_international_dev %>"
+                                                                    class="btn btn-sm btn-primary" download>
+                                                                    <i class="ri-download-line"></i> Download
+                                                                </a>
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                            </tbody>
+                        </table>
+
+
+                        <h6>C. Eligibilities/Awards</h6>
+
+
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Eligibility Level</th>
+
+                                    <th>Copy of Certificate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Sub-Professional Eligibility -->
+                                <% if( application.certificate_file_sub_professional) { %>
+                                    <tr>
+                                        <td>CSC Sub-Professional</td>
+
+                                        <td>
+                                            <%= application.certificate_file_sub_professional %>
+                                                <a href="/uploads/<%= application.certificate_file_sub_professional %>"
+                                                    class="btn btn-sm btn-primary">
+                                                    <i class="ri-eye-line me-1"></i>View
+                                                </a>
+                                                <a href="/uploads/<%= application.certificate_file_sub_professional %>"
+                                                    class="btn btn-sm btn-primary" download>
+                                                    <i class="ri-download-line"></i> Download
+                                                </a>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+
+                                        <!-- Technical (NC) Eligibility -->
+                                        <% if( application.certificate_file_technical_nc) { %>
+                                            <tr>
+                                                <td>Technical (NC)</td>
+
+                                                <td>
+                                                    <%= application.certificate_file_technical_nc %>
+                                                        <a href="/uploads/<%= application.certificate_file_technical_nc %>"
+                                                            class="btn btn-sm btn-primary">
+                                                            <i class="ri-eye-line me-1"></i>View
+                                                        </a>
+                                                        <a href="/uploads/<%= application.certificate_file_technical_nc %>"
+                                                            class="btn btn-sm btn-primary" download>
+                                                            <i class="ri-download-line"></i> Download
+                                                        </a>
+                                                </td>
+                                            </tr>
+                                            <% } %>
+
+                                                <!-- Professional (PRC) (CSC) Eligibility -->
+                                                <% if( application.certificate_file_professional_prc_csc) { %>
+                                                    <tr>
+                                                        <td>Professional (PRC) (CSC)</td>
+
+                                                        <td>
+                                                            <%= application.certificate_file_professional_prc_csc %>
+                                                                <a href="/uploads/<%= application.certificate_file_professional_prc_csc %>"
+                                                                    class="btn btn-sm btn-primary">
+                                                                    <i class="ri-eye-line me-1"></i>View
+                                                                </a>
+                                                                <a href="/uploads/<%= application.certificate_file_professional_prc_csc %>"
+                                                                    class="btn btn-sm btn-primary" download>
+                                                                    <i class="ri-download-line"></i> Download
+                                                                </a>
+                                                        </td>
+                                                    </tr>
+                                                    <% } %>
+                            </tbody>
+                        </table>
+
+
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Award Level</th>
+
+                                    <th>Copy of Certificate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Local/Regional Awards -->
+                                <% if (application.certificate_file_local_regional) { %>
+                                    <tr>
+                                        <td>Local/Regional</td>
+
+                                        <td>
+                                            <%= application.certificate_file_local_regional %>
+                                                <a href="/uploads/<%= application.certificate_file_local_regional %>"
+                                                    class="btn btn-sm btn-primary">
+                                                    <i class="ri-eye-line me-1"></i>View
+                                                </a>
+                                                <a href="/uploads/<%= application.certificate_file_local_regional %>"
+                                                    class="btn btn-sm btn-primary" download>
+                                                    <i class="ri-download-line"></i> Download
+                                                </a>
+                                        </td>
+                                    </tr>
+                                    <% } %>
+
+                                        <!-- National/International Awards -->
+                                        <% if (application.certificate_file_national_international) { %>
+                                            <tr>
+                                                <td>National/International</td>
+
+                                                <td>
+                                                    <%= application.certificate_file_national_international %>
+                                                        <a href="/uploads/<%= application.certificate_file_national_international %>"
+                                                            class="btn btn-sm btn-primary">
+                                                            <i class="ri-eye-line me-1"></i>View
+                                                        </a>
+                                                        <a href="/uploads/<%= application.certificate_file_national_international %>"
+                                                            class="btn btn-sm btn-primary" download>
+                                                            <i class="ri-download-line"></i> Download
+                                                        </a>
+                                                </td>
+                                            </tr>
+                                            <% } %>
+                            </tbody>
+                        </table>
+    
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="card">
+                <div class="card-body">
                     <% if (usersEvaluation.length > 0) { %>
                         <form action="/evaluation/<%= usersEvaluation[0].id %>/edit" method="POST" class="evaluation-edit-validation">
                             <input type="hidden" name="application_id" value="<%= application.id %>">

@@ -686,15 +686,7 @@
 
 <%block('script').append(`
 <script>
-  $("#date_local").flatpickr({
-    mode: "range"
-})
-$("#date_national").flatpickr({
-    mode: "range"
-})
-$("#date_international").flatpickr({
-    mode: "range"
-})
+
     (function () {
 "use strict";
 
@@ -1048,7 +1040,17 @@ $(document).ready(() => DocumentUpload.init());
         filePreviewContainer.removeChild(card);
     }
 </script>
-
+<script>
+    $("#date_local").flatpickr({
+    mode: "range"
+})
+$("#date_national").flatpickr({
+    mode: "range"
+})
+$("#date_international").flatpickr({
+    mode: "range"
+})
+</script>
 `)%>
 
 <script>

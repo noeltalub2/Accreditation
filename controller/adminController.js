@@ -159,30 +159,49 @@ const checkPhonenumber = async (req, res) => {
 };
 
 const getDashboard = async (req, res) => {
-    try {
-        // Count total applications
-        const total_applications = (await query("SELECT COUNT(*) AS total_applications FROM application;"))[0].total_applications;
+	try {
+		// Count total applications
+		const total_applications = (
+			await query(
+				"SELECT COUNT(*) AS total_applications FROM application;"
+			)
+		)[0].total_applications;
 
-        // Count total evaluations
-        const total_evaluations = (await query("SELECT COUNT(*) AS total_evaluations FROM evaluations;"))[0].total_evaluations;
+		// Count total evaluations
+		const total_evaluations = (
+			await query(
+				"SELECT COUNT(*) AS total_evaluations FROM evaluations;"
+			)
+		)[0].total_evaluations;
 
-        // Count total assessors
-        const total_assessors = (await query("SELECT COUNT(*) AS total_assessors FROM assessor;"))[0].total_assessors;
-		const total_users = (await query("SELECT COUNT(*) AS total_users FROM users;"))[0].total_users;
-        // Count pending applications
-        const pending_applications = (await query("SELECT COUNT(*) AS pending_applications FROM application WHERE status = 'Pending';"))[0].pending_applications;
+		// Count total assessors
+		const total_assessors = (
+			await query("SELECT COUNT(*) AS total_assessors FROM assessor;")
+		)[0].total_assessors;
+		const total_users = (
+			await query("SELECT COUNT(*) AS total_users FROM users;")
+		)[0].total_users;
+		// Count pending applications
+		const pending_applications = (
+			await query(
+				"SELECT COUNT(*) AS pending_applications FROM application WHERE status = 'Pending';"
+			)
+		)[0].pending_applications;
 
-        // Count qualified evaluations
-        const qualified_evaluations = (await query("SELECT COUNT(*) AS qualified_evaluations FROM evaluations WHERE status = 'Qualified';"))[0].qualified_evaluations;
+		// Count qualified evaluations
+		const qualified_evaluations = (
+			await query(
+				"SELECT COUNT(*) AS qualified_evaluations FROM evaluations WHERE status = 'Qualified';"
+			)
+		)[0].qualified_evaluations;
 
-        // Get recent applications
-        const recentApplications = await query("SELECT * FROM application ORDER BY created_at DESC LIMIT 5;");
+		// Get recent applications
+		const recentApplications = await query(
+			"SELECT * FROM application ORDER BY created_at DESC LIMIT 5;"
+		);
 
-    
-  
-
-        // Get assessor details with evaluations
-        const assessors = await query(`
+		// Get assessor details with evaluations
+		const assessors = await query(`
             SELECT 
                 ass.assessor_id,
                 ass.firstname,
@@ -196,25 +215,25 @@ const getDashboard = async (req, res) => {
                 evaluations e ON ass.uuid = e.assessor_id;
         `);
 
-        // Render the dashboard with all retrieved data
-        res.render("Admin/dashboard", {
-            title: "Admin Dashboard",
-            page: "dashboard",
-            pagetitle: "Admin Dashboard",
-            total_applications,
-            total_evaluations,
-            total_assessors,
-            pending_applications,
-            qualified_evaluations,
-            recentApplications,
+		// Render the dashboard with all retrieved data
+		res.render("Admin/dashboard", {
+			title: "Admin Dashboard",
+			page: "dashboard",
+			pagetitle: "Admin Dashboard",
+			total_applications,
+			total_evaluations,
+			total_assessors,
+			pending_applications,
+			qualified_evaluations,
+			recentApplications,
 			total_users,
-       
-            assessors
-        });
-    } catch (error) {
-        console.error("Error fetching dashboard data:", error);
-        res.status(500).send("Server Error");
-    }
+
+			assessors,
+		});
+	} catch (error) {
+		console.error("Error fetching dashboard data:", error);
+		res.status(500).send("Server Error");
+	}
 };
 
 const getApplicationReview = async (req, res) => {
@@ -246,46 +265,208 @@ const getApplicationReviewId = async (req, res) => {
 	const comments = await query(
 		"SELECT * FROM comments WHERE application_id = ? ORDER BY id DESC",
 		[document_id]
-	)
-
+	);
+	const workExperience = await query(
+		"SELECT * FROM work_experience WHERE application_id = ? ORDER BY id DESC",
+		[document_id]
+	);
+	const trainingExperience = await query(
+		"SELECT * FROM training WHERE application_id = ? ORDER BY id DESC",
+		[document_id]
+	);
+	const professionalDevelopments = await query(
+		"SELECT * FROM professional_development WHERE application_id = ? ORDER BY id DESC",
+		[document_id]
+	);
+	const awards = await query(
+		"SELECT * FROM award WHERE application_id = ? ORDER BY id DESC",
+		[document_id]
+	);
 	// Render the page with updated project data
 	res.render("Admin/application_review_document", {
 		title: "Application Document Review",
 		page: "application_form",
 		pagetitle: "Application Document Review",
 		application,
-		comments
+		comments,
+		workExperience,
+		trainingExperience,
+		professionalDevelopments,
+		awards,
 	});
+};
+const postAwardPoints = async (req, res) => {
+	const { awardId, points } = req.body; // Extract awardId and points from the request body
+
+	try {
+		// Update points for the award
+		const query_update_points = await query(
+			`UPDATE award SET points = ? WHERE id = ?`,
+			[points, awardId]
+		);
+
+		return res.json({
+			success: true,
+			message: "Award points updated successfully.",
+		});
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({
+			success: false,
+			message: "Failed to update points",
+		});
+	}
+};
+const postEmpPoints = async (req, res) => {
+	const { empId, points } = req.body; // Extract awardId and points from the request body
+
+	try {
+		// Update points for the award
+		const query_update_points = await query(
+			`UPDATE work_experience SET points = ? WHERE id = ?`,
+			[points, empId]
+		);
+
+		return res.json({
+			success: true,
+			message: "Work Experience points updated successfully.",
+		});
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({
+			success: false,
+			message: "Failed to update points",
+		});
+	}
+};
+
+const postTrainingPoints = async (req, res) => {
+	const { trainingId, points } = req.body; // Extract awardId and points from the request body
+
+	try {
+		// Update points for the award
+		const query_update_points = await query(
+			`UPDATE training SET points = ? WHERE id = ?`,
+			[points, trainingId]
+		);
+
+		return res.json({
+			success: true,
+			message: "Training points updated successfully.",
+		});
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({
+			success: false,
+			message: "Failed to update points",
+		});
+	}
+};
+const postDevelopmentPoints = async (req, res) => {
+	const { devId, points } = req.body; // Extract awardId and points from the request body
+
+	try {
+		// Update points for the award
+		const query_update_points = await query(
+			`UPDATE professional_development SET points = ? WHERE id = ?`,
+			[points, devId]
+		);
+
+		return res.json({
+			success: true,
+			message: "Professional Development points updated successfully.",
+		});
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({
+			success: false,
+			message: "Failed to update points",
+		});
+	}
+};
+
+const postApplicationPoints = async (req, res) => {
+	const { applicationId, pointsType, points } = req.body; // Extract awardId and points from the request body
+
+	try {
+		if (pointsType === "Education") {
+			// Update points for the award
+			const query_update_points = await query(
+				`UPDATE application SET education_points = ? WHERE id = ?`,
+				[points, applicationId]
+			);
+		}
+
+		if (pointsType === "CSC") { 
+			// Update points for the award
+			const query_update_points = await query(
+				`UPDATE application SET csc_points = ? WHERE id = ?`,
+				[points, applicationId]
+			);
+		}
+		if (pointsType === "NC") { 
+			// Update points for the award
+			const query_update_points = await query(
+				`UPDATE application SET nc_points = ? WHERE id = ?`,
+				[points, applicationId]
+			);
+		}
+
+		if (pointsType === "PRC") { 
+			// Update points for the award
+			const query_update_points = await query(
+				`UPDATE application SET prc_points = ? WHERE id = ?`,
+				[points, applicationId]
+			);
+		}
+			
+		
+
+		return res.json({
+			success: true,
+			message: `${pointsType} Points updated successfully.`,
+		});
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({
+			success: false,
+			message: "Failed to update points",
+		});
+	}
 };
 
 const postApplicationReviewId = async (req, res) => {
-    const { id, status, comment } = req.body; // Extract comment from request body
-    try {
-        // Update application status
-        const query_documents = await query(
-            `UPDATE application SET status = ? WHERE id = ?`,
-            [status, id]
-        );
+	const { id, status, comment } = req.body; // Extract comment from request body
+	try {
+		// Update application status
+		const query_documents = await query(
+			`UPDATE application SET status = ? WHERE id = ?`,
+			[status, id]
+		);
 
-        // Insert comment into comments table
-        const query_comments = await query(
-            `INSERT INTO comments (application_id, author, text) VALUES (?, ?, ?)`,
-            [id, 'Admin', `${status}: ${comment}`] // Replace 'Admin' with appropriate author if needed
-        );
+		// Insert comment into comments table
+		const query_comments = await query(
+			`INSERT INTO comments (application_id, author, text) VALUES (?, ?, ?)`,
+			[
+				id,
+				"Admin",
+				`${status}: ${comment === "" ? "No comment" : comment}`,
+			] // Replace 'Admin' with appropriate author if needed
+		);
 
-        return res.json({
-            success: true,
-            message: "Application status updated successfully, and comment added.",
-        });
-    } catch (err) {
-        console.error(err);
-        return res.status(500).json({
-            success: false,
-            message: "Failed to update application status and add comment",
-        });
-    }
+		return res.json({
+			success: true,
+			message:
+				"Application status updated successfully, and comment added.",
+		});
+	} catch (err) {
+		console.error(err);
+		return res.status(500).json({
+			success: false,
+			message: "Failed to update application status and add comment",
+		});
+	}
 };
-
 
 const getInterview = async (req, res) => {
 	try {
@@ -303,15 +484,16 @@ const getInterview = async (req, res) => {
 
 		const approved_application = await query(
 			"SELECT name,uuid,id FROM application WHERE status = 'Approved'"
-		)
-		
+		);
+
 		// Render the interview page with the fetched data
 		res.render("Admin/interviews", {
 			title: "Interviews",
 			page: "interviews",
 			pagetitle: "All Scheduled Interviews",
 			users,
-			approved_users,approved_application
+			approved_users,
+			approved_application,
 		});
 	} catch (error) {
 		console.error("Error fetching interviews:", error);
@@ -322,13 +504,11 @@ const postInterview = async (req, res) => {
 	const { application_id, interview_date, interview_time } = req.body;
 	try {
 		const user_id = (
-			await query(
-				"SELECT uuid FROM application WHERE id = ?",
-				[application_id]
-			)
+			await query("SELECT uuid FROM application WHERE id = ?", [
+				application_id,
+			])
 		)[0].uuid;
 
-	
 		// Check for existing pending interviews on the same date for the same user
 		const existingInterviews = await query(
 			`SELECT COUNT(*) as count FROM interviews 
@@ -336,7 +516,6 @@ const postInterview = async (req, res) => {
 			[user_id]
 		);
 
-	
 		// If there are existing pending interviews, send an error response
 		if (existingInterviews[0].count > 0) {
 			return res.status(400).json({
@@ -346,7 +525,7 @@ const postInterview = async (req, res) => {
 		}
 		const query_documents = await query(
 			`INSERT INTO interviews (application_id,user_id, interview_date, interview_time) VALUES (?, ?, ?, ?)`,
-			[application_id,user_id, interview_date, interview_time]
+			[application_id, user_id, interview_date, interview_time]
 		);
 
 		return res.json({
@@ -1188,15 +1367,21 @@ const getAssessor = async (req, res) => {
 };
 
 const getAssessorView = async (req, res) => {
-	const id = req.params.id
-	const assessor_application = await query("SELECT a.id AS application_id, a.name AS applicant_name, a.email AS applicant_email, a.status AS application_status, ass.assessor_id, ass.firstname,ass.uuid, ass.lastname, ass.email AS assessor_email, aa.status AS assessor_status, e.educational_points, e.work_experience_points, e.training_points, e.professional_development_points, e.eligibility_points, e.interview_chief_points, e.interview_assessor_points, e.total_score, e.status AS evaluation_status FROM application a JOIN application_assessors aa ON a.id = aa.application_id JOIN assessor ass ON aa.assessor_id = ass.uuid LEFT JOIN evaluations e ON a.id = e.application_id AND ass.uuid = e.assessor_id WHERE ass.uuid = ?",[id]);
-	const assessor_account = (await query("SELECT * FROM assessor WHERE uuid = ?",[id]))[0]
+	const id = req.params.id;
+	const assessor_application = await query(
+		"SELECT a.id AS application_id, a.name AS applicant_name, a.email AS applicant_email, a.status AS application_status, ass.assessor_id, ass.firstname,ass.uuid, ass.lastname, ass.email AS assessor_email, aa.status AS assessor_status, e.educational_points, e.work_experience_points, e.training_points, e.professional_development_points, e.eligibility_points, e.interview_chief_points, e.interview_assessor_points, e.total_score, e.status AS evaluation_status FROM application a JOIN application_assessors aa ON a.id = aa.application_id JOIN assessor ass ON aa.assessor_id = ass.uuid LEFT JOIN evaluations e ON a.id = e.application_id AND ass.uuid = e.assessor_id WHERE ass.uuid = ?",
+		[id]
+	);
+	const assessor_account = (
+		await query("SELECT * FROM assessor WHERE uuid = ?", [id])
+	)[0];
 
 	res.render("Admin/assessor_view", {
 		title: "View Assessor",
 		page: "assessor",
 		pagetitle: "View Assessor",
-		assessor_application,assessor_account
+		assessor_application,
+		assessor_account,
 	});
 };
 
@@ -1350,126 +1535,11 @@ const checkAvailability = async (req, res) => {
 	}
 };
 
-const generateEvaluationId = async (req, res) => {
-	const application_id = req.params.application_id;
-	const assessor_id = req.params.assessor_id;
-
-	const evaluation_result = (
-		await query(
-			"SELECT e.*, CONCAT(a.firstname, ' ', a.middlename, ' ', a.lastname) AS assessor_full_name, ap.name FROM evaluations e LEFT JOIN assessor a ON a.uuid = e.assessor_id LEFT JOIN application ap ON ap.id = e.application_id WHERE e.assessor_id = ? AND e.application_id = ?;",
-			[assessor_id, application_id]
-		)
-	)[0];
-
-	function formatDate(dateString) {
-		const date = new Date(dateString);
-		const options = { day: "numeric", month: "long" };
-		return date.toLocaleDateString("en-US", options);
-	}
-
-	function formatTime(dateString) {
-		const date = new Date(dateString);
-		const options = { hour: "numeric", minute: "numeric", hour12: true };
-		return date.toLocaleTimeString("en-US", options);
-	}
-	const dateString = evaluation_result.updated_at || evaluation_result.created_at;
-	const formattedDate = formatDate(dateString); // "23 October"
-	const formattedTime = formatTime(dateString); // "4:54 AM"
-
-	// Create a new PDF document
-	const doc = new PDFDocument();
-
-	// Pipe the PDF into a file or directly to the response
-	const filename = "Documentary_Evaluation_Report.pdf";
-	res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
-	doc.pipe(res);
-	// Use a fixed-width font
-	doc.font("Courier");
-	// Add MMSU Header
-	doc.fontSize(12)
-		.text("MARIANO MARCOS STATE UNIVERSITY", { align: "center" })
-		.moveDown(0.5)
-		.text(
-			"Expanded Tertiary Education Equivalency and Accreditation Program",
-			{ align: "center" }
-		)
-		.moveDown(0.5)
-		.text("DOCUMENTARY EVALUATION REPORT", {
-			align: "center",
-			underline: true,
-		})
-		.moveDown(2);
-
-	// Document details
-	doc.text("Document Code: ETEEAP-FRM-001", { align: "left" }).moveDown(0.5);
-
-	// Candidate Information
-	doc.fontSize(10)
-		.text(`Candidate  :  ${evaluation_result.name}.`, { align: "left" })
-
-		.text(`Date of evaluation:  ${formattedDate} `, {
-			align: "left",
-		})
-		.text(`Time:  ${formattedTime}`, { align: "left" })
-		.text("Venue: CIT", { align: "left" })
-		.moveDown(2);
-
-	// Define criteria data
-	const criteria = [
-		{
-			criterion: "Education Qualification",
-			maxPoints: 20,
-			pointsObtained: evaluation_result.educational_points,
-		},
-		{ criterion: "Work experience", maxPoints: 40, pointsObtained: evaluation_result.work_experience_points },
-		{
-			criterion: "Professional achievement",
-			maxPoints: 25,
-			pointsObtained: parseInt(evaluation_result.training_points) + parseInt(evaluation_result.professional_development_points) + parseInt(evaluation_result.eligibility_points),
-		},
-		{ criterion: "Interview", maxPoints: 15, pointsObtained:  parseInt(evaluation_result.interview_chief_points) + parseInt(evaluation_result.interview_assessor_points) },
-	];
-
-	// Set font size and title
-	doc.fontSize(10)
-		.text("Summary of Results:", { align: "left" })
-		.moveDown(0.5);
-
-	// Add headers for the table
-	const headerText = `${"Criteria".padEnd(35)}${"Maximum Points".padEnd(
-		20
-	)}${"Points Obtained".padStart(15)}`;
-	doc.text(headerText, { align: "left" });
-	doc.moveDown(0.5); // Space between header and data
-
-	// Add each criterion
-	criteria.forEach((item) => {
-		const text = `${item.criterion.padEnd(35)}${item.maxPoints
-			.toString()
-			.padStart(8)}${item.pointsObtained.toString().padStart(20)}`;
-		doc.text(text, { align: "left" });
-	});
-
-	// Add total row
-	doc.moveDown(1)
-		.text("Total".padEnd(50) + evaluation_result.total_score, { align: "left" })
-		.moveDown(1);
-
-	// Signatures Section
-	doc.moveDown(2)
-		.text("Submitted by:", { align: "left" })
-		.text(`${evaluation_result.assessor_full_name}`, { align: "left" })
-		.text("Internal Assessor", { align: "left" });
-
-	// Finalize PDF file
-	doc.end();
-};
 const getLogout = (req, res) => {
 	res.clearCookie("token");
 	res.redirect("/admin/signin");
 };
 export default {
-	generateEvaluationId,
 	getAssessor,
 	getSignIn,
 	postSignIn,
@@ -1482,7 +1552,11 @@ export default {
 	getApplicationReview,
 	getApplicationReviewId,
 	postApplicationReviewId,
-
+	postAwardPoints,
+	postEmpPoints,
+	postTrainingPoints,
+	postDevelopmentPoints,
+	postApplicationPoints,
 	getInterview,
 	postInterview,
 	editInterview,
@@ -1511,6 +1585,7 @@ export default {
 
 	getLogout,
 	checkAvailability,
-	postAssessor,getAssessorView,
+	postAssessor,
+	getAssessorView,
 	postAssessorEdit,
 };

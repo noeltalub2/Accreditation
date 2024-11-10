@@ -241,11 +241,44 @@ router.post(
 	adminController.postAssessorEdit
 );
 
-router.get(
-	"/download-evaluation/:application_id/:assessor_id",
+router.post(
+	"/award/points/:id",
 	auth.requireAuth,
 	auth.checkRole(["admin"]),
-	adminController.generateEvaluationId
+	uploadDocument.none(),
+	adminController.postAwardPoints
+);
+
+router.post(
+	"/emp/points/:id",
+	auth.requireAuth,
+	auth.checkRole(["admin"]),
+	uploadDocument.none(),
+	adminController.postEmpPoints
+);
+
+router.post(
+	"/training/points/:id",
+	auth.requireAuth,
+	auth.checkRole(["admin"]),
+	uploadDocument.none(),
+	adminController.postTrainingPoints
+);
+
+router.post(
+	"/development/points/:id",
+	auth.requireAuth,
+	auth.checkRole(["admin"]),
+	uploadDocument.none(),
+	adminController.postDevelopmentPoints
+);
+
+router.post(
+	"/application/points/:id",
+	auth.requireAuth,
+	auth.checkRole(["admin"]),
+	uploadDocument.none(),
+	adminController.postApplicationPoints
 );
 
 export default router;

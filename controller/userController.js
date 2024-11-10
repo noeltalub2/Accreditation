@@ -481,10 +481,13 @@ const checkPhonenumber = async (req, res) => {
 
 const getHome = async (req, res) => {
 	const userId = res.locals.user.id;
-	const count_application = (await query(
-		"SELECT COUNT(*) AS total_applications FROM application WHERE uuid = ?",[userId]
-	))[0].total_applications;
-	
+	const count_application = (
+		await query(
+			"SELECT COUNT(*) AS total_applications FROM application WHERE uuid = ?",
+			[userId]
+		)
+	)[0].total_applications;
+
 	const interview = await query(
 		"SELECT * FROM interviews WHERE user_id = ? ORDER BY id DESC LIMIT 1",
 		[userId]
@@ -493,7 +496,8 @@ const getHome = async (req, res) => {
 		title: "Dashboard",
 		page: "home",
 		pagetitle: "Dashboard",
-		interview,count_application
+		interview,
+		count_application,
 	});
 };
 
@@ -529,258 +533,216 @@ const getSubmitApplication = async (req, res) => {
 };
 
 const postApplicationForm = async (req, res) => {
-	const userId = res.locals.user.id;
+    const userId = res.locals.user.id;
 
-	// Destructure all fields from req.body
-	const {
-		name,
-		address,
-		zip_code,
-		phonenumber,
-		email,
-		birth_date,
-		birthplace,
-		civil_status,
-		sex,
-		nationality,
-		languages,
-		first_priority,
-		second_priority,
-		third_priority,
-		cost_accreditation,
-		time_commitment,
-		qualification,
-		school_name,
-		school_address,
-		date_first_attended,
-		date_last_attended,
-		job_title,
-		company_name_ordinary,
-		company_address_ordinary,
-		date_started_work_ordinary,
-		date_ended_work_ordinary,
-		company_name_supervisor,
-		company_address_supervisor,
-		date_started_work_supervisor,
-		date_ended_work_supervisor,
-		company_name_manager,
-		company_address_manager,
-		date_started_work_manager,
-		date_ended_work_manager,
-		training_level,
-		title_local,
-		organization_local,
-		date_local,
-		title_national,
-		organization_national,
-		date_national,
-		title_international,
-		organization_international,
-		date_international,
-		professional_dev_level,
-		organization_local_dev,
-		description_local_dev,
-		organization_national_dev,
-		description_national_dev,
-		organization_international_dev,
-		description_international_dev,
-		eligibility,
-		award_level,
-		final_essay,hobbies_leisure,special_skills,work_related_activities,volunteer_activities,travels
-	} = req.body;
+    // Arrays from req.body
+    const {
+        // Work Experience
+        job_title,
+        company_name_work,
+        company_address_work,
+        date_started_end_work,
+        employment_file_work,
 
-	try {
-		// Check if the user has any application with a status that prevents new submission
-		const existingApplication = await query(
-			"SELECT * FROM application WHERE uuid = ? AND status IN (?, ?, ?, ?)",
-			[
-				userId,
-				"Pending",
-				"Under Review",
-				"Additional Information Requested",
-				"Approved",
-			]
-		);
+        // Training
+        training_level,
+        training_title,
+        training_sponsor,
+        training_date,
+        training_certificate,
 
-		if (existingApplication.length > 0) {
-			return res.status(400).json({
-				message:
-					"You already have a current application that is still being processed or approved.",
-			});
-		}
+        // Professional Development
+        professional_dev_level,
+        organization_dev,
+        description_dev,
+        certificate_file_dev,
 
-		const result = await query(
-			`INSERT INTO application (
-               uuid, name, address, zip_code, phonenumber, email, birth_date, 
-               birthplace, civil_status, sex, nationality, languages, first_priority, 
-               second_priority, third_priority, cost_accreditation, time_commitment, 
-               qualification, school_name, school_address, date_first_attended, 
-               date_last_attended, job_title, company_name_ordinary, 
-               company_address_ordinary, date_started_work_ordinary, 
-               date_ended_work_ordinary, company_name_supervisor, 
-               company_address_supervisor, date_started_work_supervisor, 
-               date_ended_work_supervisor, company_name_manager, 
-               company_address_manager, date_started_work_manager, 
-               date_ended_work_manager, training_level, title_local, 
-               organization_local, date_local, title_national, 
-               organization_national, date_national, title_international, 
-               organization_international, date_international, professional_dev_level, 
-               organization_local_dev, description_local_dev, 
-               organization_national_dev, description_national_dev, 
-               organization_international_dev, description_international_dev, 
-               eligibility, award_level, final_essay,
+        // Award
+        award_level,
+        certificate_file_award
+    } = req.body;
 
-               tor_file,
 
-               employment_file_ordinary,
-
-               employment_file_supervisor,
-
-               employment_file_manager,
-
-               certificate_file_local,
-
-               certificate_file_national,
-
-               certificate_file_international,
-
-               certificate_file_local_dev,
-
-               certificate_file_national_dev,
-
-               certificate_file_international_dev,
-
-               certificate_file_sub_professional,
-
-               certificate_file_technical_nc,
-
-               certificate_file_professional_prc_csc,
-
-               certificate_file_local_regional,
-
-               certificate_file_national_international,hobbies_leisure,special_skills,work_related_activities,volunteer_activities,travels
-           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?,?, ?, ?, ?, ?, ?, ?)`,
-			[
-				userId || null,
-				name || null,
-				address || null,
-				zip_code || null,
-				phonenumber || null,
-				email || null,
-				birth_date || null,
-				birthplace || null,
-				civil_status || null,
-				sex || null,
-				nationality || null,
-				languages || null,
-				first_priority || null,
-				second_priority || null,
-				third_priority || null,
-				cost_accreditation || null,
-				time_commitment || null,
-				qualification || null,
-				school_name || null,
-				school_address || null,
-				date_first_attended || null,
-				date_last_attended || null,
-				job_title || null,
-				company_name_ordinary || null,
-				company_address_ordinary || null,
-				date_started_work_ordinary || null,
-				date_ended_work_ordinary || null,
-				company_name_supervisor || null,
-				company_address_supervisor || null,
-				date_started_work_supervisor || null,
-				date_ended_work_supervisor || null,
-				company_name_manager || null,
-				company_address_manager || null,
-				date_started_work_manager || null,
-				date_ended_work_manager  || null,
-				training_level || null,
-				title_local || null,
-				organization_local || null,
-				date_local || null,
-				title_national || null,
-				organization_national || null,
-				date_national || null,
-				title_international || null,
-				organization_international || null,
-				date_international || null,
-				professional_dev_level || null,
-				organization_local_dev || null,
-				description_local_dev || null,
-				organization_national_dev || null,
-				description_national_dev || null,
-				organization_international_dev || null,
-				description_international_dev || null,
-				eligibility || null,
-				award_level || null,
-				final_essay || null,
-				// Use filename instead of path and check for existence
-				req.files.find((file) => file.fieldname === "tor_file")
-					?.filename || null,
-				req.files.find(
-					(file) => file.fieldname === "employment_file_ordinary"
-				)?.filename || null,
-				req.files.find(
-					(file) => file.fieldname === "employment_file_supervisor"
-				)?.filename || null,
-				req.files.find(
-					(file) => file.fieldname === "employment_file_manager"
-				)?.filename || null,
-				req.files.find(
-					(file) => file.fieldname === "certificate_file_local"
-				)?.filename || null,
-				req.files.find(
-					(file) => file.fieldname === "certificate_file_national"
-				)?.filename || null,
-				req.files.find(
-					(file) =>
-						file.fieldname === "certificate_file_international"
-				)?.filename || null,
-				req.files.find(
-					(file) => file.fieldname === "certificate_file_local_dev"
-				)?.filename || null,
-				req.files.find(
-					(file) => file.fieldname === "certificate_file_national_dev"
-				)?.filename || null,
-				req.files.find(
-					(file) =>
-						file.fieldname === "certificate_file_international_dev"
-				)?.filename || null,
-				req.files.find(
-					(file) =>
-						file.fieldname === "certificate_file_sub_professional"
-				)?.filename || null,
-				req.files.find(
-					(file) => file.fieldname === "certificate_file_technical_nc"
-				)?.filename || null,
-				req.files.find(
-					(file) =>
-						file.fieldname ===
-						"certificate_file_professional_prc_csc"
-				)?.filename || null,
-				req.files.find(
-					(file) =>
-						file.fieldname === "certificate_file_local_regional"
-				)?.filename || null,
-				req.files.find(
-					(file) =>
-						file.fieldname ===
-						"certificate_file_national_international"
-				)?.filename || null,hobbies_leisure,special_skills,work_related_activities,volunteer_activities,travels
-			]
-		);
 	
-		res.status(200).json({
-			success: true,
-			message: "You have successfully submitted your application.",
-		});
-	} catch (error) {
-		console.error(error);
-		res.status(500).json({ message: "Error uploading." });
-	}
+    // Other fields (non-array)
+    const {
+        name,
+        address,
+        zip_code,
+        phonenumber,
+        email,
+        birth_date,
+        birthplace,
+        civil_status,
+        sex,
+        nationality,
+        languages,
+        first_priority,
+        second_priority,
+        third_priority,
+        cost_accreditation,
+        time_commitment,
+        qualification,
+        school_name,
+        school_address,
+        date_first_attended,
+        date_last_attended,
+        final_essay,
+        hobbies_leisure,
+        special_skills,
+        work_related_activities,
+        volunteer_activities,
+        travels,
+    } = req.body;
+
+    try {
+        // Check if the user has an existing application in progress
+        const existingApplication = await query(
+            "SELECT * FROM application WHERE uuid = ? AND status IN (?, ?, ?, ?)",
+            [
+                userId,
+                "Pending",
+                "Under Review",
+                "Additional Information Requested",
+                "Approved",
+            ]
+        );
+
+        if (existingApplication.length > 0) {
+            return res.status(400).json({
+                message:
+                    "You already have a current application that is still being processed or approved.",
+            });
+        }
+
+        // Insert into the application table
+        const result = await query(
+            `INSERT INTO application (
+                uuid, name, address, zip_code, phonenumber, email, birth_date, 
+                birthplace, civil_status, sex, nationality, languages, first_priority, 
+                second_priority, third_priority, cost_accreditation, time_commitment, 
+                qualification, school_name, school_address, date_first_attended, 
+                date_last_attended, final_essay, tor_file, certificate_file_sub_professional,
+                certificate_file_technical_nc, certificate_file_professional_prc_csc, hobbies_leisure,
+                special_skills, work_related_activities, volunteer_activities, travels
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            [
+                userId || null,
+                name || null,
+                address || null,
+                zip_code || null,
+                phonenumber || null,
+                email || null,
+                birth_date || null,
+                birthplace || null,
+                civil_status || null,
+                sex || null,
+                nationality || null,
+                languages || null,
+                first_priority || null,
+                second_priority || null,
+                third_priority || null,
+                cost_accreditation || null,
+                time_commitment || null,
+                qualification || null,
+                school_name || null,
+                school_address || null,
+                date_first_attended || null,
+                date_last_attended || null,
+                final_essay || null,
+                // Handle file uploads
+                req.files.find((file) => file.fieldname === "tor_file")?.filename || null,
+                req.files.find((file) => file.fieldname === "certificate_file_sub_professional")?.filename || null,
+                req.files.find((file) => file.fieldname === "certificate_file_technical_nc")?.filename || null,
+                req.files.find((file) => file.fieldname === "certificate_file_professional_prc_csc")?.filename || null,
+                hobbies_leisure || null,
+                special_skills || null,
+                work_related_activities || null,
+                volunteer_activities || null,
+                travels || null,
+            ]
+        );
+
+        // Get the application ID for the newly inserted application
+        const applicationId = result.insertId;
+
+        // Insert into work_experience table (batch insert)
+        if (job_title && job_title.length > 0) {
+            const workExperienceData = job_title.map((item, index) => [
+                applicationId,
+                item,
+                company_name_work[index] || null,
+                company_address_work[index] || null,
+                date_started_end_work[index] || null,
+                req.files.find((file) => file.fieldname === `employment_file_work[${index}]`)?.filename || null // Find the file for this index
+            ]);
+            await query(
+                `INSERT INTO work_experience (application_id, job_title, company_name, company_address, date_started_end, employment_file) 
+                VALUES ?`,
+                [workExperienceData]
+            );
+        }
+
+        // Insert into training table (batch insert)
+        if (training_title && training_title.length > 0) {
+            const trainingData = training_title.map((item, index) => [
+                applicationId,
+                training_level[index] || null,
+                item,
+                training_sponsor[index] || null,
+                training_date[index] || null,
+          
+				req.files.find((file) => file.fieldname === `training_certificate[${index}]`)?.filename || null,
+            ]);
+            await query(
+                `INSERT INTO training (application_id, training_level, training_title, training_sponsor, training_date, training_certificate)
+                VALUES ?`,
+                [trainingData]
+            );
+        }
+
+        // Insert into professional_development table (batch insert)
+        if (professional_dev_level && professional_dev_level.length > 0) {
+            const professionalDevelopmentData = professional_dev_level.map((item, index) => [
+                applicationId,
+                item,
+                organization_dev[index] || null,
+                description_dev[index] || null,
+             
+				req.files.find((file) => file.fieldname === `certificate_file_dev[${index}]`)?.filename || null,
+            ]);
+            await query(
+                `INSERT INTO professional_development (application_id, professional_dev_level, organization_dev, description_dev, certificate_file_dev)
+                VALUES ?`,
+                [professionalDevelopmentData]
+            );
+        }
+
+        // Insert into award table (batch insert)
+        if (award_level && award_level.length > 0) {
+            const awardData = award_level.map((item, index) => [
+                applicationId,
+                item,
+                
+				req.files.find((file) => file.fieldname === `certificate_file_award[${index}]`)?.filename || null,
+            ]);
+            await query(
+                `INSERT INTO award (application_id, award_level, certificate_file_award)
+                VALUES ?`,
+                [awardData]
+            );
+        }
+
+        res.status(200).json({
+            success: true,
+            message: "You have successfully submitted your application.",
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error submitting application." });
+    }
 };
+
 
 const getSubmitApplicationView = async (req, res) => {
 	const application = (
@@ -789,10 +751,26 @@ const getSubmitApplicationView = async (req, res) => {
 			req.params.id,
 		])
 	)[0];
+	const workExperience = await query(
+		"SELECT * FROM work_experience WHERE application_id = ? ORDER BY id DESC",
+		[req.params.id]
+	)
+	const trainingExperience = await query(
+		"SELECT * FROM training WHERE application_id = ? ORDER BY id DESC",
+		[req.params.id]
+	)
+	const professionalDevelopments = await query(
+		"SELECT * FROM professional_development WHERE application_id = ? ORDER BY id DESC",
+		[req.params.id]
+	)
+	const awards = await query(
+		"SELECT * FROM award WHERE application_id = ? ORDER BY id DESC",
+		[req.params.id]
+	)
 	const comments = await query(
 		"SELECT * FROM comments WHERE application_id = ? ORDER BY id DESC",
 		[req.params.id]
-	)
+	);
 	const interview_ = await query(
 		"SELECT * FROM interviews WHERE user_id = ? AND application_id = ? ORDER BY id DESC",
 		[res.locals.user.id, req.params.id]
@@ -804,8 +782,6 @@ const getSubmitApplicationView = async (req, res) => {
 		[req.params.id]
 	);
 
-
-
 	// Render the page with updated project data
 	res.render("User/application_view", {
 		title: "View Submitted Application Form",
@@ -815,6 +791,7 @@ const getSubmitApplicationView = async (req, res) => {
 		comments,
 		interview,
 		evaluations,
+		workExperience,trainingExperience,professionalDevelopments,awards
 	});
 };
 

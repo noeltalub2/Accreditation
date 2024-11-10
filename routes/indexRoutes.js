@@ -5,6 +5,14 @@ import auth from "../middleware/authMiddleware.js";
 const router = Router();
 
 router.get("/", indexController.getIndex);
+
+router.get(
+	"/download-evaluation/:application_id/:assessor_id",
+	auth.requireAuth,
+	auth.checkRole(["admin", "assessor"]),
+	indexController.generateEvaluationId
+);
+
 router.get(
 	"/logout",
 	auth.requireAuth,

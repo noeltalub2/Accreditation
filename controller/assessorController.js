@@ -107,12 +107,29 @@ const getEvaluationId = async (req, res) => {
 	const application = (
 		await query("SELECT * FROM application WHERE id = ?", [id])
 	)[0];
+
+	const workExperience = await query(
+		"SELECT * FROM work_experience WHERE application_id = ? ORDER BY id DESC",
+		[id]
+	)
+	const trainingExperience = await query(
+		"SELECT * FROM training WHERE application_id = ? ORDER BY id DESC",
+		[id]
+	)
+	const professionalDevelopments = await query(
+		"SELECT * FROM professional_development WHERE application_id = ? ORDER BY id DESC",
+		[id]
+	)
+	const awards = await query(
+		"SELECT * FROM award WHERE application_id = ? ORDER BY id DESC",
+		[id]
+	)
 	res.render("Assessor/evaluation_view", {
 		title: "Evaluate Applicant",
 		page: "evaluation",
 		pagetitle: "Evaluate Applicant",
 		usersEvaluation,
-		application,
+		application, workExperience, trainingExperience, professionalDevelopments, awards
 	});
 };
 

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 03, 2024 at 04:55 PM
+-- Generation Time: Nov 10, 2024 at 07:31 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -78,53 +78,14 @@ CREATE TABLE `application` (
   `date_first_attended` date DEFAULT NULL,
   `date_last_attended` date DEFAULT NULL,
   `tor_file` varchar(255) DEFAULT NULL,
-  `job_title` varchar(100) DEFAULT NULL,
-  `company_name_ordinary` varchar(255) DEFAULT NULL,
-  `company_address_ordinary` varchar(255) DEFAULT NULL,
-  `date_started_work_ordinary` date DEFAULT NULL,
-  `date_ended_work_ordinary` date DEFAULT NULL,
-  `employment_file_ordinary` varchar(255) DEFAULT NULL,
-  `company_name_supervisor` varchar(255) DEFAULT NULL,
-  `company_address_supervisor` varchar(255) DEFAULT NULL,
-  `date_started_work_supervisor` date DEFAULT NULL,
-  `date_ended_work_supervisor` date DEFAULT NULL,
-  `employment_file_supervisor` varchar(255) DEFAULT NULL,
-  `company_name_manager` varchar(255) DEFAULT NULL,
-  `company_address_manager` varchar(255) DEFAULT NULL,
-  `date_started_work_manager` date DEFAULT NULL,
-  `date_ended_work_manager` date DEFAULT NULL,
-  `employment_file_manager` varchar(255) DEFAULT NULL,
-  `training_level` varchar(50) DEFAULT NULL,
-  `title_local` varchar(100) DEFAULT NULL,
-  `organization_local` varchar(100) DEFAULT NULL,
-  `date_local` text DEFAULT NULL,
-  `title_national` varchar(100) DEFAULT NULL,
-  `organization_national` varchar(100) DEFAULT NULL,
-  `date_national` text DEFAULT NULL,
-  `title_international` varchar(100) DEFAULT NULL,
-  `organization_international` varchar(100) DEFAULT NULL,
-  `date_international` text DEFAULT NULL,
-  `professional_dev_level` varchar(50) DEFAULT NULL,
-  `organization_local_dev` varchar(100) DEFAULT NULL,
-  `description_local_dev` text DEFAULT NULL,
-  `organization_national_dev` varchar(100) DEFAULT NULL,
-  `description_national_dev` text DEFAULT NULL,
-  `organization_international_dev` varchar(100) DEFAULT NULL,
-  `description_international_dev` text DEFAULT NULL,
-  `eligibility` varchar(100) DEFAULT NULL,
-  `award_level` varchar(100) DEFAULT NULL,
+  `education_points` varchar(11) DEFAULT NULL,
   `final_essay` text DEFAULT NULL,
-  `certificate_file_local` varchar(255) DEFAULT NULL,
-  `certificate_file_national` varchar(255) DEFAULT NULL,
-  `certificate_file_international` varchar(255) DEFAULT NULL,
-  `certificate_file_local_dev` varchar(255) DEFAULT NULL,
-  `certificate_file_national_dev` varchar(255) DEFAULT NULL,
-  `certificate_file_international_dev` varchar(255) DEFAULT NULL,
   `certificate_file_sub_professional` varchar(255) DEFAULT NULL,
   `certificate_file_technical_nc` varchar(255) DEFAULT NULL,
   `certificate_file_professional_prc_csc` varchar(255) DEFAULT NULL,
-  `certificate_file_local_regional` varchar(255) DEFAULT NULL,
-  `certificate_file_national_international` varchar(255) DEFAULT NULL,
+  `csc_points` varchar(11) DEFAULT NULL,
+  `nc_points` varchar(11) DEFAULT NULL,
+  `prc_points` varchar(11) DEFAULT NULL,
   `status` enum('Pending','Under Review','Additional Information Requested','Approved','Rejected') NOT NULL DEFAULT 'Pending',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -170,6 +131,22 @@ CREATE TABLE `assessor` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `award`
+--
+
+CREATE TABLE `award` (
+  `id` int(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  `award_level` varchar(255) DEFAULT NULL,
+  `certificate_file_award` varchar(255) DEFAULT NULL,
+  `points` varchar(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `comments`
 --
 
@@ -177,7 +154,7 @@ CREATE TABLE `comments` (
   `id` int(11) NOT NULL,
   `application_id` int(11) NOT NULL,
   `author` varchar(255) NOT NULL DEFAULT 'Administrator',
-  `text` text NOT NULL,
+  `text` text DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -225,6 +202,43 @@ CREATE TABLE `interviews` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `professional_development`
+--
+
+CREATE TABLE `professional_development` (
+  `id` int(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  `professional_dev_level` varchar(255) DEFAULT NULL,
+  `organization_dev` varchar(255) DEFAULT NULL,
+  `description_dev` text DEFAULT NULL,
+  `certificate_file_dev` varchar(255) DEFAULT NULL,
+  `points` varchar(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `training`
+--
+
+CREATE TABLE `training` (
+  `id` int(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  `training_level` varchar(255) DEFAULT NULL,
+  `training_title` varchar(255) DEFAULT NULL,
+  `training_sponsor` varchar(255) DEFAULT NULL,
+  `training_date` varchar(255) DEFAULT NULL,
+  `training_certificate` varchar(255) DEFAULT NULL,
+  `points` varchar(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `users`
 --
 
@@ -247,6 +261,25 @@ CREATE TABLE `users` (
   `resetPasswordToken` varchar(255) DEFAULT NULL,
   `resetPasswordExpires` bigint(20) DEFAULT NULL,
   `verification_token` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `work_experience`
+--
+
+CREATE TABLE `work_experience` (
+  `id` int(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  `job_title` varchar(255) DEFAULT NULL,
+  `company_name` varchar(255) DEFAULT NULL,
+  `company_address` varchar(255) DEFAULT NULL,
+  `date_started_end` varchar(255) DEFAULT NULL,
+  `employment_file` varchar(255) DEFAULT NULL,
+  `points` varchar(11) DEFAULT NULL,
+  `created_at` datetime NOT NULL DEFAULT current_timestamp(),
+  `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -286,6 +319,13 @@ ALTER TABLE `assessor`
   ADD UNIQUE KEY `uuid` (`uuid`);
 
 --
+-- Indexes for table `award`
+--
+ALTER TABLE `award`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `application_id` (`application_id`);
+
+--
 -- Indexes for table `comments`
 --
 ALTER TABLE `comments`
@@ -308,6 +348,20 @@ ALTER TABLE `interviews`
   ADD KEY `application_id` (`application_id`);
 
 --
+-- Indexes for table `professional_development`
+--
+ALTER TABLE `professional_development`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `application_id` (`application_id`);
+
+--
+-- Indexes for table `training`
+--
+ALTER TABLE `training`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `application_id` (`application_id`);
+
+--
 -- Indexes for table `users`
 --
 ALTER TABLE `users`
@@ -316,6 +370,13 @@ ALTER TABLE `users`
   ADD UNIQUE KEY `phonenumber` (`phonenumber`),
   ADD UNIQUE KEY `uuid` (`uuid`),
   ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Indexes for table `work_experience`
+--
+ALTER TABLE `work_experience`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `application_id` (`application_id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -346,6 +407,12 @@ ALTER TABLE `assessor`
   MODIFY `assessor_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `award`
+--
+ALTER TABLE `award`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
@@ -364,9 +431,27 @@ ALTER TABLE `interviews`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `professional_development`
+--
+ALTER TABLE `professional_development`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `training`
+--
+ALTER TABLE `training`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `work_experience`
+--
+ALTER TABLE `work_experience`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
@@ -387,6 +472,12 @@ ALTER TABLE `application_assessors`
   ADD CONSTRAINT `application_assessors_ibfk_2` FOREIGN KEY (`assessor_id`) REFERENCES `assessor` (`uuid`);
 
 --
+-- Constraints for table `award`
+--
+ALTER TABLE `award`
+  ADD CONSTRAINT `award_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`) ON DELETE CASCADE;
+
+--
 -- Constraints for table `evaluations`
 --
 ALTER TABLE `evaluations`
@@ -399,6 +490,24 @@ ALTER TABLE `evaluations`
 ALTER TABLE `interviews`
   ADD CONSTRAINT `interviews_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`uuid`),
   ADD CONSTRAINT `interviews_ibfk_2` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`);
+
+--
+-- Constraints for table `professional_development`
+--
+ALTER TABLE `professional_development`
+  ADD CONSTRAINT `professional_development_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `training`
+--
+ALTER TABLE `training`
+  ADD CONSTRAINT `training_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `work_experience`
+--
+ALTER TABLE `work_experience`
+  ADD CONSTRAINT `work_experience_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

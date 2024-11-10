@@ -17,63 +17,71 @@
     </div>
   </div>
   <div class="row g-3">
-    <% interview.forEach(function(interview) { %>
-      <div class="col-lg-4 col-md-6"> <!-- Responsive columns -->
-        <div class="card shadow-sm border-light"> <!-- Added shadow and border styles -->
-          <div class="card-body">
-            <!-- Change title based on interview status -->
-            <h5 class="card-title mb-3">
-              <%= interview.status === 'Rejected' ? 'Interview Status' : 'Upcoming Interview' %>
-            </h5>
-            
-            <p class="mb-1 text-muted">
-              <span class="badge 
-                <%= interview.status === 'Pending' ? 'bg-warning' : '' %>
-                <%= interview.status === 'Accepted' ? 'bg-success' : '' %>
-                <%= interview.status === 'Rejected' ? 'bg-danger' : '' %>
-                <%= interview.status === 'Completed' ? 'bg-info' : '' %>
-                <%= interview.status === 'Cancelled' ? 'bg-danger' : '' %> <!-- Added for Cancelled -->
-              " class="me-1"><%= interview.status %></span>
-              <span class="text-nowrap">
-                <%= interview.status !== 'Rejected' && interview.status !== 'Cancelled' ? 'On ' + new
-                Date(interview.interview_date).toLocaleDateString() + ' at '
-                + new Date('1970-01-01T' +
-                interview.interview_time).toLocaleString('en-US', {
-                hour: 'numeric' , minute: 'numeric' , second: 'numeric' ,
-                hour12: true }) : '' %>
-              </span>
-            </p>
-            
-            <p class="card-text">
-              <small class="text-muted">
-                <%= interview.status === 'Rejected' ? 'Unfortunately, this interview has been rejected.' : 
-                    interview.status === 'Cancelled' ? 'This interview has been cancelled.' : 
-                    interview.status === 'Completed' ? 'Interview has been completed. Thank you!. Please wait for the result.' : 
-                    'Please prepare to submit personality and work aptitude tests.' %>
-              </small>
-              
-            </p>
-    
-            <!-- Conditionally render buttons based on interview status -->
-            <% if (interview.status === 'Pending') { %>
-              <div class="d-flex justify-content-between mt-3">
-                <button class="btn btn-primary w-100" onclick="confirmAccept('<%= interview.id %>')">Accept Interview</button>
-                <button class="btn btn-danger w-100" onclick="confirmReject('<%= interview.id %>')">Reject Interview</button>
-              </div>
-            <% } else if (interview.status === 'Accepted') { %>
-              <p class="text-success mt-3">Interview Accepted. Prepare accordingly!</p>
-            <% } else if (interview.status === 'Rejected') { %>
-              <p class="text-danger mt-3">Interview Rejected.</p>
-            <% } else if (interview.status === 'Completed') { %>
-              <p class="text-info mt-3">Interview Completed. Thank you!</p>
-            <% } else if (interview.status === 'Cancelled') { %> <!-- Added condition for Cancelled -->
-              <p class="text-secondary mt-3">Interview Cancelled.</p>
-            <% } %>
-          </div>
+    <% if (interview.length === 0) { %>
+      <div class="col-12">
+        <div class="alert alert-info text-center" role="alert">
+          No interview available.
         </div>
       </div>
-    <% }); %>
+    <% } else { %>
+      <% interview.forEach(function(interview) { %>
+        <div class="col-lg-4 col-md-6"> <!-- Responsive columns -->
+          <div class="card shadow-sm border-light"> <!-- Added shadow and border styles -->
+            <div class="card-body">
+              <!-- Change title based on interview status -->
+              <h5 class="card-title mb-3">
+                <%= interview.status === 'Rejected' ? 'Interview Status' : 'Upcoming Interview' %>
+              </h5>
+              
+              <p class="mb-1 text-muted">
+                <span class="badge 
+                  <%= interview.status === 'Pending' ? 'bg-warning' : '' %>
+                  <%= interview.status === 'Accepted' ? 'bg-success' : '' %>
+                  <%= interview.status === 'Rejected' ? 'bg-danger' : '' %>
+                  <%= interview.status === 'Completed' ? 'bg-info' : '' %>
+                  <%= interview.status === 'Cancelled' ? 'bg-danger' : '' %> <!-- Added for Cancelled -->
+                " class="me-1"><%= interview.status %></span>
+                <span class="text-nowrap">
+                  <%= interview.status !== 'Rejected' && interview.status !== 'Cancelled' ? 'On ' + new
+                  Date(interview.interview_date).toLocaleDateString() + ' at '
+                  + new Date('1970-01-01T' +
+                  interview.interview_time).toLocaleString('en-US', {
+                  hour: 'numeric' , minute: 'numeric' , second: 'numeric' ,
+                  hour12: true }) : '' %>
+                </span>
+              </p>
+              
+              <p class="card-text">
+                <small class="text-muted">
+                  <%= interview.status === 'Rejected' ? 'Unfortunately, this interview has been rejected.' : 
+                      interview.status === 'Cancelled' ? 'This interview has been cancelled.' : 
+                      interview.status === 'Completed' ? 'Interview has been completed. Thank you!. Please wait for the result.' : 
+                      'Please prepare to submit personality and work aptitude tests.' %>
+                </small>
+              </p>
+      
+              <!-- Conditionally render buttons based on interview status -->
+              <% if (interview.status === 'Pending') { %>
+                <div class="d-flex justify-content-between mt-3">
+                  <button class="btn btn-primary w-100" onclick="confirmAccept('<%= interview.id %>')">Accept Interview</button>
+                  <button class="btn btn-danger w-100" onclick="confirmReject('<%= interview.id %>')">Reject Interview</button>
+                </div>
+              <% } else if (interview.status === 'Accepted') { %>
+                <p class="text-success mt-3">Interview Accepted. Prepare accordingly!</p>
+              <% } else if (interview.status === 'Rejected') { %>
+                <p class="text-danger mt-3">Interview Rejected.</p>
+              <% } else if (interview.status === 'Completed') { %>
+                <p class="text-info mt-3">Interview Completed. Thank you!</p>
+              <% } else if (interview.status === 'Cancelled') { %> <!-- Added condition for Cancelled -->
+                <p class="text-secondary mt-3">Interview Cancelled.</p>
+              <% } %>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    <% } %>
   </div>
+  
   
 
 <!-- SweetAlert2 Script -->

@@ -306,368 +306,202 @@
                   <input type="file" class="form-control" id="tor_file" name="tor_file" accept=".pdf" required multiple>
                 </div>
   
-  
                 <h4>IV. Work Experiences</h4>
-                <div class="mb-3">
-                  <label for="job_title" class="form-label">Position/Job Title</label>
-                  <select id="job_title" name="job_title" class="form-control" onchange="showFields(this.value)">
-                    <option value="" hidden selected>Select Job Title</option>
-                    <option value="ordinary_employee">Ordinary Employee/Regular Employee</option>
-                    <option value="supervisor">Supervisor</option>
-                    <option value="head_manager">Head/Manager</option>
-                  </select>
-                </div>
-  
-                <div id="ordinary_employee_fields" class="input-fields" style="display: none;">
-                  <h5>Ordinary Employee/Regular Employee Details</h5>
-                  <div class="mb-3">
-                    <label for="company_name_ordinary" class="form-label">Company Name</label>
-                    <input type="text" class="form-control" id="company_name_ordinary" name="company_name_ordinary"
-                      required>
+                <div id="ordinary_employee_fields" class="input-fields">
+                  <div class="row mb-3">
+                    <div class='col-sm-2'>
+                      <label for='job_title' class='form-label'>Job Title</label>
+                      <select name='job_title[0]' class='form-control' required>
+                        <option value="" hidden selected>Select Job Title</option>
+                        <option value='Ordinary Employee'>Ordinary Employee/Regular Employee</option>
+                        <option value='Supervisor'>Supervisor</option>
+                        <option value='Head Manager'>Head/Manager</option>
+                      </select>
+                    </div>
+                
+                    <div class='col-sm-2'>
+                      <label for='company_name_work' class='form-label'>Company Name</label>
+                      <input type='text' class='form-control' name='company_name_work[0]' required>
+                    </div>
+                
+                    <div class='col-sm-2'>
+                      <label for='company_address_work' class='form-label'>Company Address</label>
+                      <input type='text' class='form-control' name='company_address_work[0]' required>
+                    </div>
+                
+                    <div class='col-sm-3'>
+                      <label for='date_started_end_work' class='form-label'>Date Started and End</label>
+                      <input type='text' class='form-control date-range' name='date_started_end_work[0]' required>
+                    </div>
+                
+                    <div class="col-sm-3">
+                      <label for="employment_file_work" class="form-label">Certificate of Employment</label>
+                      <input type="file" class="form-control" name="employment_file_work[0]" accept=".pdf" required />
+                    </div> 
                   </div>
-  
+                
+                  <!-- Dynamic Fields Section -->
+                  <div id="dynamic_fields_container"></div>
+                
+                  <!-- Add Button -->
                   <div class="mb-3">
-                    <label for="company_address_ordinary" class="form-label">Company Address</label>
-                    <input type="text" class="form-control" id="company_address_ordinary" name="company_address_ordinary"
-                      required>
-                  </div>
-  
-                  <div class="mb-3">
-                    <label for="date_started_work_ordinary" class="form-label">Date Started</label>
-                    <input type="date" class="form-control" id="date_started_work_ordinary"
-                      name="date_started_work_ordinary" required>
-                  </div>
-  
-                  <div class="mb-3">
-                    <label for="date_ended_work_ordinary" class="form-label">Date Ended</label>
-                    <input type="date" class="form-control" id="date_ended_work_ordinary" name="date_ended_work_ordinary"
-                      required>
-                  </div>
-  
-                  <div class="mb-3">
-                    <label for="employment_file_ordinary" class="form-label">Copy of Certificate of Employment</label>
-                    <input type="file" class="form-control" id="employment_file_ordinary" name="employment_file_ordinary"
-                      accept=".pdf" required multiple>
-                  </div>
-                </div>
-  
-                <div id="supervisor_fields" class="input-fields" style="display: none;">
-                  <h5>Supervisor Details</h5>
-                  <div class="mb-3">
-                    <label for="company_name_supervisor" class="form-label">Company Name</label>
-                    <input type="text" class="form-control" id="company_name_supervisor" name="company_name_supervisor"
-                      required>
-                  </div>
-  
-                  <div class="mb-3">
-                    <label for="company_address_supervisor" class="form-label">Company Address</label>
-                    <input type="text" class="form-control" id="company_address_supervisor"
-                      name="company_address_supervisor" required>
-                  </div>
-  
-                  <div class="mb-3">
-                    <label for="date_started_work_supervisor" class="form-label">Date Started</label>
-                    <input type="date" class="form-control " id="date_started_work_supervisor"
-                      name="date_started_work_supervisor" required>
-                  </div>
-  
-                  <div class="mb-3">
-                    <label for="date_ended_work_supervisor" class="form-label">Date Ended</label>
-                    <input type="date" class="form-control" id="date_ended_work_supervisor"
-                      name="date_ended_work_supervisor" required>
-                  </div>
-  
-                  <div class="mb-3">
-                    <label for="employment_file_supervisor" class="form-label">Copy of Certificate of Employment</label>
-                    <input type="file" class="form-control" id="employment_file_supervisor"
-                      name="employment_file_supervisor" accept=".pdf" required multiple>
+                    <button type="button" class="btn btn-primary" id="add_field_button">Add Another Work Experience</button>
                   </div>
                 </div>
-  
-                <div id="head_manager_fields" class="input-fields" style="display: none;">
-                  <h5>Head/Manager Details</h5>
-                  <div class="mb-3">
-                    <label for="company_name_manager" class="form-label">Company Name</label>
-                    <input type="text" class="form-control" id="company_name_manager" name="company_name_manager"
-                      required>
-                  </div>
-  
-                  <div class="mb-3">
-                    <label for="company_address_manager" class="form-label">Company Address</label>
-                    <input type="text" class="form-control" id="company_address_manager" name="company_address_manager"
-                      required>
-                  </div>
-  
-                  <div class="mb-3">
-                    <label for="date_started_work_manager" class="form-label">Date Started</label>
-                    <input type="date" class="form-control " id="date_started_work_manager"
-                      name="date_started_work_manager" required>
-                  </div>
-  
-                  <div class="mb-3">
-                    <label for="date_ended_work_manager" class="form-label">Date Ended</label>
-                    <input type="date" class="form-control" id="date_ended_work_manager" name="date_ended_work_manager"
-                      required>
-                  </div>
-  
-                  <div class="mb-3">
-                    <label for="employment_file_manager" class="form-label">Copy of Certificate of Employment</label>
-                    <input type="file" class="form-control" id="employment_file_manager" name="employment_file_manager"
-                      accept=".pdf" required multiple>
-                  </div>
-                </div>
-  
-  
                 <h4>V. PROFESSIONAL ACHIEVEMENTS</h4>
   
   
                 <!-- Level of Training/Seminar -->
                 <h6>A. Trainings and Seminars</h6>
-                <div class="">
-                  <div class="mb-3">
-                    <label for="training_level" class="form-label">Level of Training/Seminar</label>
-                    <select id="training_level" name="training_level" class="form-control"
-                      onchange="showTrainingFields(this.value)">
-                      <option value=""  selected>Select Level of Training/Seminar</option>
-                      <option value="local_regional">Local/Regional</option>
-                      <option value="national">National</option>
-                      <option value="international">International</option>
-                    </select>
-                  </div> <!-- Local/Regional -->
-                  <div id="local_regional_fields" class="input-fields" style="display: none;">
-                    <h5>Local/Regional Seminar Details</h5>
-                    <div class="mb-3">
-                      <label for="title_local" class="form-label">Title of Training/Seminar</label>
-                      <input type="text" class="form-control" id="title_local" name="title_local" required>
+                <div id="trainings_seminars_fields" class="input-fields">
+                  <div class="row mb-3">
+                    <div class='col-sm-2'>
+                      <label for='training_level' class='form-label'>Level of Training/Seminar</label>
+                      <select id="training_level" name="training_level[0]" class="form-control" required>
+                        <option value="" selected>Select Level of Training/Seminar</option>
+                        <option value="Local/Regional">Local/Regional</option>
+                        <option value="National">National</option>
+                        <option value="International">International</option>
+                      </select>
                     </div>
-  
-                    <div class="mb-3">
-                      <label for="organization_local" class="form-label">Sponsoring Organization</label>
-                      <input type="text" class="form-control" id="organization_local" name="organization_local" required>
+                
+                    <div class='col-sm-2'>
+                      <label for='training_title' class='form-label'>Title of Training/Seminar</label>
+                      <input type='text' class='form-control' id='training_title' name='training_title[0]' required>
                     </div>
-  
-                    <div class="mb-3">
-                      <label for="date_local" class="form-label">Inclusive Date</label>
-                      <input type="text" class="form-control" id="date_local" name="date_local" required placeholder="2018-10-03 to 2018-10-10">
+                
+                    <div class='col-sm-2'>
+                      <label for='training_sponsor' class='form-label'>Sponsoring Organization</label>
+                      <input type='text' class='form-control' id='training_sponsor' name='training_sponsor[0]' required>
                     </div>
-  
-                    <div class="mb-3">
-                      <label for="certificate_file_local" class="form-label">Copy of Certificate Obtained</label>
-                      <input type="file" class="form-control" id="certificate_file_local" name="certificate_file_local"
-                        accept=".pdf" required>
+                
+                    <div class='col-sm-3'>
+                      <label for='training_date' class='form-label'>Inclusive Date</label>
+                      <input type='text' class='form-control' id='training_date' name='training_date[0]' required >
+                    </div>
+                
+                    <div class="col-sm-3">
+                      <label for="training_certificate" class="form-label">Copy of Certificate Obtained</label>
+                      <input type="file" class="form-control" id="training_certificate" name="training_certificate[0]" accept=".pdf" required />
                     </div>
                   </div>
-  
-                  <!-- National -->
-                  <div id="national_fields" class="input-fields" style="display: none;">
-                    <h5>National Seminar Details</h5>
-                    <div class="mb-3">
-                      <label for="title_national" class="form-label">Title of Training/Seminar</label>
-                      <input type="text" class="form-control" id="title_national" name="title_national" required>
-                    </div>
-  
-                    <div class="mb-3">
-                      <label for="organization_national" class="form-label">Sponsoring Organization</label>
-                      <input type="text" class="form-control" id="organization_national" name="organization_national"
-                        required>
-                    </div>
-  
-                    <div class="mb-3">
-                      <label for="date_national" class="form-label">Inclusive Date</label>
-                      <input type="text" class="form-control" id="date_national" name="date_national" required placeholder="2018-10-03 to 2018-10-10">
-                    </div>
-  
-                    <div class="mb-3">
-                      <label for="certificate_file_national" class="form-label">Copy of Certificate Obtained</label>
-                      <input type="file" class="form-control" id="certificate_file_national"
-                        name="certificate_file_national" accept=".pdf" required>
-                    </div>
-                  </div>
-  
-                  <!-- International -->
-                  <div id="international_fields" class="input-fields" style="display: none;">
-                    <h5>International Seminar Details</h5>
-                    <div class="mb-3">
-                      <label for="title_international" class="form-label">Title of Training/Seminar</label>
-                      <input type="text" class="form-control" id="title_international" name="title_international"
-                        required>
-                    </div>
-  
-                    <div class="mb-3">
-                      <label for="organization_international" class="form-label">Sponsoring Organization</label>
-                      <input type="text" class="form-control" id="organization_international"
-                        name="organization_international" required>
-                    </div>
-  
-                    <div class="mb-3">
-                      <label for="date_international" class="form-label">Inclusive Date</label>
-                      <input type="text" class="form-control" id="date_international" name="date_international" required placeholder="2018-10-03 to 2018-10-10">
-                    </div>
-  
-                    <div class="mb-3">
-                      <label for="certificate_file_international" class="form-label">Copy of Certificate Obtained</label>
-                      <input type="file" class="form-control" id="certificate_file_international"
-                        name="certificate_file_international" accept=".pdf" required>
-                    </div>
-                  </div>
+                
+                </div>
+
+                <!-- Dynamic Fields Section -->
+                <div id="dynamic_trainings_seminars_container"></div>
+
+                <!-- Add Button -->
+                <div class="mb-3">
+                  <button type="button" class="btn btn-primary" id="add_training_field_button">Add Another Training/Seminar</button>
                 </div>
                 <h6>B. Professional Development</h6>
-                <div>
-              
-                  <div class="mb-3">
-                    <label for="professional_dev_level" class="form-label">Level</label>
-                    <select id="professional_dev_level" name="professional_dev_level" class="form-control"
-                      onchange="showProfessionalDevFields(this.value)">
-                      <option value="" hidden selected>Select Level</option>
-                      <option value="local_regional">Local/Regional</option>
-                      <option value="national">National</option>
-                      <option value="international">International</option>
-                    </select>
-                  </div>
-  
-                  <!-- Local/Regional -->
-                  <div id="local_regional_dev_fields" class="input-fields" style="display: none;">
-                    <h5>Local/Regional Professional Development Details</h5>
-                    <div class="mb-3">
-                      <label for="organization_local_dev" class="form-label">Name of Organization/Scholarship</label>
-                      <input type="text" class="form-control" id="organization_local_dev" name="organization_local_dev"
-                        required>
-                    </div>
-  
-                    <div class="mb-3">
-                      <label for="description_local_dev" class="form-label">Description</label>
-                      <textarea class="form-control" id="description_local_dev" name="description_local_dev"
-                        required></textarea>
-                    </div>
-  
-                    <div class="mb-3">
-                      <label for="certificate_file_local_dev" class="form-label">Copy of Certificate</label>
-                      <input type="file" class="form-control" id="certificate_file_local_dev"
-                        name="certificate_file_local_dev" accept=".pdf" required>
-                    </div>
-                  </div>
-  
-                  <!-- National -->
-                  <div id="national_dev_fields" class="input-fields" style="display: none;">
-                    <h5>National Professional Development Details</h5>
-                    <div class="mb-3">
-                      <label for="organization_national_dev" class="form-label">Name of Organization/Scholarship</label>
-                      <input type="text" class="form-control" id="organization_national_dev"
-                        name="organization_national_dev" required>
-                    </div>
-  
-                    <div class="mb-3">
-                      <label for="description_national_dev" class="form-label">Description</label>
-                      <textarea class="form-control" id="description_national_dev" name="description_national_dev"
-                        required></textarea>
-                    </div>
-  
-                    <div class="mb-3">
-                      <label for="certificate_file_national_dev" class="form-label">Copy of Certificate</label>
-                      <input type="file" class="form-control" id="certificate_file_national_dev"
-                        name="certificate_file_national_dev" accept=".pdf" required>
-                    </div>
-                  </div>
-  
-                  <!-- International -->
-                  <div id="international_dev_fields" class="input-fields" style="display: none;">
-                    <h5>International Professional Development Details</h5>
-                    <div class="mb-3">
-                      <label for="organization_international_dev" class="form-label">Name of
-                        Organization/Scholarship</label>
-                      <input type="text" class="form-control" id="organization_international_dev"
-                        name="organization_international_dev" required>
-                    </div>
-  
-                    <div class="mb-3">
-                      <label for="description_international_dev" class="form-label">Description</label>
-                      <textarea class="form-control" id="description_international_dev"
-                        name="description_international_dev" required></textarea>
-                    </div>
-  
-                    <div class="mb-3">
-                      <label for="certificate_file_international_dev" class="form-label">Copy of Certificate</label>
-                      <input type="file" class="form-control" id="certificate_file_international_dev"
-                        name="certificate_file_international_dev" accept=".pdf" required>
-                    </div>
-                  </div>
-                </div>
-                <h6>C. Eligibilities/Awards</h6>
 
-                <!-- Eligibilities -->
-                <div class="mb-3">
-                  <label for="eligibility" class="form-label">Eligibilities</label>
-                  <select id="eligibility" name="eligibility" class="form-control" onchange="showEligibilityFields(this.value)">
-                    <option value="" hidden selected>Select Eligibility</option>
-                    <option value="sub_professional">CSC Sub-Professional</option>
-                    <option value="technical_nc">Technical (NC)</option>
-                    <option value="professional_prc_csc">Professional (PRC) (CSC)</option>
-                  </select>
+                <!-- Professional Development Fields -->
+                <div id="professional_dev_fields" class="input-fields">
+                  <div class="row mb-3">
+                    <!-- Level of Development -->
+                    <div class='col-sm-3'>
+                      <label for='professional_dev_level' class='form-label'>Level</label>
+                      <select id="professional_dev_level" name="professional_dev_level[0]" class="form-control" required>
+                        <option value="" hidden selected>Select Level</option>
+                        <option value="Local/Regional">Local/Regional</option>
+                        <option value="National">National</option>
+                        <option value="International">International</option>
+                      </select>
+                    </div>
+                
+                    <!-- Name of Organization/Scholarship -->
+                    <div class='col-sm-3'>
+                      <label for='organization_dev' class='form-label'>Name of Organization/Scholarship</label>
+                      <input type='text' class='form-control' id='organization_dev' name='organization_dev[0]' required>
+                    </div>
+                
+                    <!-- Description -->
+                    <div class='col-sm-3'>
+                      <label for='description_dev' class='form-label'>Description</label>
+                      <input class='form-control' id='description_dev' name='description_dev[0]' required>
+                    </div>
+                
+                    <!-- Copy of Certificate -->
+                    <div class='col-sm-3'>
+                      <label for='certificate_file_dev' class='form-label'>Copy of Certificate</label>
+                      <input type='file' class='form-control' id='certificate_file_dev' name='certificate_file_dev[0]' accept='.pdf' required>
+                    </div>
+                  </div>
+                
+                  <!-- Dynamic Fields Section -->
+                  <div id="dynamic_professional_dev_fields_container"></div>
+                
+                  <!-- Add Button -->
+                  <div class="mb-3">
+                    <button type="button" class="btn btn-primary" id="add_professional_dev_field_button">Add Another</button>
+                  </div>
                 </div>
                 
+  
+              
+             
+                <h6>C. Eligibilities/Awards</h6>
+
+             
+                
                 <!-- Sub-Professional Eligibility Details -->
-                <div id="sub_professional_fields" class="input-fields" style="display: none;">
-                  <h5>CSC Sub-Professional Details</h5>
+                <div id="sub_professional_fields" class="input-fields" >
+                  <h6>CSC Sub-Professional Details (If Applicable)</h6>
                   <div class="mb-3">
-                    <label for="certificate_file_sub_professional" class="form-label">Copy of Certificate</label>
-                    <input type="file" class="form-control" id="certificate_file_sub_professional" name="certificate_file_sub_professional" accept=".pdf" required>
+                  
+                    <input type="file" class="form-control" id="certificate_file_sub_professional" name="certificate_file_sub_professional" accept=".pdf" >
                   </div>
                 </div>
                 
                 <!-- Technical (NC) Eligibility Details -->
-                <div id="technical_nc_fields" class="input-fields" style="display: none;">
-                  <h5>Technical (NC) Details</h5>
+                <div id="technical_nc_fields" class="input-fields">
+                  <h6>Technical (NC) Details (If Applicable)</h6>
                   <div class="mb-3">
-                    <label for="certificate_file_technical_nc" class="form-label">Copy of Certificate</label>
-                    <input type="file" class="form-control" id="certificate_file_technical_nc" name="certificate_file_technical_nc" accept=".pdf" required>
+                
+                    <input type="file" class="form-control" id="certificate_file_technical_nc" name="certificate_file_technical_nc" accept=".pdf" >
                   </div>
                 </div>
                 
                 <!-- Professional (PRC) (CSC) Eligibility Details -->
-                <div id="professional_prc_csc_fields" class="input-fields" style="display: none;">
-                  <h5>Professional (PRC) (CSC) Details</h5>
+                <div id="professional_prc_csc_fields" class="input-fields">
+                  <h6>Professional (PRC) (CSC) Details (If Applicable)</h6>
                   <div class="mb-3">
-                    <label for="certificate_file_professional_prc_csc" class="form-label">Copy of Certificate</label>
-                    <input type="file" class="form-control" id="certificate_file_professional_prc_csc" name="certificate_file_professional_prc_csc" accept=".pdf" required>
+ 
+                    <input type="file" class="form-control" id="certificate_file_professional_prc_csc" name="certificate_file_professional_prc_csc" accept=".pdf" >
                   </div>
                 </div>
                 
-                <!-- Awards -->
-                <div class="mb-3">
-                  <label for="award_level" class="form-label">Awards</label>
-                  <select id="award_level" name="award_level" class="form-control" onchange="showAwardFields(this.value)">
-                    <option value="" hidden selected>Select Award Level</option>
-                    <option value="local_regional">Local/Regional</option>
-                    <option value="national_international">National/International</option>
-                  </select>
-                </div>
+               
+                <div id="local_regional_fields_award" class="input-fields">
+                  <div class="row mb-3">
+                    <!-- Award Level -->
+                    <div class='col-sm-3'>
+                      <label for='award_level' class='form-label'>Awards</label>
+                      <select id="award_level" name="award_level[0]" class="form-control" required>
+                        <option value="" hidden selected>Select Award Level</option>
+                        <option value="Local/Regional">Local/Regional</option>
+                        <option value="National/International">National/International</option>
+                      </select>
+                    </div>
                 
-                <!-- Local/Regional Award Details -->
-                <div id="local_regional_fields_award" class="input-fields" style="display: none;">
-                  <h5>Local/Regional Award Details</h5>
+                    <!-- Copy of Certificate -->
+                    <div class='col-sm-4'>
+                      <label for='certificate_file_award' class='form-label'>Copy of Certificate</label>
+                      <input type='file' class='form-control' id='certificate_file_award' name='certificate_file_award[0]' accept='.pdf' required>
+                    </div>
+                  </div>
+                
+                  <!-- Dynamic Fields Section -->
+                  <div id="dynamic_local_regional_award_fields_container"></div>
+                
+                  <!-- Add Button -->
                   <div class="mb-3">
-                    <label for="certificate_file_local_regional" class="form-label">Copy of Certificate</label>
-                    <input type="file" class="form-control" id="certificate_file_local_regional" name="certificate_file_local_regional" accept=".pdf" required>
+                    <button type="button" class="btn btn-primary" id="add_local_regional_award_button">Add Another Award</button>
                   </div>
                 </div>
-                
-                <!-- National/International Award Details -->
-                <div id="national_international_fields" class="input-fields" style="display: none;">
-                  <h5>National/International Award Details</h5>
-                  <div class="mb-3">
-                    <label for="certificate_file_national_international" class="form-label">Copy of Certificate</label>
-                    <input type="file" class="form-control" id="certificate_file_national_international" name="certificate_file_national_international" accept=".pdf" required>
-                  </div>
-                </div>
-  
-  
-  
-  
-  
-  
-  
-  
-                <!-- Final Essay -->
+
                 <h4>VI. Essay</h4>
                 <div class="mb-3">
                   <label for="final_essay" class="form-label">If you finish your degree, how will this contribute to your personal development to the development of your community, your work place, society and country?</label>
@@ -1041,7 +875,7 @@ $(document).ready(() => DocumentUpload.init());
     }
 </script>
 <script>
-    $("#date_local").flatpickr({
+    $("#training_date").flatpickr({
     mode: "range"
 })
 $("#date_national").flatpickr({
@@ -1050,56 +884,307 @@ $("#date_national").flatpickr({
 $("#date_international").flatpickr({
     mode: "range"
 })
+$(".date-range").flatpickr({
+    mode: "range"
+})
 </script>
 `)%>
 
 <script>
-   function showEligibilityFields(value) {
-    // Hide all eligibility fields
-    document.getElementById("sub_professional_fields").style.display = "none";
-    document.getElementById("technical_nc_fields").style.display = "none";
-    document.getElementById("professional_prc_csc_fields").style.display = "none";
-
-    // Show relevant fields based on the selected eligibility
-    if (value === "sub_professional") {
-      document.getElementById("sub_professional_fields").style.display = "block";
-    } else if (value === "technical_nc") {
-      document.getElementById("technical_nc_fields").style.display = "block";
-    } else if (value === "professional_prc_csc") {
-      document.getElementById("professional_prc_csc_fields").style.display = "block";
-    }
-  }
-
-  function showAwardFields(value) {
-    // Hide all award fields
-    document.getElementById("local_regional_fields_award").style.display = "none";
-    document.getElementById("national_international_fields").style.display = "none";
-
-    // Show relevant fields based on the selected award level
-    if (value === "local_regional") {
-      document.getElementById("local_regional_fields_award").style.display = "block";
-    } else if (value === "national_international") {
-      document.getElementById("national_international_fields").style.display = "block";
-    }
-  }
   
-  function showProfessionalDevFields(value) {
-    document.getElementById('local_regional_dev_fields').style.display = (value === 'local_regional') ? 'block' : 'none';
-    document.getElementById('national_dev_fields').style.display = (value === 'national') ? 'block' : 'none';
-    document.getElementById('international_dev_fields').style.display = (value === 'international') ? 'block' : 'none';
-  } function showTrainingFields(value) {
-    document.getElementById('local_regional_fields').style.display = (value === 'local_regional') ? 'block' : 'none';
-    document.getElementById('national_fields').style.display = (value === 'national') ? 'block' : 'none';
-    document.getElementById('international_fields').style.display = (value === 'international') ? 'block' : 'none';
-  }    function showFields(selectedValue) {
-    // Hide all input fields initially
-    document.querySelectorAll('.input-fields').forEach(function (field) {
-      field.style.display = 'none';
+  
+  // Counter for dynamic fields
+  let fieldCounter = 1;
+  
+  // JavaScript to dynamically add and remove input fields
+  document.getElementById('add_field_button').addEventListener('click', function() {
+    // Check if the current number of fields is less than the maximum allowed (5)
+    if (fieldCounter < 5) {
+      // Create a new div for the dynamic field set
+      const newFieldSet = document.createElement('div');
+      newFieldSet.classList.add('dynamic_field', 'my-3');
+  
+      // Create the HTML structure for the new field set with indexed names
+      newFieldSet.innerHTML = `
+        <div class="row mb-3">
+          <div class='col-sm-2'>
+            <label for='job_title' class='form-label'>Job Title</label>
+            <select name='job_title[${fieldCounter}]' class='form-control' required>
+              <option value="" hidden selected>Select Job Title</option>
+              <option value='Ordinary Employee'>Ordinary Employee/Regular Employee</option>
+              <option value='Supervisor'>Supervisor</option>
+              <option value='Head Manager'>Head/Manager</option>
+            </select>
+          </div>
+  
+          <div class='col-sm-2'>
+            <label for='company_name_work' class='form-label'>Company Name</label>
+            <input type='text' class='form-control' name='company_name_work[${fieldCounter}]' required>
+          </div>
+  
+          <div class='col-sm-2'>
+            <label for='company_address_work' class='form-label'>Company Address</label>
+            <input type='text' class='form-control' name='company_address_work[${fieldCounter}]' required>
+          </div>
+  
+          <div class='col-sm-3'>
+            <label for='date_started_end_work' class='form-label'>Date Started and End</label>
+            <input type='text' class='form-control date-range' name='date_started_end_work[${fieldCounter}]' required>
+          </div>
+  
+          <div class="col-sm-3">
+            <label for="employment_file_work" class="form-label">Certificate of Employment</label>
+            <input type="file" class="form-control" name="employment_file_work[${fieldCounter}]" accept=".pdf" required />
+          </div> 
+          
+          <!-- Remove Button -->
+          <div>
+            <button type="button" class="btn btn-danger remove_field_button mt-2">Remove</button> 
+          </div>
+        </div>  
+      `;
+  
+      // Append the new field set to the container
+      document.getElementById('dynamic_fields_container').appendChild(newFieldSet);
+  
+      // Initialize Flatpickr on the newly added date input
+      flatpickr(newFieldSet.querySelector(".date-range"), {
+        mode: "range",
+      });
+  
+      // Increment the counter for the next field
+      fieldCounter++;
+  
+      // Add event listener to the remove button
+      newFieldSet.querySelector('.remove_field_button').addEventListener('click', function() {
+        newFieldSet.remove();
+        fieldCounter--; // Decrement counter when a field is removed
+      });
+    } else {
+      alert("You can only add a maximum of 5 entries.");
+    }
+  });
+  
+  // Optional: Add remove functionality to the initially created fields
+  const initialRemoveButtonsWork = document.querySelectorAll('.remove_field_button');
+  initialRemoveButtonsWork.forEach(button => {
+    button.addEventListener('click', function() {
+      button.closest('.dynamic_field').remove();
+    });
+  });
+  </script>
+  <script>
+    // Counter for dynamic fields
+let trainingFieldCounter = 1;
+
+// JavaScript to dynamically add and remove input fields
+document.getElementById('add_training_field_button').addEventListener('click', function() {
+  // Check if the current number of fields is less than the maximum allowed (5)
+  if (trainingFieldCounter < 5) {
+    // Create a new div for the dynamic field set
+    const newFieldSet = document.createElement('div');
+    newFieldSet.classList.add('dynamic_field', 'my-3');
+
+    // Create the HTML structure for the new field set with indexed names
+    newFieldSet.innerHTML = `
+     <div class="row mb-3">
+      <div class="col-sm-2">
+        <label for="training_level" class="form-label">Level of Training/Seminar</label>
+        <select name="training_level[${trainingFieldCounter}]" class="form-control" required>
+          <option value="" selected>Select Level of Training/Seminar</option>
+          <option value="Local/Regional">Local/Regional</option>
+          <option value="National">National</option>
+          <option value="International">International</option>
+        </select>
+      </div>
+
+      <div class="col-sm-2">
+        <label for="training_title" class="form-label">Title of Training/Seminar</label>
+        <input type="text" class="form-control" name="training_title[${trainingFieldCounter}]" required>
+      </div>
+
+      <div class="col-sm-2">
+        <label for="training_sponsor" class="form-label">Sponsoring Organization</label>
+        <input type="text" class="form-control" name="training_sponsor[${trainingFieldCounter}]" required>
+      </div>
+
+      <div class="col-sm-3">
+        <label for="training_date" class="form-label">Inclusive Date</label>
+        <input type="text" class="form-control date-range" name="training_date[${trainingFieldCounter}]" required >
+      </div>
+
+      <div class="col-sm-3">
+        <label for="training_certificate" class="form-label">Copy of Certificate Obtained</label>
+        <input type="file" class="form-control" name="training_certificate[${trainingFieldCounter}]" accept=".pdf" required>
+      </div>
+
+      <!-- Remove Button -->
+      <div>
+        <button type="button" class="btn btn-danger remove_field_button mt-2">Remove</button>
+      </div>
+    </div>
+    `;
+
+    // Append the new field set to the container
+    document.getElementById('dynamic_trainings_seminars_container').appendChild(newFieldSet);
+
+    // Initialize Flatpickr on the newly added date input
+    flatpickr(newFieldSet.querySelector(".date-range"), {
+      mode: "range",
     });
 
-    // Show the relevant input fields based on the selected job title
-    if (selectedValue) {
-      document.getElementById(selectedValue + '_fields').style.display = 'block';
-    }
+    // Increment the counter for the next field
+    trainingFieldCounter++;
+
+    // Add event listener to the remove button
+    newFieldSet.querySelector('.remove_field_button').addEventListener('click', function() {
+      newFieldSet.remove();
+      trainingFieldCounter--; // Decrement counter when a field is removed
+    });
+  } else {
+    alert("You can only add a maximum of 5 entries.");
   }
+});
+
+// Optional: Add remove functionality to the initially created fields
+const initialRemoveButtonsTraining = document.querySelectorAll('.remove_field_button');
+initialRemoveButtonsTraining.forEach(button => {
+  button.addEventListener('click', function() {
+    button.closest('.dynamic_field').remove();
+  });
+});
+
+
+
+
+  </script>
+  <script>
+    // Counter for dynamic professional development fields
+    let professionalDevFieldCounter = 1;
+    
+    // JavaScript to dynamically add and remove professional development fields
+    document.getElementById('add_professional_dev_field_button').addEventListener('click', function() {
+      // Check if the current number of fields is less than the maximum allowed (5)
+      if (professionalDevFieldCounter < 5) {
+        // Create a new div for the dynamic field set
+        const newFieldSet = document.createElement('div');
+        newFieldSet.classList.add('dynamic_field', 'my-3');
+  
+        // Create the HTML structure for the new professional development field set with indexed names
+        newFieldSet.innerHTML = `
+          <div class="row mb-3">
+            <div class='col-sm-3'>
+              <label for='professional_dev_level' class='form-label'>Level</label>
+              <select name='professional_dev_level[${professionalDevFieldCounter}]' class='form-control' required>
+                <option value="" hidden selected>Select Level</option>
+                <option value="Local/Regional">Local/Regional</option>
+                <option value="National">National</option>
+                <option value="International">International</option>
+              </select>
+            </div>
+  
+            <div class='col-sm-3'>
+              <label for='organization_dev' class='form-label'>Name of Organization/Scholarship</label>
+              <input type='text' class='form-control' name='organization_dev[${professionalDevFieldCounter}]' required>
+            </div>
+  
+            <div class='col-sm-3'>
+              <label for='description_dev' class='form-label'>Description</label>
+              <input class='form-control' name='description_dev[${professionalDevFieldCounter}]' required>
+            </div>
+  
+            <div class='col-sm-3'>
+              <label for='certificate_file_dev[0]' class='form-label'>Copy of Certificate</label>
+              <input type='file' class='form-control' name='certificate_file_dev[${professionalDevFieldCounter}]' accept='.pdf' required>
+            </div>
+  
+            <!-- Remove Button -->
+            <div class="col-sm-3">
+              <button type="button" class="btn btn-danger remove_field_button mt-2">Remove</button>
+            </div>
+          </div>
+        `;
+  
+        // Append the new field set to the container
+        document.getElementById('dynamic_professional_dev_fields_container').appendChild(newFieldSet);
+  
+        // Increment the counter for the next field
+        professionalDevFieldCounter++;
+  
+        // Add event listener to the remove button
+        newFieldSet.querySelector('.remove_field_button').addEventListener('click', function() {
+          newFieldSet.remove();
+          professionalDevFieldCounter--; // Decrement counter when a field is removed
+        });
+      } else {
+        alert("You can only add a maximum of 5 entries.");
+      }
+    });
+  
+    // Optional: Add remove functionality to the initially created fields
+    const initialRemoveButtonsProfessional = document.querySelectorAll('.remove_field_button');
+    initialRemoveButtonsProfessional.forEach(button => {
+      button.addEventListener('click', function() {
+        button.closest('.dynamic_field').remove();
+      });
+    });
+  </script>
+
+<script>
+  // Counter for dynamic award fields
+  let localRegionalAwardCounter = 1;
+
+  // JavaScript to dynamically add and remove local/regional award fields
+  document.getElementById('add_local_regional_award_button').addEventListener('click', function() {
+    // Check if the current number of fields is less than the maximum allowed (5)
+    if (localRegionalAwardCounter < 5) {
+      // Create a new div for the dynamic field set
+      const newFieldSet = document.createElement('div');
+      newFieldSet.classList.add('dynamic_field', 'my-3');
+
+      // Create the HTML structure for the new award field set with indexed names
+      newFieldSet.innerHTML = `
+        <div class="row mb-2">
+          <div class='col-sm-3'>
+            <label for='award_level' class='form-label'>Award Level</label>
+            <select name='award_level[${localRegionalAwardCounter}]' class='form-control' required>
+              <option value="" hidden selected>Select Award Level</option>
+              <option value="Local/Regional">Local/Regional</option>
+              <option value="National/International">National/International</option>
+            </select>
+          </div>
+
+          <div class='col-sm-4'>
+            <label for='certificate_file_award' class='form-label'>Copy of Certificate</label>
+            <input type='file' class='form-control' name='certificate_file_award[${localRegionalAwardCounter}]' accept='.pdf' required>
+          </div>
+
+         
+        </div>
+        <button type="button" class="btn btn-danger remove_field_button">Remove</button>
+      `;
+
+      // Append the new field set to the container
+      document.getElementById('dynamic_local_regional_award_fields_container').appendChild(newFieldSet);
+
+      // Increment the counter for the next field
+      localRegionalAwardCounter++;
+
+      // Add event listener to the remove button
+      newFieldSet.querySelector('.remove_field_button').addEventListener('click', function() {
+        newFieldSet.remove();
+        localRegionalAwardCounter--; // Decrement counter when a field is removed
+      });
+    } else {
+      alert("You can only add a maximum of 5 awards.");
+    }
+  });
+
+  // Optional: Add remove functionality to the initially created fields
+  const initialRemoveButtonsAwards = document.querySelectorAll('.remove_field_button');
+  initialRemoveButtonsAwards.forEach(button => {
+    button.addEventListener('click', function() {
+      button.closest('.dynamic_field').remove();
+    });
+  });
 </script>

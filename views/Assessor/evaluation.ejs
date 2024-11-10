@@ -72,12 +72,21 @@
                                             </span>
                                         </td>
                                         <td class="text-center fs-sm">
+                                            <%if ( record.status === 'Evaluated') {%>
+                                                <a href="/download-evaluation/<%= record.application_id %>/<%= record.uuid %>"
+                                                    class="btn btn-sm btn-primary js-bs-tooltip-enabled"
+                                                    data-bs-toggle="tooltip" aria-label="Download Evaluation"
+                                                    data-bs-original-title="Download Evaluation">
+                                                    <i class="ri-download-line me-1"></i>Download
+                                                 </a>
+                                                 
+                                            <%}%>
                                             <div class="btn-group">
                                                 <a href="/assessor/evaluate/<%= record.id %>" class="btn btn-sm btn-success"
                                                
-                                                data-bs-toggle="tooltip" aria-label="Evaluate"
-                                                data-bs-original-title="Evaluate">
-                                                <i class="fa fa-fw fa-check"></i><i class=" ri-edit-2-line me-1"></i>Evaluate 
+                                                data-bs-toggle="tooltip" aria-label="<%= record.status === 'Pending' ? 'Evaluate' : 'Edit Evaluation' %>"
+                                                data-bs-original-title="<%= record.status === 'Pending' ? 'Evaluate' : 'Edit Evaluation' %>">
+                                                <i class="fa fa-fw fa-check"></i><i class=" ri-edit-2-line me-1"></i><%= record.status === 'Pending' ? 'Evaluate' : 'Edit Evaluation' %> 
                                             </a>
                                             
                                             </div>

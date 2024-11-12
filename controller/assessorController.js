@@ -85,7 +85,7 @@ const postSignIn = (req, res) => {
 
 const getHome = async (req, res) => {
 	const applications = await query(
-		"SELECT a.id,a.name,aa.status FROM application_assessors aa LEFT JOIN application a ON a.id = aa.application_id WHERE aa.assessor_id = ?;",
+		"SELECT a.id,a.name,aa.status,aa.assessor_id FROM application_assessors aa LEFT JOIN application a ON a.id = aa.application_id WHERE aa.assessor_id = ?;",
 		[res.locals.user.id]
 	);
 
@@ -99,10 +99,43 @@ const getHome = async (req, res) => {
 
 const getEvaluationId = async (req, res) => {
 	const { id } = req.params;
+	const hasAccess = await query(
+		"SELECT * FROM application_assessors WHERE application_id = ? AND assessor_id = ?",
+		[id, res.locals.user.id]
+	)
+	if (hasAccess.length === 0) {
+		res.redirect("/assessor/home");
+		return;
+	}
 	const usersEvaluation = await query(
 		"SELECT * FROM evaluations WHERE assessor_id = ? AND application_id = ?",
 		[res.locals.user.id, id]
 	);
+
+	const usersEvaluationHistory = await query(
+		"SELECT * FROM evaluation_history WHERE assessor_id = ? AND application_id = ? ORDER BY created_at DESC",
+		[res.locals.user.id, id]
+	);
+
+	// Assuming usersEvaluationHistory is an array with one or more evaluation records
+	usersEvaluationHistory.forEach((evaluation) => {
+		evaluation.work_experience_points = evaluation.work_experience_points
+			.split(",")
+			.map((point) => point.trim());
+		evaluation.training_points = evaluation.training_points
+			.split(",")
+			.map((point) => point.trim());
+		evaluation.professional_development_points =
+			evaluation.professional_development_points
+				.split(",")
+				.map((point) => point.trim());
+		evaluation.award_points = evaluation.award_points
+			.split(",")
+			.map((point) => point.trim());
+		evaluation.eligibility_points = evaluation.eligibility_points
+			.split(",")
+			.map((point) => point.trim());
+	});
 
 	const application = (
 		await query("SELECT * FROM application WHERE id = ?", [id])
@@ -111,48 +144,84 @@ const getEvaluationId = async (req, res) => {
 	const workExperience = await query(
 		"SELECT * FROM work_experience WHERE application_id = ? ORDER BY id DESC",
 		[id]
-	)
+	);
 	const trainingExperience = await query(
 		"SELECT * FROM training WHERE application_id = ? ORDER BY id DESC",
 		[id]
-	)
+	);
 	const professionalDevelopments = await query(
 		"SELECT * FROM professional_development WHERE application_id = ? ORDER BY id DESC",
 		[id]
-	)
+	);
 	const awards = await query(
 		"SELECT * FROM award WHERE application_id = ? ORDER BY id DESC",
 		[id]
-	)
+	);
 	res.render("Assessor/evaluation_view", {
 		title: "Evaluate Applicant",
 		page: "evaluation",
 		pagetitle: "Evaluate Applicant",
 		usersEvaluation,
-		application, workExperience, trainingExperience, professionalDevelopments, awards
+		application,
+		workExperience,
+		trainingExperience,
+		professionalDevelopments,
+		usersEvaluationHistory,
+		awards,
 	});
 };
 
 const postEvaluation = async (req, res) => {
 	const user_id = res.locals.user.id;
-	console.log(user_id);
+
 	const {
 		application_id,
-		educational_points,
+		education_points,
 		work_experience_points,
 		training_points,
-		professional_development_points,
-		eligibility_points,
+		professional_dev_points,
+		award_points,
+		csc_points,
+		nc_points,
+		prc_points,
 		interview_chief_points,
 		interview_assessor_points,
 	} = req.body;
+
+	// Sum the points in the arrays
+	const work_experience_total = work_experience_points.reduce(
+		(acc, val) => acc + parseInt(val),
+		0
+	);
+	const training_total = training_points.reduce(
+		(acc, val) => acc + parseInt(val),
+		0
+	);
+	const professional_dev_total = professional_dev_points.reduce(
+		(acc, val) => acc + parseInt(val),
+		0
+	);
+	const award_total = award_points.reduce(
+		(acc, val) => acc + parseInt(val),
+		0
+	);
+
+	// Create comma-separated strings for point history
+	const work_experience_history = work_experience_points.join(", ");
+	const training_history = training_points.join(", ");
+	const professional_dev_history = professional_dev_points.join(", ");
+	const award_history = award_points.join(", ");
+
+	// Calculate total points
 	const points_calculated =
-		parseInt(application_id) +
-		parseInt(educational_points) +
-		parseInt(work_experience_points) +
-		parseInt(training_points) +
-		parseInt(professional_development_points) +
-		parseInt(eligibility_points) +
+		parseInt(education_points) +
+		work_experience_total +
+		training_total +
+		professional_dev_total +
+		award_total +
+		parseInt(csc_points) +
+		parseInt(nc_points) +
+		parseInt(prc_points) +
 		parseInt(interview_chief_points) +
 		parseInt(interview_assessor_points);
 
@@ -166,11 +235,14 @@ const postEvaluation = async (req, res) => {
 
 	// Validate input data
 	if (
-		educational_points < 0 ||
-		work_experience_points < 0 ||
-		training_points < 0 ||
-		professional_development_points < 0 ||
-		eligibility_points < 0 ||
+		education_points < 0 ||
+		work_experience_points.some((point) => point < 0) ||
+		training_points.some((point) => point < 0) ||
+		professional_dev_points.some((point) => point < 0) ||
+		award_points.some((point) => point < 0) ||
+		csc_points < 0 ||
+		nc_points < 0 ||
+		prc_points < 0 ||
 		interview_chief_points < 0 ||
 		interview_assessor_points < 0
 	) {
@@ -198,6 +270,10 @@ const postEvaluation = async (req, res) => {
 			});
 		}
 
+		const eligibility_points =
+			parseInt(csc_points) + parseInt(nc_points) + parseInt(prc_points);
+		const eligibility_points_history = 	`${csc_points}, ${nc_points}, ${prc_points}`
+		
 		// SQL query to insert a new evaluation if no record exists
 		const insertSql =
 			"INSERT INTO evaluations (" +
@@ -207,32 +283,73 @@ const postEvaluation = async (req, res) => {
 			"work_experience_points, " +
 			"training_points, " +
 			"professional_development_points, " +
+			"award_points, " +
 			"eligibility_points, " +
 			"interview_chief_points, " +
-			"interview_assessor_points," +
+			"interview_assessor_points, " +
 			"status" +
-			") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+			") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 		const values = [
 			user_id,
 			application_id,
-			educational_points,
-			work_experience_points,
-			training_points,
-			professional_development_points,
+			education_points,
+			work_experience_total,
+			training_total,
+			professional_dev_total,
+			award_total,
 			eligibility_points,
 			interview_chief_points,
 			interview_assessor_points,
 			qualification_status,
 		];
-		await query("UPDATE application_assessors SET status = 'Evaluated' WHERE application_id = ? AND assessor_id = ?",[application_id,user_id])
-		// Execute SQL query to insert the evaluation
+
+		// Insert into evaluations table
 		await query(insertSql, values);
+
+		// Insert evaluation history into evaluation_history table
+		const historyInsertSql =
+			"INSERT INTO evaluation_history (" +
+			"assessor_id, " +
+			"application_id, " +
+			"education_points, " +
+			"work_experience_points, " +
+			"training_points, " +
+			"professional_development_points, " +
+			"award_points, " +
+			"eligibility_points, " +
+			"interview_chief_points, " +
+			"interview_assessor_points, " +
+			"status" +
+			") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+		const historyValues = [
+			user_id,
+			application_id,
+			education_points,
+			work_experience_history,
+			training_history,
+			professional_dev_history,
+			award_history,
+			eligibility_points_history,
+			interview_chief_points,
+			interview_assessor_points,
+			qualification_status,
+		];
+
+		// Insert into evaluation history table
+		await query(historyInsertSql, historyValues);
+
+		// Update application_assessors table to 'Evaluated' status
+		await query(
+			"UPDATE application_assessors SET status = 'Evaluated' WHERE application_id = ? AND assessor_id = ?",
+			[application_id, user_id]
+		);
 
 		// Return success response
 		res.status(201).json({
 			success: true,
-			message: "Evaluation created successfully",
+			message: "Evaluation and evaluation history created successfully",
 		});
 	} catch (error) {
 		console.error("Error inserting evaluation:", error);
@@ -245,25 +362,55 @@ const postEvaluation = async (req, res) => {
 
 const updateEvaluation = async (req, res) => {
 	const user_id = res.locals.user.id;
-
+	
 	const {
 		application_id,
-		educational_points,
+		education_points,
 		work_experience_points,
 		training_points,
-		professional_development_points,
-		eligibility_points,
+		professional_dev_points,
+		award_points,
+		csc_points,
+		nc_points,
+		prc_points,
 		interview_chief_points,
 		interview_assessor_points,
 	} = req.body;
 
+	// Sum the points in the arrays
+	const work_experience_total = work_experience_points.reduce(
+		(acc, val) => acc + parseInt(val),
+		0
+	);
+	const training_total = training_points.reduce(
+		(acc, val) => acc + parseInt(val),
+		0
+	);
+	const professional_dev_total = professional_dev_points.reduce(
+		(acc, val) => acc + parseInt(val),
+		0
+	);
+	const award_total = award_points.reduce(
+		(acc, val) => acc + parseInt(val),
+		0
+	);
+
+	// Create comma-separated strings for point history
+	const work_experience_history = work_experience_points.join(", ");
+	const training_history = training_points.join(", ");
+	const professional_dev_history = professional_dev_points.join(", ");
+	const award_history = award_points.join(", ");
+
+	// Calculate total points
 	const points_calculated =
-		parseInt(application_id) +
-		parseInt(educational_points) +
-		parseInt(work_experience_points) +
-		parseInt(training_points) +
-		parseInt(professional_development_points) +
-		parseInt(eligibility_points) +
+		parseInt(education_points) +
+		work_experience_total +
+		training_total +
+		professional_dev_total +
+		award_total +
+		parseInt(csc_points) +
+		parseInt(nc_points) +
+		parseInt(prc_points) +
 		parseInt(interview_chief_points) +
 		parseInt(interview_assessor_points);
 
@@ -277,11 +424,14 @@ const updateEvaluation = async (req, res) => {
 
 	// Validate input data
 	if (
-		educational_points < 0 ||
-		work_experience_points < 0 ||
-		training_points < 0 ||
-		professional_development_points < 0 ||
-		eligibility_points < 0 ||
+		education_points < 0 ||
+		work_experience_points.some((point) => point < 0) ||
+		training_points.some((point) => point < 0) ||
+		professional_dev_points.some((point) => point < 0) ||
+		award_points.some((point) => point < 0) ||
+		csc_points < 0 ||
+		nc_points < 0 ||
+		prc_points < 0 ||
 		interview_chief_points < 0 ||
 		interview_assessor_points < 0
 	) {
@@ -292,7 +442,7 @@ const updateEvaluation = async (req, res) => {
 	}
 
 	try {
-		// SQL query to check if an evaluation already exists
+		// SQL query to check if an evaluation exists
 		const checkSql =
 			"SELECT * FROM evaluations WHERE assessor_id = ? AND application_id = ?";
 		const checkValues = [user_id, application_id];
@@ -309,6 +459,9 @@ const updateEvaluation = async (req, res) => {
 			});
 		}
 
+		const eligibility_points =
+			parseInt(csc_points) + parseInt(nc_points) + parseInt(prc_points);
+		const eligibility_points_history = 	`${csc_points}, ${nc_points}, ${prc_points}`
 		// SQL query to update the existing evaluation
 		const updateSql =
 			"UPDATE evaluations SET " +
@@ -316,6 +469,7 @@ const updateEvaluation = async (req, res) => {
 			"work_experience_points = ?, " +
 			"training_points = ?, " +
 			"professional_development_points = ?, " +
+			"award_points = ?, " +
 			"eligibility_points = ?, " +
 			"interview_chief_points = ?, " +
 			"interview_assessor_points = ?, " +
@@ -323,10 +477,11 @@ const updateEvaluation = async (req, res) => {
 			"WHERE assessor_id = ? AND application_id = ?";
 
 		const values = [
-			educational_points,
-			work_experience_points,
-			training_points,
-			professional_development_points,
+			education_points,
+			work_experience_total,
+			training_total,
+			professional_dev_total,
+			award_total,
 			eligibility_points,
 			interview_chief_points,
 			interview_assessor_points,
@@ -337,6 +492,45 @@ const updateEvaluation = async (req, res) => {
 
 		// Execute SQL query to update the evaluation
 		await query(updateSql, values);
+
+		// Insert evaluation history into evaluation_history table
+		const historyInsertSql =
+			"INSERT INTO evaluation_history (" +
+			"assessor_id, " +
+			"application_id, " +
+			"education_points, " +
+			"work_experience_points, " +
+			"training_points, " +
+			"professional_development_points, " +
+			"award_points, " +
+			"eligibility_points, " +
+			"interview_chief_points, " +
+			"interview_assessor_points, " +
+			"status" +
+			") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+		const historyValues = [
+			user_id,
+			application_id,
+			education_points,
+			work_experience_history,
+			training_history,
+			professional_dev_history,
+			award_history,
+			eligibility_points_history,
+			interview_chief_points,
+			interview_assessor_points,
+			qualification_status,
+		];
+
+		// Insert into evaluation history table
+		await query(historyInsertSql, historyValues);
+
+		// Update application_assessors table to 'Evaluated' status
+		await query(
+			"UPDATE application_assessors SET status = 'Evaluated' WHERE application_id = ? AND assessor_id = ?",
+			[application_id, user_id]
+		);
 
 		// Return success response
 		res.status(200).json({

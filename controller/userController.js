@@ -745,6 +745,10 @@ const postApplicationForm = async (req, res) => {
 
 
 const getSubmitApplicationView = async (req, res) => {
+	const hasAccess = await query("SELECT * FROM application WHERE uuid = ? AND id = ?", [res.locals.user.id, req.params.id]);
+	if (hasAccess.length === 0) {
+		return res.redirect("/application");
+	}
 	const application = (
 		await query("SELECT * FROM application WHERE uuid = ? AND id = ?", [
 			res.locals.user.id,

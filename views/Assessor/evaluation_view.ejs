@@ -31,383 +31,418 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-
+                    <% if (usersEvaluation.length > 0) { %>
+                        <form action="/assessor/evaluation/update" method="POST" class="evaluation-validation">
+                            <input type="hidden" name="application_id" value="<%= application.id %>">
+                            <h4>Edit Evaluation</h4>
+                    <% } else { %>
+                        <form action="/assessor/evaluation" method="POST" class="evaluation-validation">
+                            <input type="hidden" name="application_id" value="<%= application.id %>">
+                            <h4>Create Evaluation</h4>
+                    <% } %>
                     <div class="applicationForm">
                         
 
-                        <!-- Education -->
-                        <h4>Education</h4>
-                        <!-- Educational Qualifications -->
-                        <h6>A. Educational Qualifications</h6>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Educational Qualification</th>
-                                    <th>Name of School</th>
-                                    <th>Address</th>
-                                    <th>Date First Attended</th>
-                                    <th>Date Last Attended</th>
-                                    <th>Copy of TOR/Form 137</th>
-                                    <th>Points</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><%=application.qualification%></td> <!-- Replace with the actual qualification level -->
-                                    <td>
-                                        <%= application.school_name || 'N/A' %>
-                                    </td>
-                                    <td>
-                                        <%= application.school_address || 'N/A' %>
-                                    </td>
-                                    <td>
-                                        <%= application.date_first_attended ? new
-                                            Date(application.date_first_attended).toLocaleDateString('en-CA')
-                                            : 'N/A' %>
-                                    </td>
-                                    <td>
-                                        <%= application.date_last_attended ? new
-                                            Date(application.date_last_attended).toLocaleDateString('en-CA') : 'N/A'
-                                            %>
-                                    </td>
-                                    <td class="align-middle">
-                                        <% if (application.tor_file) { %>
-                                            <div>
-                                              
-                                                <a href="/uploads/<%= application.tor_file %>"
-                                                    class="btn btn-sm btn-primary"> 
-                                                    <i class="ri-eye-line me-1"></i>View
-                                               
-                                                </a>
-                                        
-                                                    <a href="/uploads/<%= application.tor_file %>"
-                                                        class="btn btn-sm btn-primary" download>
-                                                        <i class="ri-download-line"></i> Download
-                                                    </a>
-                                                
-                                            </div>
-                                            <% } else { %>
-                                                <span class="text-muted">No document uploaded.</span>
-                                                <% } %>
-                                    </td>
-                                    <td>
-                                        <%= application.education_points || 'N/A' %>
-                                    </td>
-
-                                </tr>
-                                <!-- Additional rows for more educational qualifications can be added here -->
-                            </tbody>
-                        </table>
-
-
-                        <h4>Work Experiences</h4>
-
-
-                        <div id="ordinary_employee_fields" class="input-fields">
-
-                            <table class="table table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Position/Job Title</th>
-                                        <th>Company Name</th>
-                                        <th>Address</th>
-                                        <th>Date Started and Ended</th>
-
-                                        <th>Copy of Certificate of Enrollment</th>
-                                        <th>Points</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <% if (workExperience && workExperience.length> 0) { %>
-                                        <% workExperience.forEach(function(emp) { %>
-                                            <tr>
-                                                <td>
-                                                    <%= emp.job_title || 'Ordinary Employee' %>
-                                                        <!-- Display job title -->
-                                                </td>
-                                                <td>
-                                                    <%= emp.company_name || '' %> <!-- Display company name -->
-                                                </td>
-                                                <td>
-                                                    <%= emp.company_address || '' %>
-                                                        <!-- Display company address -->
-                                                </td>
-
-                                                <td>
-                                                    <%= emp.date_started_end || '' %> <!-- Display end date -->
-                                                </td>
-                                                <td>
-                                                    <% if (emp.employment_file) { %>
-                                                        <!-- Check if there is a file -->
-                                                        <a href="/uploads/<%= emp.employment_file %>"
-                                                            class="btn btn-sm btn-primary">
-                                                            <i class="ri-eye-line me-1"></i>View
-                                                        </a>
-                                                        <a href="/uploads/<%= emp.employment_file %>"
-                                                            class="btn btn-sm btn-primary" download>
-                                                            <i class="ri-download-line"></i> Download
-                                                        </a>
-                                                        <% } else { %>
-                                                            No file uploaded
-                                                            <% } %>
-                                                </td>
-                                                <td>
-                                                    <%= emp.points || 'N/A' %>
-                                                </td>
-                                            </tr>
-                                            <% }) %>
-                                                <% } else { %>
-                                                    <tr>
-                                                        <td colspan="6">No employment records available.</td>
-                                                    </tr>
-                                                    <% } %>
-
-                                </tbody>
-                            </table>
-
-                        </div>
-
-
-                        <h4>PROFESSIONAL ACHIEVEMENTS</h4>
-
-                        <!-- Level of Training/Seminar -->
-                        <h6>A. Trainings and Seminars</h6>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Level</th>
-                                    <th>Title of Training/Seminar</th>
-                                    <th>Sponsoring Organization</th>
-                                    <th>Inclusive Date</th>
-                                    <th>Copy of Certificate</th>
-                                    <th>Points</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if (trainingExperience && trainingExperience.length> 0) { %>
-                                    <% trainingExperience.forEach(function(training) { %>
-                                        <tr>
-                                            <td>
-                                                <%= training.training_level || 'N/A' %>
-                                            </td>
-                                            <td>
-                                                <%= training.training_title || 'N/A' %>
-                                            </td>
-                                            <td>
-                                                <%= training.training_sponsor || 'N/A' %>
-                                            </td>
-                                            <td>
-                                                <%= training.training_date || 'N/A' %>
-                                            </td>
-                                            <td>
-                                                <% if (training.training_certificate) { %>
-                                                    <a href="/uploads/<%= training.training_certificate %>"
-                                                        class="btn btn-sm btn-primary">
-                                                        <i class="ri-eye-line me-1"></i> View
-                                                    </a>
-                                                    <a href="/uploads/<%= training.training_certificate %>"
-                                                        class="btn btn-sm btn-primary" download>
-                                                        <i class="ri-download-line"></i> Download
-                                                    </a>
-                                                    <% } else { %>
-                                                        No certificate available
-                                                        <% } %>
-                                            </td>
-                                            <td>
-                                                <%= training.points || 'N/A' %>
-                                            </td>
-                                        </tr>
-                                        <% }) %>
-                                            <% } else { %>
-                                                <tr>
-                                                    <td colspan="5">No training records available.</td>
-                                                </tr>
-                                                <% } %>
-                            </tbody>
-                        </table>
-
-
-
-                        <!-- Professional Development -->
-                        <h6>Professional Development</h6>
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Level</th>
-                                    <th>Organization</th>
-                                    <th>Description</th>
-                                    <th>Certificate File</th>
-                                    <th>Points</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if (professionalDevelopments && professionalDevelopments.length> 0) { %>
-                                    <% professionalDevelopments.forEach(function(dev) { %>
-                                        <tr>
-                                            <td>
-                                                <%= dev.professional_dev_level || 'N/A' %>
-                                            </td>
-                                            <td>
-                                                <%= dev.organization_dev || 'N/A' %>
-                                            </td>
-                                            <td>
-                                                <%= dev.description_dev || 'N/A' %>
-                                            </td>
-                                            <td>
-                                                <% if (dev.certificate_file_dev) { %>
-                                                    <a href="/uploads/<%= dev.certificate_file_dev %>"
-                                                        class="btn btn-sm btn-primary">
-                                                        <i class="ri-eye-line me-1"></i> View
-                                                    </a>
-                                                    <a href="/uploads/<%= dev.certificate_file_dev %>"
-                                                        class="btn btn-sm btn-primary" download>
-                                                        <i class="ri-download-line"></i> Download
-                                                    </a>
-                                                    <% } else { %>
-                                                        No certificate available
-                                                        <% } %>
-                                            </td>
-                                            <td>
-                                                <%= dev.points || 'N/A' %>
-                                            </td>
-                                        </tr>
-                                        <% }) %>
-                                            <% } else { %>
-                                                <tr>
-                                                    <td colspan="4">No professional development records available.
-                                                    </td>
-                                                </tr>
-                                                <% } %>
-                            </tbody>
-                        </table>
-
-
-                        <h6>Eligibilities/Awards</h6>
-
-
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Eligibility Level</th>
-
-                                    <th>Copy of Certificate</th>
-                                    <th>Points</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <!-- Sub-Professional Eligibility -->
-                                <% if( application.certificate_file_sub_professional) { %>
-                                    <tr>
-                                        <td>CSC Sub-Professional</td>
-
-                                        <td>
-                                        
-                                                <a href="/uploads/<%= application.certificate_file_sub_professional %>"
-                                                    class="btn btn-sm btn-primary">
-                                                    <i class="ri-eye-line me-1"></i>View
-                                                </a>
-                                                <a href="/uploads/<%= application.certificate_file_sub_professional %>"
-                                                    class="btn btn-sm btn-primary" download>
-                                                    <i class="ri-download-line"></i> Download
-                                                </a>
-                                        </td>
-                                        <td>
-                                            <%= application.csc_points || 'N/A' %>
-                                        </td>
-                                    </tr>
-                                    <% } %>
-
-                                        <!-- Technical (NC) Eligibility -->
-                                        <% if( application.certificate_file_technical_nc) { %>
-                                            <tr>
-                                                <td>Technical (NC)</td>
-
-                                                <td>
+                          <!-- Education -->
+                          <h4>EDUCATION</h4>
+                          <!-- Educational Qualifications -->
+                          <h6>A. Educational Qualifications</h6>
+                          <table class="table table-bordered">
+                              <thead>
+                                  <tr>
+                                      <th>Educational Qualification</th>
+                                      <th>Name of School</th>
+                                      <th>Address</th>
+                                      <th>Date First Attended</th>
+                                      <th>Date Last Attended</th>
+                                      <th>Copy of TOR/Form 137</th>
+                                      <th>Points</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <tr>
+                                      <td><%=application.qualification%></td> <!-- Replace with the actual qualification level -->
+                                      <td>
+                                          <%= application.school_name || 'N/A' %>
+                                      </td>
+                                      <td>
+                                          <%= application.school_address || 'N/A' %>
+                                      </td>
+                                      <td>
+                                          <%= application.date_first_attended ? new
+                                              Date(application.date_first_attended).toLocaleDateString('en-CA')
+                                              : 'N/A' %>
+                                      </td>
+                                      <td>
+                                          <%= application.date_last_attended ? new
+                                              Date(application.date_last_attended).toLocaleDateString('en-CA') : 'N/A'
+                                              %>
+                                      </td>
+                                      <td class="align-middle">
+                                          <% if (application.tor_file) { %>
+                                              <div>
                                                  
-                                                        <a href="/uploads/<%= application.certificate_file_technical_nc %>"
-                                                            class="btn btn-sm btn-primary">
-                                                            <i class="ri-eye-line me-1"></i>View
-                                                        </a>
-                                                        <a href="/uploads/<%= application.certificate_file_technical_nc %>"
-                                                            class="btn btn-sm btn-primary" download>
-                                                            <i class="ri-download-line"></i> Download
-                                                        </a>
-                                                </td>
-                                                <td>
-                                                    <%= application.nc_points || 'N/A' %>
-                                                </td>
-                                            </tr>
-                                            <% } %>
+                                                  <a href="/uploads/<%= application.tor_file %>"
+                                                      class="btn btn-sm btn-primary" tabindex="-1"> 
+                                                      <i class="ri-eye-line me-1"></i>View
+                                                 
+                                                  </a>
+                                                 
+                                                      <a href="/uploads/<%= application.tor_file %>"
+                                                          class="btn btn-sm btn-primary" tabindex="-1" download>
+                                                          <i class="ri-download-line"></i> Download
+                                                      </a>
+                                               
+                                              </div>
+                                              <% } else { %>
+                                                  <span class="text-muted">No document uploaded.</span>
+                                                  <% } %>
+                                      </td>
+                                      <td>
+                                    
+                                              <input type="number"  value="<%=usersEvaluationHistory[0]?.education_points || ''%>"  name="education_points" id="education_points" class="form-control" min="0" max="20"  />
+                                
+                                      </td>
 
-                                                <!-- Professional (PRC) (CSC) Eligibility -->
-                                                <% if( application.certificate_file_professional_prc_csc) { %>
-                                                    <tr>
-                                                        <td>Professional (PRC) (CSC)</td>
-
-                                                        <td>
-                                                          
-                                                                <a href="/uploads/<%= application.certificate_file_professional_prc_csc %>"
-                                                                    class="btn btn-sm btn-primary">
-                                                                    <i class="ri-eye-line me-1"></i>View
-                                                                </a>
-                                                                <a href="/uploads/<%= application.certificate_file_professional_prc_csc %>"
-                                                                    class="btn btn-sm btn-primary" download>
-                                                                    <i class="ri-download-line"></i> Download
-                                                                </a>
-                                                        </td>
-                                                        <td>
-                                                            <%= application.prc_points || 'N/A' %>
-                                                        </td>
-                                                    </tr>
-                                                    <% } %>
-                            </tbody>
-                        </table>
+                                  </tr>
+                                  <!-- Additional rows for more educational qualifications can be added here -->
+                              </tbody>
+                          </table>
 
 
-                        <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Award Level</th>
-                                    <th>Copy of Certificate File</th>
-                                    <th>Points</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% if (awards && awards.length> 0) { %>
-                                    <% awards.forEach(function(award) { %>
-                                        <tr>
-                                            <td>
-                                                <%= award.award_level || 'N/A' %>
-                                            </td>
-                                            <td>
-                                                <% if (award.certificate_file_award) { %>
-                                                    <a href="/uploads/<%= award.certificate_file_award %>"
-                                                        class="btn btn-sm btn-primary">
-                                                        <i class="ri-eye-line me-1"></i> View
-                                                    </a>
-                                                    <a href="/uploads/<%= award.certificate_file_award %>"
-                                                        class="btn btn-sm btn-primary" download>
-                                                        <i class="ri-download-line"></i> Download
-                                                    </a>
-                                                    <% } else { %>
-                                                        No certificate available
-                                                        <% } %>
-                                            </td>
-                                            <td>
-                                                <%= award.points || 'N/A' %>
-                                            </td>
-                                        </tr>
-                                        <% }) %>
-                                            <% } else { %>
-                                                <tr>
-                                                    <td colspan="2">No award records available.</td>
-                                                </tr>
-                                                <% } %>
-                            </tbody>
-                        </table>
+                          <h4>WORK EXPERIENCES</h4>
 
+
+                          <div id="ordinary_employee_fields" class="input-fields">
+
+                              <table class="table table-bordered">
+                                  <thead>
+                                      <tr>
+                                          <th>Position/Job Title</th>
+                                          <th>Company Name</th>
+                                          <th>Address</th>
+                                          <th>Date Started and Ended</th>
+
+                                          <th>Copy of Certificate of Enrollment</th>
+                                          <th>Points</th>
+                                      </tr>
+                                  </thead>
+                                  <tbody>
+                                      <% if (workExperience && workExperience.length> 0) { %>
+                                          <% workExperience.forEach(function(emp, index) { %>
+                                              <tr>
+                                                  <td>
+                                                      <%= emp.job_title || 'Ordinary Employee' %>
+                                                          <!-- Display job title -->
+                                                  </td>
+                                                  <td>
+                                                      <%= emp.company_name || '' %> <!-- Display company name -->
+                                                  </td>
+                                                  <td>
+                                                      <%= emp.company_address || '' %>
+                                                          <!-- Display company address -->
+                                                  </td>
+
+                                                  <td>
+                                                      <%= emp.date_started_end || '' %> <!-- Display end date -->
+                                                  </td>
+                                                  <td>
+                                                      <% if (emp.employment_file) { %>
+                                                          <!-- Check if there is a file -->
+                                                          <a href="/uploads/<%= emp.employment_file %>"
+                                                              class="btn btn-sm btn-primary" tabindex="-1">
+                                                              <i class="ri-eye-line me-1"></i>View
+                                                          </a>
+                                                          <a href="/uploads/<%= emp.employment_file %>"
+                                                              class="btn btn-sm btn-primary" tabindex="-1" download>
+                                                              <i class="ri-download-line"></i> Download
+                                                          </a>
+                                                          <% } else { %>
+                                                              No file uploaded
+                                                              <% } %>
+                                                  </td>
+                                                  <td>
+                                               
+                                                          <input type="number" value="<%=usersEvaluationHistory[0]?.work_experience_points[index] || ''%>"  name="work_experience_points[<%= index %>]" class="form-control" min="0" max="<%=(40 / workExperience.length).toFixed(0) %>" required  />
+                                                  
+                                                  </td>
+                                              </tr>
+                                              <% }) %>
+                                                  <% } else { %>
+                                                      <tr>
+                                                          <td colspan="6">No employment records available.</td>
+                                                      </tr>
+                                                      <% } %>
+
+                                  </tbody>
+                              </table>
+
+                          </div>
+
+                          <h4>PROFESSIONAL ACHIEVEMENTS</h4>
+
+                          <!-- Level of Training/Seminar -->
+                          <h6>A. Trainings and Seminars</h6>
+                          <table class="table table-bordered">
+                              <thead>
+                                  <tr>
+                                      <th>Level</th>
+                                      <th>Title of Training/Seminar</th>
+                                      <th>Sponsoring Organization</th>
+                                      <th>Inclusive Date</th>
+                                      <th>Copy of Certificate</th>
+                                      <th>Points</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <% if (trainingExperience && trainingExperience.length> 0) { %>
+                                      <% trainingExperience.forEach(function(training, index) { %>
+                                          <tr>
+                                              <td>
+                                                  <%= training.training_level || 'N/A' %>
+                                              </td>
+                                              <td>
+                                                  <%= training.training_title || 'N/A' %>
+                                              </td>
+                                              <td>
+                                                  <%= training.training_sponsor || 'N/A' %>
+                                              </td>
+                                              <td>
+                                                  <%= training.training_date || 'N/A' %>
+                                              </td>
+                                              <td>
+                                                  <% if (training.training_certificate) { %>
+                                                      <a href="/uploads/<%= training.training_certificate %>"
+                                                          class="btn btn-sm btn-primary" tabindex="-1">
+                                                          <i class="ri-eye-line me-1"></i> View
+                                                      </a>
+                                                      <a href="/uploads/<%= training.training_certificate %>"
+                                                          class="btn btn-sm btn-primary" tabindex="-1" download>
+                                                          <i class="ri-download-line"></i> Download
+                                                      </a>
+                                                      <% } else { %>
+                                                          No certificate available
+                                                          <% } %>
+                                              </td>
+                                              <td>
+                                                  
+                                                      <input type="number" value="<%=usersEvaluationHistory[0]?.training_points[index] || ''%>"  name="training_points[<%= index %>]" class="form-control" min="0" max="5" required />
+                                           
+                                              </td>
+                                          </tr>
+                                          <% }) %>
+                                              <% } else { %>
+                                                  <tr>
+                                                      <td colspan="5">No training records available.</td>
+                                                  </tr>
+                                                  <% } %>
+                              </tbody>
+                          </table>
+
+
+                          <!-- Professional Development -->
+                          <h6>B. Professional Development</h6>
+                          <table class="table table-bordered">
+                              <thead>
+                                  <tr>
+                                      <th>Level</th>
+                                      <th>Organization</th>
+                                      <th>Description</th>
+                                      <th>Certificate File</th>
+                                      <th>Points</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <% if (professionalDevelopments && professionalDevelopments.length> 0) { %>
+                                      <% professionalDevelopments.forEach(function(dev, index) { %>
+                                          <tr>
+                                              <td>
+                                                  <%= dev.professional_dev_level || 'N/A' %>
+                                              </td>
+                                              <td>
+                                                  <%= dev.organization_dev || 'N/A' %>
+                                              </td>
+                                              <td>
+                                                  <%= dev.description_dev || 'N/A' %>
+                                              </td>
+                                              <td>
+                                                  <% if (dev.certificate_file_dev) { %>
+                                                      <a href="/uploads/<%= dev.certificate_file_dev %>"
+                                                          class="btn btn-sm btn-primary" tabindex="-1">
+                                                          <i class="ri-eye-line me-1"></i> View
+                                                      </a>
+                                                      <a href="/uploads/<%= dev.certificate_file_dev %>"
+                                                          class="btn btn-sm btn-primary" tabindex="-1" download>
+                                                          <i class="ri-download-line"></i> Download
+                                                      </a>
+                                                      <% } else { %>
+                                                          No certificate available
+                                                          <% } %>
+                                              </td>
+                                              <td>
+                                         
+                                                      <input type="number" value="<%=usersEvaluationHistory[0]?.professional_development_points[index] || ''%>"   name="professional_dev_points[<%= index %>]" class="form-control" min="0" max="5" required />
+                                            
+                                              </td>
+                                          </tr>
+                                          <% }) %>
+                                              <% } else { %>
+                                                  <tr>
+                                                      <td colspan="4">No professional development records available.
+                                                      </td>
+                                                  </tr>
+                                                  <% } %>
+                              </tbody>
+                          </table>
+
+
+                          <h6>C. Eligibilities/Awards</h6>
+
+                          <table class="table table-bordered">
+                              <thead>
+                                  <tr>
+                                      <th>Eligibility Level</th>
+                                      <th>Copy of Certificate</th>
+                                      <th>Points</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <!-- Sub-Professional Eligibility -->
+                                  <% if(application.certificate_file_sub_professional) { %>
+                                      <tr>
+                                          <td>CSC Sub-Professional</td>
+                                          <td>
+                                              <a href="/uploads/<%= application.certificate_file_sub_professional %>" class="btn btn-sm btn-primary" tabindex="-1">
+                                                  <i class="ri-eye-line me-1"></i>View
+                                              </a>
+                                              <a href="/uploads/<%= application.certificate_file_sub_professional %>" class="btn btn-sm btn-primary" tabindex="-1" download>
+                                                  <i class="ri-download-line"></i> Download
+                                              </a>
+                                          </td>
+                                          <td>
+                                              
+                                                  <input type="number"   value="<%=usersEvaluationHistory[0]?.eligibility_points[0] || ''%>" name="csc_points" id="csc_points" class="form-control" min="0" max="5" required >
+                                         
+                                          </td>
+                                      </tr>
+                                  <% } %>
+                          
+                                  <!-- Technical (NC) Eligibility -->
+                                  <% if(application.certificate_file_technical_nc) { %>
+                                      <tr>
+                                          <td>Technical (NC)</td>
+                                          <td>
+                                              <a href="/uploads/<%= application.certificate_file_technical_nc %>" class="btn btn-sm btn-primary" tabindex="-1">
+                                                  <i class="ri-eye-line me-1"></i>View
+                                              </a>
+                                              <a href="/uploads/<%= application.certificate_file_technical_nc %>" class="btn btn-sm btn-primary" tabindex="-1" download>
+                                                  <i class="ri-download-line"></i> Download
+                                              </a>
+                                          </td>
+                                          <td>
+                                       
+                                                  <input type="number"   value="<%=usersEvaluationHistory[0]?.eligibility_points[1] || ''%>"  name="nc_points" id="nc_points" class="form-control" min="0" max="5" required>
+                                         
+                                          </td>
+                                      </tr>
+                                  <% } %>
+                          
+                                  <!-- Professional (PRC) (CSC) Eligibility -->
+                                  <% if(application.certificate_file_professional_prc_csc) { %>
+                                      <tr>
+                                          <td>Professional (PRC) (CSC)</td>
+                                          <td>
+                                              <a href="/uploads/<%= application.certificate_file_professional_prc_csc %>" class="btn btn-sm btn-primary" tabindex="-1">
+                                                  <i class="ri-eye-line me-1"></i>View
+                                              </a>
+                                              <a href="/uploads/<%= application.certificate_file_professional_prc_csc %>" class="btn btn-sm btn-primary" tabindex="-1" download>
+                                                  <i class="ri-download-line"></i> Download
+                                              </a>
+                                          </td>
+                                          <td>
+                                             
+                                                  <input type="number"  value="<%=usersEvaluationHistory[0]?.eligibility_points[2] || ''%>" name="prc_points" id="prc_points" class="form-control" min="0" max="40" required>
+                                              
+                                          </td>
+                                      </tr>
+                                  <% } %>
+                              </tbody>
+                          </table>
+                          
+
+                          <table class="table table-bordered">
+                              <thead>
+                                  <tr>
+                                      <th>Award Level</th>
+                                      <th>Copy of Certificate File</th>
+                                      <th>Points</th>
+                                  </tr>
+                              </thead>
+                              <tbody>
+                                  <% if (awards && awards.length > 0) { %>
+                                      <% awards.forEach(function(award, index) { %>
+                                          <tr>
+                                              <td><%= award.award_level || 'N/A' %></td>
+                                              <td>
+                                                  <% if (award.certificate_file_award) { %>
+                                                      <a href="/uploads/<%= award.certificate_file_award %>" class="btn btn-sm btn-primary" tabindex="-1">
+                                                          <i class="ri-eye-line me-1"></i> View
+                                                      </a>
+                                                      <a href="/uploads/<%= award.certificate_file_award %>" class="btn btn-sm btn-primary" tabindex="-1" download>
+                                                          <i class="ri-download-line"></i> Download
+                                                      </a>
+                                                  <% } else { %>
+                                                      No certificate available
+                                                  <% } %>
+                                              </td>
+                                              <td>
+                                  
+                                                      <input type="number" value="<%=usersEvaluationHistory[0]?.award_points[index] || ''%>"  name="award_points[<%= index %>]" class="form-control" min="0" max="5" required />
+                                            
+                                              </td>
+                                          </tr>
+                                      <% }) %>
+                                  <% } else { %>
+                                      <tr>
+                                          <td colspan="3">No award records available.</td>
+                                      </tr>
+                                  <% } %>
+                              </tbody>
+                          </table>
+                          <h4>INTERVIEW</h4>
+                          <div class="mb-3">
+                            <label for="interview_chief_points" class="form-label">Interview Chief Points</label>
+                            <input type="number"  id="interview_chief_points" name="interview_chief_points"
+                                   class="form-control" min="0" max="5" required
+                                   value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].interview_chief_points : '' %>">
+                        </div>
+                        <div class="mb-3">
+                            <label for="interview_assessor_points" class="form-label">Interview Assessor Points</label>
+                            <input type="number"  id="interview_assessor_points" name="interview_assessor_points"
+                                   class="form-control" min="0" max="10" required
+                                   value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].interview_assessor_points : '' %>">
+                        </div>
+                    
                     </div>
-
+                            <!-- Qualification Status Input -->
+                 <div class="mb-3">
+                    <div class="row align-items-start ">
+                        <div class="col-1">
+                            <label for="qualification_status" class="">Qualification Status</label>
+                        </div>
+                        <div class="col-4">
+                            <input type="text" id="qualification_status" name="qualification_status" class="form-control-plaintext text-center" readonly>
+                        </div>
+                    </div>
+                    
+                
+                
+                </div>
+                    <!-- Submit Button -->
+                    <button type="submit" id="submit_button" class="btn btn-primary">
+                        <% if (usersEvaluation.length > 0) { %>Update Evaluation<% } else { %>Create Evaluation<% } %>
+                    </button>
+                </form>
                 </div>
             </div>
         </div>
@@ -416,15 +451,7 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <% if (usersEvaluation.length > 0) { %>
-                        <form action="/evaluation/<%= usersEvaluation[0].id %>/edit" method="POST" class="evaluation-edit-validation">
-                            <input type="hidden" name="application_id" value="<%= application.id %>">
-                            <h4>Edit Evaluation</h4>
-                    <% } else { %>
-                        <form action="/evaluation/create" method="POST" class="evaluation-validation">
-                            <input type="hidden" name="application_id" value="<%= application.id %>">
-                            <h4>Create Evaluation</h4>
-                    <% } %>
+                 
                 
                     <h4>1. Educational Qualification</h4>
                     
@@ -439,12 +466,7 @@
                         <li class="list-group-item">1.5 Three Years College - 20 Points</li>
                         <li class="list-group-item">1.6 College Degree Holder - 20 Points</li>
                     </ul>
-                    <div class="mb-3">
-                        <label for="educational_points" class="form-label">Educational Qualification Points</label>
-                        <input type="number" id="educational_points" name="educational_points" class="form-control"
-                               min="0" max="20" required
-                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].educational_points : '' %>">
-                    </div>
+                   
                 
                     <h4>2. Work Experience</h4>
                     <div class="mb-3">
@@ -455,12 +477,6 @@
                         <li class="list-group-item">2.2 Supervisor - 2 Points / year</li>
                         <li class="list-group-item">2.3 Head/Manager - 3 Points / year</li>
                     </ul>
-                    <div class="mb-3">
-                        <label for="work_experience_points" class="form-label">Work Experience Points</label>
-                        <input type="number" id="work_experience_points" name="work_experience_points"
-                               class="form-control" min="0" max="40" required
-                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].work_experience_points : '' %>">
-                    </div>
                 
                     <h4>3. Professional Achievement</h4>
                     <div class="mb-3">
@@ -484,24 +500,7 @@
                             <li>3.3.1.3 Professional - 5 Points</li>
                         </ul>
                     </ul>
-                    <div class="mb-3">
-                        <label for="training_points" class="form-label">Training Points</label>
-                        <input type="number" id="training_points" name="training_points" class="form-control"
-                               min="0" max="10" required
-                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].training_points : '' %>">
-                    </div>
-                    <div class="mb-3">
-                        <label for="professional_development_points" class="form-label">Professional Development Points</label>
-                        <input type="number" id="professional_development_points" name="professional_development_points"
-                               class="form-control" min="0" max="10" required
-                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].professional_development_points : '' %>">
-                    </div>
-                    <div class="mb-3">
-                        <label for="eligibility_points" class="form-label">Eligibility & Awards Points</label>
-                        <input type="number" id="eligibility_points" name="eligibility_points" class="form-control"
-                               min="0" max="5" required
-                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].eligibility_points : '' %>">
-                    </div>
+                  
                 
                     <h4>4. Interview</h4>
                     <div class="mb-3">
@@ -511,41 +510,11 @@
                         <li class="list-group-item">4.1 Chief of ETEEAP - 5 Points</li>
                         <li class="list-group-item">4.2 Internal Assessor - 10 Points</li>
                     </ul>
-                    <div class="mb-3">
-                        <label for="interview_chief_points" class="form-label">Interview Chief Points</label>
-                        <input type="number" id="interview_chief_points" name="interview_chief_points"
-                               class="form-control" min="0" max="5" required
-                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].interview_chief_points : '' %>">
-                    </div>
-                    <div class="mb-3">
-                        <label for="interview_assessor_points" class="form-label">Interview Assessor Points</label>
-                        <input type="number" id="interview_assessor_points" name="interview_assessor_points"
-                               class="form-control" min="0" max="10" required
-                               value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].interview_assessor_points : '' %>">
-                    </div>
-                
-                    <!-- Qualification Status Input -->
-                    <div class="mb-3">
-                        <div class="row align-items-center ">
-                            <div class="col-4">
-                                <label for="qualification_status" class="">Qualification Status</label>
-                            </div>
-                            <div class="col-auto">
-                                <input type="text" id="qualification_status" name="qualification_status" class="form-control-plaintext text-center" readonly>
-                            </div>
-                        </div>
-                        
-                    
-                    
-                    </div>
-                
-                    <!-- Submit Button -->
-                    <button type="submit" class="btn btn-primary">
-                        <% if (usersEvaluation.length > 0) { %>Update Evaluation<% } else { %>Create Evaluation<% } %>
-                    </button>
-                </form>
+                   
+                  
                 </div>
-                
+             
+            
             </div>
         </div>
         
@@ -553,51 +522,94 @@
 
 
     <script>
-        // Function to calculate total points and update qualification status
         function calculateQualificationStatus() {
-            // Get the values of the input fields
-            const educationalPoints = parseInt(document.getElementById('educational_points').value) || 0;
-            const workExperiencePoints = parseInt(document.getElementById('work_experience_points').value) || 0;
-            const trainingPoints = parseInt(document.getElementById('training_points').value) || 0;
-            const professionalDevelopmentPoints = parseInt(document.getElementById('professional_development_points').value) || 0;
-            const eligibilityPoints = parseInt(document.getElementById('eligibility_points').value) || 0;
+            // Get the values from the form fields
+            const educationPoints = parseInt(document.getElementById('education_points').value) || 0;
             const interviewChiefPoints = parseInt(document.getElementById('interview_chief_points').value) || 0;
             const interviewAssessorPoints = parseInt(document.getElementById('interview_assessor_points').value) || 0;
+            const cscPoints = parseInt(document.getElementById('csc_points').value) || 0;
+            const ncPoints = parseInt(document.getElementById('nc_points').value) || 0;
+            const prcPoints = parseInt(document.getElementById('prc_points').value) || 0;
     
-            // Calculate total points
-            const totalPoints = educationalPoints + workExperiencePoints + trainingPoints +
-                professionalDevelopmentPoints + eligibilityPoints + interviewChiefPoints + interviewAssessorPoints;
+            // Initialize arrays for each point category using querySelectorAll
+            const workExperiencePoints = Array.from(document.querySelectorAll("input[name^='work_experience_points']"))
+                .map(input => parseInt(input.value) || 0);
     
-            // Update qualification status
+            const trainingPoints = Array.from(document.querySelectorAll("input[name^='training_points']"))
+                .map(input => parseInt(input.value) || 0);
+    
+            const professionalDevPoints = Array.from(document.querySelectorAll("input[name^='professional_dev_points']"))
+                .map(input => parseInt(input.value) || 0);
+    
+            const awardPoints = Array.from(document.querySelectorAll("input[name^='award_points']"))
+                .map(input => parseInt(input.value) || 0);
+    
+            // Calculate the sum of points from training, professional dev, awards, and other fields
+            const totalAdditionalPoints = trainingPoints.reduce((sum, value) => sum + value, 0)
+                + professionalDevPoints.reduce((sum, value) => sum + value, 0)
+                + awardPoints.reduce((sum, value) => sum + value, 0)
+                + cscPoints
+                + ncPoints
+                + prcPoints;
+    
+            // Calculate total points from all fields
+            const totalPoints = educationPoints
+                + workExperiencePoints.reduce((sum, value) => sum + value, 0)
+                + totalAdditionalPoints
+                + interviewChiefPoints
+                + interviewAssessorPoints;
+    
+            // Get qualification status input field
             const qualificationStatusInput = document.getElementById('qualification_status');
-            qualificationStatusInput.value = totalPoints >= 80 ? 'Qualified' : 'Not Qualified';
-
-              // Change text color based on qualification status
-        if (qualificationStatusInput.value === 'Qualified') {
-            qualificationStatusInput.style.color = 'green';
-        } else {
-            qualificationStatusInput.style.color = 'red'; // Default color for "Qualified"
-        }
+            const submitButton = document.getElementById('submit_button');  // Assuming you have a submit button with this id
+            
+            // Check if the sum of specific points exceeds 25
+            if (totalAdditionalPoints > 25) {
+                // Disable the submit button
+                submitButton.disabled = true;
+    
+                // Set error message and change text color to red
+                qualificationStatusInput.value = 'Error: Points exceeded limit (Check criteria below for more information)';
+                qualificationStatusInput.style.color = 'red';
+            } else {
+                // Enable the submit button if conditions are not met
+                submitButton.disabled = false;
+    
+                // Update qualification status based on total points
+                qualificationStatusInput.value = totalPoints >= 80 ? 'Qualified' : 'Not Qualified';
+                qualificationStatusInput.style.color = totalPoints >= 80 ? 'green' : 'red';
+            }
+    
+            console.log(totalPoints);
         }
     
-        // Attach event listeners to input fields
+        // Use querySelectorAll for attaching event listeners to form controls
         const inputFields = [
-            'educational_points',
+            'education_points',
             'work_experience_points',
             'training_points',
-            'professional_development_points',
-            'eligibility_points',
+            'professional_dev_points',
+            'award_points',
             'interview_chief_points',
-            'interview_assessor_points'
+            'interview_assessor_points',
+            'csc_points',
+            'nc_points',
+            'prc_points'
         ];
-        
-        inputFields.forEach(field => {
-            document.getElementById(field).addEventListener('input', calculateQualificationStatus);
+    
+        inputFields.forEach((field) => {
+            // Using querySelectorAll to attach event listeners
+            const elements = document.querySelectorAll(`input[name='${field}'], input[name^='${field}']`);
+            elements.forEach((element) => {
+                element.addEventListener('input', calculateQualificationStatus);
+            });
         });
     
         // Initial calculation on page load
         window.onload = calculateQualificationStatus;
     </script>
+    
+    
 
     <%block('script').append(` <!-- Datatable Demo Aapp js -->
         <script>
@@ -607,151 +619,129 @@
                 class EvaluationFormValidation {
                     static initValidation() {
                         // Initialize jQuery validation
-                        jQuery(".evaluation-validation").validate({
-                            rules: {
-                                educational_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 20
-                                },
-                                work_experience_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 40
-                                },
-                                training_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 10
-                                },
-                                professional_development_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 10
-                                },
-                                eligibility_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 5
-                                },
-                                interview_chief_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 5
-                                },
-                                interview_assessor_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 10
-                                }
-                            },
-                            messages: {
-                                educational_points: {
-                                    required: "Please enter educational qualification points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 20"
-                                },
-                                work_experience_points: {
-                                    required: "Please enter work experience points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 40"
-                                },
-                                training_points: {
-                                    required: "Please enter training points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 10"
-                                },
-                                professional_development_points: {
-                                    required: "Please enter professional development points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 10"
-                                },
-                                eligibility_points: {
-                                    required: "Please enter eligibility points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 5"
-                                },
-                                interview_chief_points: {
-                                    required: "Please enter interview chief points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 5"
-                                },
-                                interview_assessor_points: {
-                                    required: "Please enter interview assessor points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 10"
-                                }
-                            },
-                            submitHandler: function (form) {
-                                const data = {
-                                    educational_points: form.educational_points.value,
-                                    work_experience_points: form.work_experience_points.value,
-                                    training_points: form.training_points.value,
-                                    professional_development_points: form.professional_development_points.value,
-                                    eligibility_points: form.eligibility_points.value,
-                                    interview_chief_points: form.interview_chief_points.value,
-                                    interview_assessor_points: form.interview_assessor_points.value,
-                                 
-                                    application_id: form.application_id.value,
-                             
-                                };
+                      jQuery(".evaluation-validation").validate({
+    rules: {
+        education_points: {
+            required: true,
+            number: true,
+            min: 0,
+            max: 20
+        },
+        work_experience_points: {
+            required: true,
+            number: true,
+            min: 0,
+            max: 40
+        },
+        training_points: {
+            required: true,
+            number: true,
+            min: 0,
+            max: 40
+        },
+        professional_dev_points: {
+            required: true,
+            number: true,
+            min: 0,
+            max: 40
+        },
+        csc_points: {
+            required: true,
+            number: true,
+            min: 0,
+            max: 40
+        },
+        nc_points: {
+            required: true,
+            number: true,
+            min: 0,
+            max: 40
+        },
+        prc_points: {
+            required: true,
+            number: true,
+            min: 0,
+            max: 40
+        },
+        award_points: {
+            required: true,
+            number: true,
+            min: 0,
+            max: 40
+        }
+    },
+    messages: {
+        
+    },
+    submitHandler: function (form) {
+        const data = {
+            education_points: form.education_points.value,
+            work_experience_points: [],
+            training_points: [],
+            professional_dev_points: [],
+            award_points: [],
+            csc_points: form.csc_points.value,
+            nc_points: form.nc_points.value,
+            prc_points: form.prc_points.value,
+            interview_chief_points: form.interview_chief_points.value,
+            interview_assessor_points: form.interview_assessor_points.value,
+            application_id: form.application_id.value
+        };
+        document.querySelectorAll("input[name^='work_experience_points']").forEach(input => {
+    data.work_experience_points.push(input.value);
+});
+document.querySelectorAll("input[name^='training_points']").forEach(input => {
+    data.training_points.push(input.value);
+});
+document.querySelectorAll("input[name^='professional_dev_points']").forEach(input => {
+    data.professional_dev_points.push(input.value);
+});
+document.querySelectorAll("input[name^='award_points']").forEach(input => {
+    data.award_points.push(input.value);
+});
 
-                                fetch('/assessor/evaluation', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json', // Specify the content type as JSON
-                                    },
-                                    body: JSON.stringify(data), // Convert form data to JSON string
-                                })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.success) {
-                                         
-
-                                            $.notify({
-                                                icon: 'fa fa-check me-1',
-                                                message: 'Evaluation submitted successfully!'
-                                            }, {
-                                                type: 'success', allow_dismiss: false,
-                                            });
-                                            setTimeout(() => {
-                                                window.location.reload()
-                                            }, 2000);
-                                        } else {
-                                            $.notify({
-                                                icon: 'fa fa-exclamation-triangle me-1',
-                                                message: 'Failed to submit evaluation. Please try again.'
-                                            }, {
-                                                type: 'danger', allow_dismiss: false,
-                                            });
-                                        }
-                                    })
-                                    .catch(error => {
-                                        $.notify({
-                                            icon: 'fa fa-times-circle me-1',
-                                            message: 'An error occurred. Please try again.'
-                                        }, {
-                                            type: 'danger'
-                                        });
-                                        console.error('Error:', error);
-                                    });
-                            }
-                        });
-                    }
+        fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(data),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                $.notify({
+                    icon: 'fa fa-check me-1',
+                    message: data.message
+                }, {
+                    type: 'success',
+                    allow_dismiss: false,
+                });
+                setTimeout(() => {
+                    window.location.reload()
+                }, 2000);
+            } else {
+                $.notify({
+                    icon: 'fa fa-exclamation-triangle me-1',
+                    message: 'Failed to submit evaluation. Please try again.'
+                }, {
+                    type: 'danger',
+                    allow_dismiss: false,
+                });
+            }
+        })
+        .catch(error => {
+            $.notify({
+                icon: 'fa fa-times-circle me-1',
+                message: 'An error occurred. Please try again.'
+            }, {
+                type: 'danger'
+            });
+            console.error('Error:', error);
+        });
+    }
+});
+     }
 
                     static init() {
                         this.initValidation();
@@ -762,166 +752,7 @@
                 $(document).ready(() => EvaluationFormValidation.init());
             })();
 
-            !(function () {
-                "use strict";
-                class EditEvaluationFormValidation {
-                    static initValidation() {
-                        // Initialize jQuery validation
-                        jQuery(".evaluation-edit-validation").validate({
-                            rules: {
-                                educational_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 20
-                                },
-                                work_experience_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 40
-                                },
-                                training_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 10
-                                },
-                                professional_development_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 10
-                                },
-                                eligibility_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 5
-                                },
-                                interview_chief_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 5
-                                },
-                                interview_assessor_points: {
-                                    required: true,
-                                    number: true,
-                                    min: 0,
-                                    max: 10
-                                }
-                            },
-                            messages: {
-                                educational_points: {
-                                    required: "Please enter educational qualification points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 20"
-                                },
-                                work_experience_points: {
-                                    required: "Please enter work experience points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 40"
-                                },
-                                training_points: {
-                                    required: "Please enter training points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 10"
-                                },
-                                professional_development_points: {
-                                    required: "Please enter professional development points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 10"
-                                },
-                                eligibility_points: {
-                                    required: "Please enter eligibility points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 5"
-                                },
-                                interview_chief_points: {
-                                    required: "Please enter interview chief points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 5"
-                                },
-                                interview_assessor_points: {
-                                    required: "Please enter interview assessor points",
-                                    number: "Please enter a valid number",
-                                    min: "Points should not be less than 0",
-                                    max: "Points should not exceed 10"
-                                }
-                            },
-                            submitHandler: function (form) {
-                                const data = {
-                                    educational_points: form.educational_points.value,
-                                    work_experience_points: form.work_experience_points.value,
-                                    training_points: form.training_points.value,
-                                    professional_development_points: form.professional_development_points.value,
-                                    eligibility_points: form.eligibility_points.value,
-                                    interview_chief_points: form.interview_chief_points.value,
-                                    interview_assessor_points: form.interview_assessor_points.value,
-                                
-                                    application_id: form.application_id.value,
-                                    qualification_status: form.qualification_status.value
-                                };
-
-                                fetch('/assessor/evaluation/update', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json', // Specify the content type as JSON
-                                    },
-                                    body: JSON.stringify(data), // Convert form data to JSON string
-                                })
-                                    .then(response => response.json())
-                                    .then(data => {
-                                        if (data.success) {
-                                           
-
-                                            $.notify({
-                                                icon: 'fa fa-check me-1',
-                                                message: 'Evaluation updated successfully!'
-                                            }, {
-                                                type: 'success', allow_dismiss: false,
-                                            });
-                                            setTimeout(() => {
-                                                window.location.reload()
-                                            }, 2000);
-                                        } else {
-                                            $.notify({
-                                                icon: 'fa fa-exclamation-triangle me-1',
-                                                message: 'Failed to submit evaluation. Please try again.'
-                                            }, {
-                                                type: 'danger', allow_dismiss: false,
-                                            });
-                                        }
-                                    })
-                                    .catch(error => {
-                                        $.notify({
-                                            icon: 'fa fa-times-circle me-1',
-                                            message: 'An error occurred. Please try again.'
-                                        }, {
-                                            type: 'danger'
-                                        });
-                                        console.error('Error:', error);
-                                    });
-                            }
-                        });
-                    }
-
-                    static init() {
-                        this.initValidation();
-                    }
-                }
-
-                // Call init function on document ready
-                $(document).ready(() => EditEvaluationFormValidation.init());
-            })();
-
+       
         </script>
         `) %>
 

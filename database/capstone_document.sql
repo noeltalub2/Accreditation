@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 10, 2024 at 07:31 PM
+-- Generation Time: Nov 12, 2024 at 01:02 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -114,16 +114,16 @@ CREATE TABLE `application_assessors` (
 CREATE TABLE `assessor` (
   `assessor_id` int(11) NOT NULL,
   `uuid` varchar(50) NOT NULL,
-  `firstname` varchar(255) NOT NULL,
-  `middlename` varchar(255) NOT NULL,
-  `lastname` varchar(255) NOT NULL,
-  `birthday` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `phonenumber` varchar(20) NOT NULL,
-  `gender` varchar(255) NOT NULL,
-  `username` varchar(45) NOT NULL,
+  `firstname` varchar(255) DEFAULT NULL,
+  `middlename` varchar(255) DEFAULT NULL,
+  `lastname` varchar(255) DEFAULT NULL,
+  `birthday` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phonenumber` varchar(20) DEFAULT NULL,
+  `gender` varchar(255) DEFAULT NULL,
+  `username` varchar(45) DEFAULT NULL,
   `password` varchar(60) NOT NULL,
-  `profile_url` varchar(255) NOT NULL,
+  `profile_url` varchar(255) DEFAULT 'default.jpg',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `modified_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -174,10 +174,34 @@ CREATE TABLE `evaluations` (
   `training_points` int(11) DEFAULT NULL,
   `professional_development_points` int(11) DEFAULT NULL,
   `eligibility_points` int(11) DEFAULT NULL,
+  `award_points` int(11) DEFAULT NULL,
   `interview_chief_points` int(11) DEFAULT NULL,
   `interview_assessor_points` int(11) DEFAULT NULL,
-  `total_score` int(11) GENERATED ALWAYS AS (`educational_points` + `work_experience_points` + `training_points` + `professional_development_points` + `eligibility_points` + `interview_chief_points` + `interview_assessor_points`) STORED,
+  `total_score` int(11) GENERATED ALWAYS AS (`educational_points` + `work_experience_points` + `training_points` + `professional_development_points` + `eligibility_points` + `interview_chief_points` + `interview_assessor_points` + `award_points`) STORED,
   `status` varchar(255) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `evaluation_history`
+--
+
+CREATE TABLE `evaluation_history` (
+  `id` int(11) NOT NULL,
+  `assessor_id` varchar(11) NOT NULL,
+  `application_id` int(11) NOT NULL,
+  `education_points` int(11) DEFAULT NULL,
+  `work_experience_points` varchar(255) DEFAULT NULL,
+  `training_points` varchar(255) DEFAULT NULL,
+  `professional_development_points` varchar(255) DEFAULT NULL,
+  `award_points` varchar(255) DEFAULT NULL,
+  `eligibility_points` varchar(255) DEFAULT NULL,
+  `interview_chief_points` int(11) DEFAULT NULL,
+  `interview_assessor_points` int(11) DEFAULT NULL,
+  `status` varchar(50) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -192,8 +216,8 @@ CREATE TABLE `interviews` (
   `id` int(11) NOT NULL,
   `user_id` varchar(11) NOT NULL,
   `application_id` int(11) NOT NULL,
-  `interview_date` date NOT NULL,
-  `interview_time` time NOT NULL,
+  `interview_date` date DEFAULT NULL,
+  `interview_time` time DEFAULT NULL,
   `status` enum('Pending','Completed','Rejected','Accepted','Cancelled') DEFAULT 'Pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
@@ -307,7 +331,7 @@ ALTER TABLE `application`
 ALTER TABLE `application_assessors`
   ADD PRIMARY KEY (`id`),
   ADD KEY `application_id` (`application_id`),
-  ADD KEY `assessor_id` (`assessor_id`);
+  ADD KEY `application_assessors_ibfk_2` (`assessor_id`);
 
 --
 -- Indexes for table `assessor`
@@ -329,15 +353,24 @@ ALTER TABLE `award`
 -- Indexes for table `comments`
 --
 ALTER TABLE `comments`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `application_id` (`application_id`);
 
 --
 -- Indexes for table `evaluations`
 --
 ALTER TABLE `evaluations`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `application_id` (`application_id`),
-  ADD KEY `evaluations_ibfk_1` (`assessor_id`);
+  ADD KEY `evaluations_ibfk_1` (`application_id`),
+  ADD KEY `evaluations_ibfk_2` (`assessor_id`);
+
+--
+-- Indexes for table `evaluation_history`
+--
+ALTER TABLE `evaluation_history`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `evaluation_history_ibfk_1` (`application_id`),
+  ADD KEY `evaluation_history_ibfk_2` (`assessor_id`);
 
 --
 -- Indexes for table `interviews`
@@ -425,6 +458,12 @@ ALTER TABLE `evaluations`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
+-- AUTO_INCREMENT for table `evaluation_history`
+--
+ALTER TABLE `evaluation_history`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `interviews`
 --
 ALTER TABLE `interviews`
@@ -469,7 +508,7 @@ ALTER TABLE `application`
 --
 ALTER TABLE `application_assessors`
   ADD CONSTRAINT `application_assessors_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`),
-  ADD CONSTRAINT `application_assessors_ibfk_2` FOREIGN KEY (`assessor_id`) REFERENCES `assessor` (`uuid`);
+  ADD CONSTRAINT `application_assessors_ibfk_2` FOREIGN KEY (`assessor_id`) REFERENCES `assessor` (`uuid`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `award`
@@ -478,11 +517,24 @@ ALTER TABLE `award`
   ADD CONSTRAINT `award_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `comments`
+--
+ALTER TABLE `comments`
+  ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`);
+
+--
 -- Constraints for table `evaluations`
 --
 ALTER TABLE `evaluations`
-  ADD CONSTRAINT `evaluations_ibfk_1` FOREIGN KEY (`assessor_id`) REFERENCES `assessor` (`uuid`),
-  ADD CONSTRAINT `evaluations_ibfk_2` FOREIGN KEY (`application_id`) REFERENCES `application` (`id`);
+  ADD CONSTRAINT `evaluations_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `application_assessors` (`application_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `evaluations_ibfk_2` FOREIGN KEY (`assessor_id`) REFERENCES `application_assessors` (`assessor_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `evaluation_history`
+--
+ALTER TABLE `evaluation_history`
+  ADD CONSTRAINT `evaluation_history_ibfk_1` FOREIGN KEY (`application_id`) REFERENCES `application_assessors` (`application_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `evaluation_history_ibfk_2` FOREIGN KEY (`assessor_id`) REFERENCES `application_assessors` (`assessor_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `interviews`

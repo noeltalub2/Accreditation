@@ -296,7 +296,7 @@ aria-hidden="true">
             const assessorId = document.getElementById('delete-assessor-id').value;
 
             try {
-            const response = await fetch('/admin/assessor/delete/', {
+            const response = await fetch('/admin/assessor/remove/', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json'
@@ -313,12 +313,12 @@ aria-hidden="true">
 
             $.notify({
             icon: 'fa fa-check me-1',
-            message: 'Assessor deleted successfully!'
+            message: 'Assessor removed successfully!'
             }, {
             type: 'success',allow_dismiss: false,
             });
             setTimeout(() => {
-            window.location.href = '/admin/assessor/delete';
+            window.location.reload()
             }, 2000);
             } else {
             $.notify({
@@ -328,7 +328,7 @@ aria-hidden="true">
             type: 'danger',allow_dismiss: false,
             });
             setTimeout(() => {
-            window.location.href = '/admin/assessor/delete';
+            window.location.reload()
             }, 2000);
             }
             } catch (error) {

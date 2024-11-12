@@ -111,14 +111,14 @@
                                         <label for="nationality" class="form-label">Nationality</label>
                                         <input type="text" class="form-control" id="nationality" readonly
                                             name="nationality" value="<%= application.nationality || 'Filipino' %>"
-                                            required>
+                                            >
                                     </div>
                                 </div>
                                 <div class="col-lg-6"> <!-- Languages Spoken Field -->
                                     <div class="mb-3">
                                         <label for="languages" class="form-label">Languages and Dialects Spoken</label>
                                         <input type="text" class="form-control" id="languages" readonly name="languages"
-                                            required value="<%= application.languages %>">
+                                             value="<%= application.languages %>">
                                     </div>
                                 </div>
                             </div>
@@ -208,14 +208,14 @@
                             <div class="mb-3">
                                 <label for="cost_accreditation" class="form-label">Who will pay for the cost of
                                     obtaining your accreditation?</label>
-                                <input class="form-control" id="cost_accreditation" name="cost_accreditation"
+                                <input readonly class="form-control" id="cost_accreditation" name="cost_accreditation"
                                     value="<%= application.cost_accreditation || '' %>">
                             </div>
 
                             <div class="mb-3">
                                 <label for="time_commitment" class="form-label">How soon do you need to complete
                                     accreditation/equivalency?</label>
-                                <input class="form-control" id="time_commitment" name="time_commitment"
+                                <input readonly class="form-control" id="time_commitment" name="time_commitment"
                                     value="<%= application.time_commitment || '' %>">
                             </div>
                             <!-- Lifelong Learning Experiences -->
@@ -225,7 +225,7 @@
                                 <label for="hobbies_leisure" class="form-label">A. Hobbies/Leisure Activities</label>
                                 <br><small>Include only those leisure activities which can be considered learning
                                     opportunities.</small>
-                                <textarea class="form-control" id="hobbies_leisure" name="hobbies_leisure"
+                                <textarea readonly class="form-control" id="hobbies_leisure" name="hobbies_leisure"
                                     rows="5"><%= application.hobbies_leisure || '' %></textarea>
                             </div>
 
@@ -234,7 +234,7 @@
                                 <br><small>A special skill can be considered as an acceptable substitute for a specific
                                     credit requirement. Note down those special skills which you think must be related
                                     to the field of study you want to pursue.</small>
-                                <textarea class="form-control" id="special_skills" name="special_skills"
+                                <textarea readonly class="form-control" id="special_skills" name="special_skills"
                                     rows="5"><%= application.special_skills || '' %></textarea>
                             </div>
 
@@ -246,7 +246,7 @@
                                     skills and knowledge. Please do not include, under this category, formal training.
                                     However, you may include here experiences which can be classified as
                                     on-the-job-training or apprenticeship.</small>
-                                <textarea class="form-control" id="work_related_activities"
+                                <textarea readonly class="form-control" id="work_related_activities"
                                     name="work_related_activities"
                                     rows="5"><%= application.work_related_activities || '' %></textarea>
                             </div>
@@ -255,7 +255,7 @@
                                 <label for="volunteer_activities" class="form-label">D. Volunteer Activities</label>
                                 <br><small>Choose only volunteer activities that also demonstrate learning
                                     opportunities.</small>
-                                <textarea class="form-control" id="volunteer_activities" name="volunteer_activities"
+                                <textarea readonly class="form-control" id="volunteer_activities" name="volunteer_activities"
                                     rows="5"><%= application.volunteer_activities || '' %></textarea>
                             </div>
 
@@ -272,7 +272,7 @@
                                         <th>Date First Attended</th>
                                         <th>Date Last Attended</th>
                                         <th>Copy of TOR/Form 137</th>
-                                        <th>Points</th>
+                             
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -314,13 +314,7 @@
                                                     <span class="text-muted">No document uploaded.</span>
                                                     <% } %>
                                         </td>
-                                        <td>
-                                            <form id="points-form-<%= application.id %>-EDU"method="post">
-                                                <input type="hidden" name="application_id" value="<%= application.id %>">
-                                                <input type="hidden" name="points_type" value="Education">
-                                                <input type="number" name="points" class="form-control" min="0" value="<%= application.education_points || 0 %>" />
-                                            </form>
-                                        </td>
+                                   
 
                                     </tr>
                                     <!-- Additional rows for more educational qualifications can be added here -->
@@ -342,7 +336,7 @@
                                             <th>Date Started and Ended</th>
 
                                             <th>Copy of Certificate of Enrollment</th>
-                                            <th>Points</th>
+                                  
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -379,12 +373,7 @@
                                                                 No file uploaded
                                                                 <% } %>
                                                     </td>
-                                                    <td>
-                                                        <form id="empForm_<%= emp.id %>" method="post">
-                                                            <input type="hidden" name="emp_id" value="<%= emp.id %>">
-                                                            <input type="number" name="points_<%= emp.id %>" class="form-control" min="0" value="<%= emp.points || 0 %>" />
-                                                        </form>
-                                                    </td>
+                                               
                                                 </tr>
                                                 <% }) %>
                                                     <% } else { %>
@@ -398,7 +387,6 @@
 
                             </div>
 
-
                             <h4>V. PROFESSIONAL ACHIEVEMENTS</h4>
 
                             <!-- Level of Training/Seminar -->
@@ -411,7 +399,7 @@
                                         <th>Sponsoring Organization</th>
                                         <th>Inclusive Date</th>
                                         <th>Copy of Certificate</th>
-                                        <th>Points</th>
+                           
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -444,12 +432,7 @@
                                                             No certificate available
                                                             <% } %>
                                                 </td>
-                                                <td>
-                                                    <form id="trainingForm_<%= training.id %>" method="post">
-                                                        <input type="hidden" name="training_id" value="<%= training.id %>">
-                                                        <input type="number" name="points_<%= training.id %>" class="form-control" min="0" value="<%= training.points || 0 %>" />
-                                                    </form>
-                                                </td>
+                                            
                                             </tr>
                                             <% }) %>
                                                 <% } else { %>
@@ -461,7 +444,6 @@
                             </table>
 
 
-
                             <!-- Professional Development -->
                             <h6>B. Professional Development</h6>
                             <table class="table table-bordered">
@@ -471,7 +453,7 @@
                                         <th>Organization</th>
                                         <th>Description</th>
                                         <th>Certificate File</th>
-                                        <th>Points</th>
+                                      
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -501,12 +483,7 @@
                                                             No certificate available
                                                             <% } %>
                                                 </td>
-                                                <td>
-                                                    <form id="devForm_<%= dev.id %>" method="post">
-                                                        <input type="hidden" name="dev_id" value="<%= dev.id %>">
-                                                        <input type="number" name="points_<%= dev.id %>" class="form-control" min="0" value="<%= dev.points || 0 %>" />
-                                                    </form>
-                                                </td>
+                                             
                                             </tr>
                                             <% }) %>
                                                 <% } else { %>
@@ -526,7 +503,7 @@
                                     <tr>
                                         <th>Eligibility Level</th>
                                         <th>Copy of Certificate</th>
-                                        <th>Points</th>
+                                  
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -542,13 +519,7 @@
                                                     <i class="ri-download-line"></i> Download
                                                 </a>
                                             </td>
-                                            <td>
-                                                <form id="points-form-<%= application.id %>-CSC" method="post">
-                                                    <input type="hidden" name="application_id" value="<%= application.id %>">
-                                                    <input type="hidden" name="points_type" value="CSC">
-                                                    <input type="number" name="points" class="form-control" min="0" value="<%= application.csc_points || 0 %>">
-                                                </form>
-                                            </td>
+                                     
                                         </tr>
                                     <% } %>
                             
@@ -564,13 +535,7 @@
                                                     <i class="ri-download-line"></i> Download
                                                 </a>
                                             </td>
-                                            <td>
-                                                <form id="points-form-<%= application.id %>-NC" method="post">
-                                                    <input type="hidden" name="application_id" value="<%= application.id %>">
-                                                    <input type="hidden" name="points_type" value="NC">
-                                                    <input type="number" name="points" class="form-control" min="0" value="<%= application.nc_points || 0 %>">
-                                                </form>
-                                            </td>
+                                         
                                         </tr>
                                     <% } %>
                             
@@ -586,26 +551,18 @@
                                                     <i class="ri-download-line"></i> Download
                                                 </a>
                                             </td>
-                                            <td>
-                                                <form id="points-form-<%= application.id %>-PRC" method="post">
-                                                    <input type="hidden" name="application_id" value="<%= application.id %>">
-                                                    <input type="hidden" name="points_type" value="PRC">
-                                                    <input type="number" name="points" class="form-control" min="0" value="<%= application.prc_points || 0 %>">
-                                                </form>
-                                            </td>
+                                         
                                         </tr>
                                     <% } %>
                                 </tbody>
                             </table>
                             
-
-
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
                                         <th>Award Level</th>
                                         <th>Copy of Certificate File</th>
-                                        <th>Points</th>
+                                   
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -625,12 +582,7 @@
                                                         No certificate available
                                                     <% } %>
                                                 </td>
-                                                <td>
-                                                    <form id="awardForm_<%= award.id %>" method="post">
-                                                        <input type="hidden" name="award_id" value="<%= award.id %>">
-                                                        <input type="number" name="points_<%= award.id %>" class="form-control" min="0" value="<%= award.points || 0 %>" />
-                                                    </form>
-                                                </td>
+                                            
                                             </tr>
                                         <% }) %>
                                     <% } else { %>
@@ -647,7 +599,7 @@
                                 <label for="final_essay" class="form-label">If you finish your degree, how will this
                                     contribute to your personal development to the development of your community, your
                                     work place, society and country?</label>
-                                <textarea class="form-control" id="final_essay" readonly name="final_essay"
+                                <textarea readonly class="form-control" id="final_essay" readonly name="final_essay"
                                     rows="5"><%= application.final_essay %></textarea>
                             </div>
 

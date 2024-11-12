@@ -397,14 +397,14 @@ const postApplicationPoints = async (req, res) => {
 			);
 		}
 
-		if (pointsType === "CSC") { 
+		if (pointsType === "CSC") {
 			// Update points for the award
 			const query_update_points = await query(
 				`UPDATE application SET csc_points = ? WHERE id = ?`,
 				[points, applicationId]
 			);
 		}
-		if (pointsType === "NC") { 
+		if (pointsType === "NC") {
 			// Update points for the award
 			const query_update_points = await query(
 				`UPDATE application SET nc_points = ? WHERE id = ?`,
@@ -412,15 +412,13 @@ const postApplicationPoints = async (req, res) => {
 			);
 		}
 
-		if (pointsType === "PRC") { 
+		if (pointsType === "PRC") {
 			// Update points for the award
 			const query_update_points = await query(
 				`UPDATE application SET prc_points = ? WHERE id = ?`,
 				[points, applicationId]
 			);
 		}
-			
-		
 
 		return res.json({
 			success: true,
@@ -1172,6 +1170,21 @@ const postAddAssessor = async (req, res) => {
 	}
 };
 
+const removeAssessor = async (req, res) => {
+	const { assessor_id, application_id } = req.body;
+
+	try {
+		const deleteQuery = "DELETE FROM application_assessors WHERE id = ?";
+		await query(deleteQuery, [assessor_id]);
+		return res.json({ success: true });
+	} catch (err) {
+		console.error(err);
+		return res
+			.status(500)
+			.json({ success: false, message: "Failed to remove assessor." });
+	}
+};
+
 const postEvaluation = async (req, res) => {
 	const {
 		user_id,
@@ -1369,7 +1382,7 @@ const getAssessor = async (req, res) => {
 const getAssessorView = async (req, res) => {
 	const id = req.params.id;
 	const assessor_application = await query(
-		"SELECT a.id AS application_id, a.name AS applicant_name, a.email AS applicant_email, a.status AS application_status, ass.assessor_id, ass.firstname,ass.uuid, ass.lastname, ass.email AS assessor_email, aa.status AS assessor_status, e.educational_points, e.work_experience_points, e.training_points, e.professional_development_points, e.eligibility_points, e.interview_chief_points, e.interview_assessor_points, e.total_score, e.status AS evaluation_status FROM application a JOIN application_assessors aa ON a.id = aa.application_id JOIN assessor ass ON aa.assessor_id = ass.uuid LEFT JOIN evaluations e ON a.id = e.application_id AND ass.uuid = e.assessor_id WHERE ass.uuid = ?",
+		"SELECT a.id AS application_id, a.name AS applicant_name, a.email AS applicant_email, a.status AS application_status, ass.assessor_id, ass.firstname,ass.uuid, ass.lastname, ass.email AS assessor_email, aa.status AS assessor_status, e.educational_points, e.work_experience_points, e.training_points, e.professional_development_points, e.eligibility_points, e.interview_chief_points, e.interview_assessor_points, e.total_score, e.award_points, e.status AS evaluation_status FROM application a JOIN application_assessors aa ON a.id = aa.application_id JOIN assessor ass ON aa.assessor_id = ass.uuid LEFT JOIN evaluations e ON a.id = e.application_id AND ass.uuid = e.assessor_id WHERE ass.uuid = ?",
 		[id]
 	);
 	const assessor_account = (
@@ -1386,50 +1399,99 @@ const getAssessorView = async (req, res) => {
 };
 
 const postAssessor = async (req, res) => {
-	const {
-		firstname,
-		lastname,
-		middlename,
-		phonenumber,
-		username,
-		email,
-		birthday,
-		password,
-		gender,
-	} = req.body;
+	const { firstname, lastname, middlename, email } = req.body;
 
 	try {
+		const usernameBase =
+			firstname.slice(0, 2).toLowerCase() +
+			lastname.slice(0, 2).toLowerCase() +
+			(middlename ? middlename.slice(0, 2).toLowerCase() : ""); // Optional middlename
+
+		// Calculate the total length of the names
+		const nameLength = (firstname + lastname + middlename).length;
+
+		// Combine the base username and the length count
+		let username = `${usernameBase}${nameLength}`;
+
+		const existingUser = await query(
+			"SELECT * FROM assessor WHERE username = ?",
+			[username]
+		);
+
+		// If the username exists, regenerate the username by appending 3 random characters
+		if (existingUser.length > 0) {
+			// Generate a 3-character random string
+			const randomString = Math.random().toString(36).substring(2, 5);
+			username = `${username}${randomString}`;
+		}
+
 		const uuid = nanoid(6);
+		const password = nanoid(6);
+
 		// Hash the password before storing
 		const hashedPassword = await bcrypt.hash(password, 10);
 
 		// Insert into the assessor table
 		const query_result = await query(
-			"INSERT INTO assessor (uuid,firstname, middlename, lastname, phonenumber, username, email, password, profile_url,birthday,gender) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?,?,?)",
+			"INSERT INTO assessor (uuid,firstname, middlename, lastname, email, username, password) VALUES (?, ?, ?, ?, ?, ?, ?)",
 			[
 				uuid,
 				firstname,
 				middlename,
 				lastname,
-				phonenumber,
-				username,
 				email,
+				username,
 				hashedPassword,
-				"default.jpg",
-				birthday,
-				gender,
+			
 			]
 		);
 
-		return res.json({
-			success: true,
-			message: "Assessor created successfully",
+		// Send verification email
+		const transporter = nodemailer.createTransport({
+			service: "Gmail",
+			secure: true,
+			port: 465,
+			auth: {
+				user: process.env.EMAIL,
+				pass: process.env.PASS,
+			},
+		});
+
+		const mailOptions = {
+			to: email,
+			from: "no-reply@yourorganization.com", // Change to your sending email
+			subject: "Assessor Account Created - MMSU ETEEAP",
+			html: `<p>Dear ${firstname} ${lastname},</p>
+				   <p>Your account has been successfully created by the administrator for the <strong>MMSU ETEEAP</strong> system as an Assessor.</p>
+				   <p>Your login credentials are as follows:</p>
+				   <ul>
+					   <li><strong>Username:</strong> ${username}</li>
+					   <li><strong>Password:</strong> ${password}</li> <!-- or the generated password -->
+				   </ul>
+				   <p>Use these credentials to log in to the system. If you did not request this account, please contact the administrator.</p>
+				   <p>Best regards,<br>The MMSU ETEEAP Team</p>`,
+		};
+
+		transporter.sendMail(mailOptions, (err) => {
+			if (err) {
+				console.error(err);
+				return res.json({
+					success: false,
+					msg: "Failed to send assessor account. Please try again later.",
+				});
+			}
+
+			return res.json({
+				success: true,
+				message: "Assessor account created successfully",
+			});
 		});
 	} catch (err) {
 		console.error(err);
 		return res.status(500).json({
 			success: false,
-			message: "Failed to add assessor",
+			message:
+				"Failed to create assessor account. Please try again later.",
 		});
 	}
 };
@@ -1498,7 +1560,20 @@ const postAssessorEdit = async (req, res) => {
 			.json({ success: false, message: "Failed to update assessor" });
 	}
 };
+const deleteAssessor = async (req, res) => {
+	const { assessor_id} = req.body;
 
+	try {
+		const deleteQuery = "DELETE FROM assessor WHERE uuid = ?";
+		await query(deleteQuery, [assessor_id]);
+		return res.json({ success: true, message: "Assessor deleted successfully" });
+	} catch (err) {
+		console.error(err);
+		return res
+			.status(500)
+			.json({ success: false, message: "Failed to remove assessor." });
+	}
+};
 const checkAvailability = async (req, res) => {
 	const { user, field, value, id } = req.body;
 
@@ -1582,10 +1657,11 @@ export default {
 	postEvaluation,
 	updateEvaluation,
 	postAddAssessor,
-
+	deleteAssessor,
 	getLogout,
 	checkAvailability,
 	postAssessor,
 	getAssessorView,
 	postAssessorEdit,
+	removeAssessor,
 };

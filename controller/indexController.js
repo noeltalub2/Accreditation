@@ -97,7 +97,8 @@ const generateEvaluationId = async (req, res) => {
 			pointsObtained:
 				parseInt(evaluation_result.training_points) +
 				parseInt(evaluation_result.professional_development_points) +
-				parseInt(evaluation_result.eligibility_points),
+				parseInt(evaluation_result.eligibility_points) +
+				parseInt(evaluation_result.award_points),
 		},
 		{
 			criterion: "Interview",

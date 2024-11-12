@@ -73,7 +73,7 @@
                                         </td>
                                         <td class="text-center fs-sm">
                                             <%if ( record.status === 'Evaluated') {%>
-                                                <a href="/download-evaluation/<%= record.application_id %>/<%= record.uuid %>"
+                                                <a href="/download-evaluation/<%= record.id %>/<%= record.assessor_id %>"
                                                     class="btn btn-sm btn-primary js-bs-tooltip-enabled"
                                                     data-bs-toggle="tooltip" aria-label="Download Evaluation"
                                                     data-bs-original-title="Download Evaluation">

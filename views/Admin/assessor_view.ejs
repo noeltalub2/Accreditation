@@ -44,7 +44,15 @@
     </div>
     <div class="row g-3">
 
-
+        <% if (assessor_application.length === 0) { %>
+            <div class="col-md-12">
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body">
+                        <h5 class="text-muted">No applications found.</h5>
+                    </div>
+                </div>
+            </div>
+        <% } else { %>
 
 
         <% assessor_application.forEach(function(item) { %> <!-- Assuming 'results' contains the query result -->
@@ -95,6 +103,9 @@
                                 <li><strong>Eligibility Points:</strong>
                                     <%= item.eligibility_points %>
                                 </li>
+                                <li><strong>Awards Points:</strong>
+                                    <%= item.award_points %>
+                                </li>
                                 <li><strong>Interview Chief Points:</strong>
                                     <%= item.interview_chief_points %>
                                 </li>
@@ -102,7 +113,7 @@
                                     <%= item.interview_assessor_points %>
                                 </li>
                             </ul>
-                            <a href="/admin/download-evaluation/<%= item.application_id %>/<%= item.uuid %>"
+                            <a href="/download-evaluation/<%= item.application_id %>/<%= item.uuid %>"
                                 class="btn btn-sm btn-primary js-bs-tooltip-enabled"
                                 data-bs-toggle="tooltip" aria-label="Download Evaluation"
                                 data-bs-original-title="Download Evaluation">
@@ -115,4 +126,5 @@
                 </div> <!-- end card-->
             </div> <!-- end col-->
             <% }); %>
+            <% } %>
     </div> <!-- end row -->

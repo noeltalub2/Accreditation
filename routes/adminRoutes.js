@@ -242,6 +242,22 @@ router.post(
 );
 
 router.post(
+	"/assessor/remove",
+	auth.requireAuth,
+	auth.checkRole(["admin"]),
+	uploadDocument.none(),
+	adminController.removeAssessor
+);
+
+router.post(
+	"/assessor/delete",
+	auth.requireAuth,
+	auth.checkRole(["admin"]),
+	uploadDocument.none(),
+	adminController.deleteAssessor
+);
+
+router.post(
 	"/award/points/:id",
 	auth.requireAuth,
 	auth.checkRole(["admin"]),

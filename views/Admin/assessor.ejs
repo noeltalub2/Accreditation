@@ -94,7 +94,7 @@
                                             <button type="button"
                                                 class="btn btn-sm btn-danger js-bs-tooltip-enabled"
                                                 data-bs-toggle="tooltip" aria-label="Remove User"
-                                                onclick="deleteUser('<%= record.uuid %>', '<%= record.lastname %>, <%= record.firstname %>')"
+                                                onclick="deleteAssessor('<%= record.uuid %>', '<%= record.lastname %>, <%= record.firstname %>')"
                                                 data-bs-original-title="Remove User">
                                                 <i class="fa fa-fw fa-times"></i>Delete
                                             </button>
@@ -134,44 +134,18 @@
                         <label for="lastname" class="form-label">Last Name</label>
                         <input class="form-control" type="text" name="lastname" id="lastname" required placeholder="Enter Last Name">
                     </div>
-                    <div class="mb-2">
-                        <label for="username" class="form-label">Username</label>
-                        <input class="form-control" type="text" name="username" id="username" required placeholder="Enter Username">
-                    </div>
+                    
                     <div class="mb-2">
                         <label for="email" class="form-label">Email Address</label>
                         <input class="form-control" type="email" name="email" id="email" required placeholder="Enter Email">
                     </div>
-                    <div class="mb-2">
-                        <label for="phonenumber" class="form-label">Phone Number</label>
-                        <input class="form-control" type="tel" name="phonenumber" id="phonenumber" required placeholder="Enter Phone Number">
-                    </div>
-                    <div class="mb-2">
-                        <label for="birthday" class="form-label">Birthday</label>
-                        <input class="form-control" type="date" name="birthday" id="birthday" required>
-                    </div>
-                    <div class="mb-2">
-                        <label for="gender" class="form-label">Gender</label>
-                        <select class="form-select" name="gender" id="gender" required>
-                            <option value="" disabled selected>Select Gender</option>
-                            <option value="male">Male</option>
-                            <option value="female">Female</option>
-                            <option value="other">Other</option>
-                        </select>
-                    </div>
-                   
-                    <div class="mb-2">
-                        <label for="password" class="form-label">Password</label>
-                        <input class="form-control" type="password" name="password" id="password" required placeholder="Enter Password">
-                    </div>
-                    <div class="mb-2">
-                        <label for="confirm_password" class="form-label">Confirm Password</label>
-                        <input class="form-control" type="password" name="confirm_password" id="confirm_password" required placeholder="Re-enter Password">
+                    <div class="alert alert-info mt-3" role="alert">
+                        <strong><i class="ri-lightbulb-flash-fill"></i> The login credentials will be automatically generated and sent to the email address provided. Please make sure you have the valid email address.</strong>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-primary" id="submit-button">Insert
+                    <button type="submit" class="btn btn-primary" id="submit-button">Create
                         <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>
                     </button>
                 </div>
@@ -186,7 +160,7 @@
  aria-hidden="true">
  <div class="modal-dialog">
      <div class="modal-content">
-         <form id="deleteUserForm" action="/admin/user/delete/" method="POST">
+         <form id="deleteUserForm" action="/admin/assesor/delete/" method="POST">
              <input type="hidden" name="user_id" id="delete-user-id">
              <div class="modal-header">
                  <h5 class="modal-title">Delete User</h5>
@@ -255,8 +229,9 @@
                         <label for="edit-gender" class="form-label">Gender</label>
                         <select class="form-select" name="gender" id="edit-gender" required>
                             <option value="" disabled selected>Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
                         </select>
                     </div>
                     <div class="mb-2">
@@ -276,7 +251,35 @@
         </form>
     </div>
 </div>
-
+<!-- Delete Assessor Modal -->
+<div class="modal fade" id="modal-delete-assessor" tabindex="-1" aria-labelledby="modal-delete-assessor"
+aria-hidden="true">
+<div class="modal-dialog">
+    <div class="modal-content">
+        <form id="deleteAssessorForm" action="/admin/assessor/delete/" method="POST">
+            <input type="hidden" name="assessor_id" id="delete-assessor-id">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete Assessor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete the account <span id="assessor_delete_name" class="fw-bold"></span>
+                    as assessor?</p>
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <i class="fa fa-exclamation-triangle me-2"></i>
+                    <div>
+                        <strong>Note:</strong> Deleting this will also delete all associated records.
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-danger">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
+</div>
 
 
     <%block('script').append(`
@@ -412,7 +415,7 @@
                     // Show spinner and disable button
                     spinner.style.display = "inline-block";
                     submitButton.disabled = true;
-                    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Inserting...';
+                    submitButton.innerHTML = '<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>Creating...';
                     
                     const formData = new FormData(form); // Collect form data
                  
@@ -424,7 +427,7 @@
                     .then((data) => {
                         spinner.style.display = "none";
                         submitButton.disabled = false;
-                        submitButton.innerHTML = 'Insert <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>';
+                        submitButton.innerHTML = 'Create <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>';
                         if (data.success) {
                             const modal = document.querySelector("#addAssessor"); // Updated to correct modal ID
                             if (modal) {
@@ -458,7 +461,7 @@
                     .catch((error) => {
                         spinner.style.display = "none";
                         submitButton.disabled = false;
-                        submitButton.innerHTML = 'Insert <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>';
+                        submitButton.innerHTML = 'Create <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true" style="display: none;"></span>';
                         $.notify({
                             type: "danger",
                             icon: "fa fa-times-circle me-1",
@@ -749,4 +752,66 @@
                 modal.show();
             }
         </script>
-        
+        <script>
+            function deleteAssessor(assessorId, assessorName) {
+            document.getElementById("assessor_delete_name").innerText = assessorName;
+            document.getElementById("delete-assessor-id").value = assessorId;
+
+            // Show the modal using Bootstrap 5 API
+            const modal = new bootstrap.Modal(document.getElementById('modal-delete-assessor'));
+            modal.show();
+            }
+
+
+            document.getElementById('deleteAssessorForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent the form from submitting the traditional way
+
+            const assessorId = document.getElementById('delete-assessor-id').value;
+
+            try {
+            const response = await fetch('/admin/assessor/delete/', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ assessor_id: assessorId })
+            });
+
+            const result = await response.json();
+
+            if (result.success) {
+            // Close the modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modal-delete-assessor'));
+            modal.hide();
+
+            $.notify({
+            icon: 'fa fa-check me-1',
+            message: 'Assessor removed successfully!'
+            }, {
+            type: 'success',allow_dismiss: false,
+            });
+            setTimeout(() => {
+            window.location.reload()
+            }, 2000);
+            } else {
+            $.notify({
+            icon: 'fa fa-check me-1',
+            message: 'Assessor updating error!'
+            }, {
+            type: 'danger',allow_dismiss: false,
+            });
+            setTimeout(() => {
+            window.location.reload()
+            }, 2000);
+            }
+            } catch (error) {
+            $.notify({
+            icon: 'fa fa-times-circle me-1',
+            message: 'An error occurred. Please try again.'
+            }, {
+            type: 'danger'
+            });
+            console.error('Error:', error);
+            }
+            });
+        </script>

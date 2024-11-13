@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 12, 2024 at 01:02 PM
+-- Generation Time: Nov 13, 2024 at 04:43 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -83,9 +83,6 @@ CREATE TABLE `application` (
   `certificate_file_sub_professional` varchar(255) DEFAULT NULL,
   `certificate_file_technical_nc` varchar(255) DEFAULT NULL,
   `certificate_file_professional_prc_csc` varchar(255) DEFAULT NULL,
-  `csc_points` varchar(11) DEFAULT NULL,
-  `nc_points` varchar(11) DEFAULT NULL,
-  `prc_points` varchar(11) DEFAULT NULL,
   `status` enum('Pending','Under Review','Additional Information Requested','Approved','Rejected') NOT NULL DEFAULT 'Pending',
   `created_at` datetime NOT NULL DEFAULT current_timestamp(),
   `updated_at` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()

@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <%- include ('../partials/title-meta') %>
 
-    <%- include ('../partials/head-css') %>
+        <%- include ('../partials/head-css') %>
 </head>
 
 <body class="authentication-bg">
 
-<div class="position-absolute start-0 end-0 start-0 bottom-0 w-100 h-100">
-    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
+    <div class="position-absolute start-0 end-0 start-0 bottom-0 w-100 h-100">
+        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink"
             xmlns:svgjs="http://svgjs.com/svgjs" width="100%" height="100%" preserveAspectRatio="none"
             viewBox="0 0 1920 1024">
             <g mask="url(#SvgjsMask1046)" fill="none">
@@ -38,75 +39,202 @@
                 </linearGradient>
             </defs>
         </svg>
-</div>
-
-<div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5 position-relative">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-xxl-4 col-lg-5">
-                <div class="card">
-                    <!-- Logo -->
-                    <div class="card-header pt-4 text-center">
-                        <div class="auth-brand mb-0">
-                            <a href="index" class="logo-dark">
-                                <span><img src="assets/images/cit_logo.png" alt="logo" height="65"></span>
-                                <span><img src="assets/images/logo.png" alt="dark logo" height="65"></span>
-                            </a>
-                            <a href="index" class="logo-light">
-                                <span><img src="assets/images/cit_logo.png" alt="logo" height="65"></span>
-                                <span><img src="assets/images/logo.png" alt="logo" height="65"></span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="card-body p-4">
-
-                        <div class="text-center w-75 m-auto">
-                            <h4 class="text-dark-50 text-center mt-0">Reset Password</h4>
-                            <p class="text-muted mb-4">Enter your email address and we'll send you an email with
-                                instructions to reset your password.</p>
-                        </div>
-
-                        <form class="request-password" action="/request-reset" method="POST">
-                            <div class="mb-3">
-                                <label for="emailaddress" class="form-label">Email address</label>
-                                <input type="text" class="form-control"
-                                id="email" name="email" placeholder="Email" required>
-                            </div>
-
-                            <div class="mb-0 text-center">
-                                <button class="btn btn-primary" type="submit">Reset Password</button>
-                            </div>
-                        </form>
-                    </div> <!-- end card-body-->
-                </div>
-                <!-- end card -->
-
-                <div class="row mt-3">
-                    <div class="col-12 text-center">
-                        <p class="text-white-50">Back to <a href="/signin"
-                                                            class="text-white ms-1 link-offset-3 text-decoration-underline"><b>Sign
-                                    In</b></a></p>
-                    </div> <!-- end col -->
-                </div>
-                <!-- end row -->
-
-            </div> <!-- end col -->
-        </div>
-        <!-- end row -->
     </div>
-    <!-- end container -->
-</div>
-<!-- end page -->
 
-<footer class="footer footer-alt">
-    <span class="text-white-50"><script>document.write(new Date().getFullYear())</script> © Accreditation</span>
-</footer>
+    <div class="account-pages pt-2 pt-sm-5 pb-4 pb-sm-5 position-relative">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-xxl-4 col-lg-5">
+                    <div class="card">
+                        <!-- Logo -->
+                        <div class="card-header pt-4 text-center">
+                            <div class="auth-brand mb-0">
+                                <a href="/" class="logo-dark">
+                                    <span><img src="assets/images/cit_logo.png" alt="logo" height="65"></span>
+                                    <span><img src="assets/images/logo.png" alt="dark logo" height="65"></span>
+                                </a>
+                                <a href="/" class="logo-light">
+                                    <span><img src="assets/images/cit_logo.png" alt="logo" height="65"></span>
+                                    <span><img src="assets/images/logo.png" alt="logo" height="65"></span>
+                                </a>
+                            </div>
+                        </div>
 
-<%- include ('../partials/footer-scripts') %>
+                        <div class="card-body p-4">
 
-<!-- App js -->
-<script src="assets/js/app.min.js"></script>
+                            <div class="text-center w-75 m-auto">
+                                <h4 class="text-dark-50 text-center mt-0">Reset Password</h4>
+                                <p class="text-muted mb-4">Enter your email address and we'll send you an email with
+                                    instructions to reset your password.</p>
+                            </div>
+
+                            <form class="request-password" action="/request-reset" method="POST">
+                                <div class="mb-3">
+                                    <label for="emailaddress" class="form-label">Email address</label>
+                                    <input type="text" class="form-control" id="email" name="email" placeholder="Email"
+                                        required>
+                                </div>
+
+                                <div class="mb-0 text-center">
+
+                                    <button type="submit" class="btn btn-primary" id="submit-button">
+                                        <i class="ri-mail-line me-1 opacity-50" id="email-icon"></i>
+
+                                        <span id="button-text">Send Mail</span>
+                                        <span id="spinner" class="spinner-border spinner-border-sm d-none" role="status"
+                                            aria-hidden="true"></span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div> <!-- end card-body-->
+                    </div>
+                    <!-- end card -->
+
+                    <div class="row mt-3">
+                        <div class="col-12 text-center">
+                            <p class="text-white-50">Back to <a href="/signin"
+                                    class="text-white ms-1 link-offset-3 text-decoration-underline"><b>Sign
+                                        In</b></a></p>
+                        </div> <!-- end col -->
+                    </div>
+                    <!-- end row -->
+
+                </div> <!-- end col -->
+            </div>
+            <!-- end row -->
+        </div>
+        <!-- end container -->
+    </div>
+    <!-- end page -->
+
+    <footer class="footer footer-alt">
+        <span class="text-white-50">
+            <script>document.write(new Date().getFullYear())</script> © Accreditation
+        </span>
+    </footer>
+
+    <%- include ('../partials/footer-scripts') %>
+
+        <!-- App js -->
+        <script src="/assets/js/lib/jquery.min.js"></script>
+
+        <script src="/assets/js/plugins/jquery-validation/jquery.validate.min.js"></script>
+        <script>
+            !(function () {
+                "use strict";
+                class e {
+                    static initValidation() {
+                        // Initialize jQuery validation
+                        jQuery(".request-password").validate({
+                            rules: {
+                                email: {
+                                    required: true,
+                                    email: true
+                                },
+
+                            },
+                            messages: {
+
+                                email: {
+                                    required: "Please enter your email",
+                                },
+
+                            },
+                            submitHandler: function (form) {
+
+                                // Get the submit button and spinner elements
+                                const submitButton = document.querySelector("#submit-button");
+                                const buttonText = document.querySelector("#button-text");
+                                const spinner = document.querySelector("#spinner");
+                                const emailIcon = document.querySelector("#email-icon");
+
+                                // Disable the button and show the spinner
+                                submitButton.disabled = true;
+                                buttonText.style.display = "none";
+                                emailIcon.style.display = "none";
+                                spinner.classList.remove("d-none");
+
+                                // Clear previous custom server-side errors
+                                jQuery(".error").remove();
+                                const formData = new FormData(form); // Collect form data
+                                fetch('/request-reset', {
+                                    method: 'POST',
+                                    body: formData,
+                                })
+                                    .then(response => response.json())
+                                    .then(data => {
+
+
+                                        if (data.success) {
+                                            form.reset();
+
+                                            $.notify({
+                                                icon: 'fa fa-check me-1',
+                                                message: data.msg
+                                            }, {
+                                                type: 'success', allow_dismiss: false,
+                                            });
+                                           
+                                        } else if (data.errors) {
+                                            e.addServerErrors(data.errors);
+                                        }
+                                        else {
+                                            $.notify({
+                                                icon: 'fa fa-exclamation-triangle me-1',
+                                                message: data.msg
+                                            }, {
+                                                type: 'danger', allow_dismiss: false,
+                                            });
+                                        }
+                                    })
+                                    .catch(error => {
+
+
+                                        $.notify({
+                                            icon: 'fa fa-times-circle me-1',
+                                            message: 'An error occurred. Please try again.'
+                                        }, {
+                                            type: 'danger'
+                                        });
+                                        console.error('Error:', error);
+                                    }).finally(() => {
+                                        // Re-enable the button and hide the spinner
+                                        submitButton.disabled = false;
+                                        buttonText.style.display = "inline";
+                                        emailIcon.style.display = "inline";
+                                        spinner.classList.add("d-none");
+                                    });
+                            }
+
+                        });
+                    }
+                    static addServerErrors(errors) {
+                        // Use jQuery Validation's `showErrors` method to add the server-side errors
+                        const validator = jQuery(".request-password").validate();
+
+                        // Prepare the errors object
+                        const errorMessages = {};
+                        errors.forEach((error) => {
+                            errorMessages[error.field] = error.msg;
+                        });
+
+                        // Show the errors
+                        validator.showErrors(errorMessages);
+                    }
+                    static init() {
+                        this.initValidation();
+                    }
+                }
+
+                // Call init function on document ready
+                $(document).ready(() => e.init());
+            })();
+        </script>
+
+        <script src="/assets/js/plugins/bootstrap-notify/bootstrap-notify.min.js"></script>
+        <!-- App js -->
+        <script src="assets/js/app.min.js"></script>
 
 </body>
+
 </html>

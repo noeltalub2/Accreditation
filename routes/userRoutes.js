@@ -24,14 +24,14 @@ router.get(
 	userController.getVerifyEmail
 );
 router.get("/request-reset", auth.forwardAuth, userController.getReqPass);
-router.post("/request-reset", auth.forwardAuth, userController.postReqPass);
+router.post("/request-reset", auth.forwardAuth, uploadDocument.none(), userController.postReqPass);
 
 router.get(
 	"/reset-password/:token",
 	auth.forwardAuth,
 	userController.getResetPass
 );
-router.post("/reset-password/", auth.forwardAuth, userController.postResetPass);
+router.post("/reset-password/", auth.forwardAuth,  uploadDocument.none(),  userController.postResetPass);
 
 router.post("/check-username", userController.checkUsername);
 router.post("/check-email", userController.checkEmail);

@@ -325,8 +325,9 @@
                                          
                                           </td>
                                       </tr>
-                                  <% } %>
-                          
+                                  <% } else { %>
+                                    <input type="hidden"   value="0"  name="csc_points" id="csc_points" class="form-control" min="0" max="5" >
+                                <%}%>
                                   <!-- Technical (NC) Eligibility -->
                                   <% if(application.certificate_file_technical_nc) { %>
                                       <tr>
@@ -345,8 +346,9 @@
                                          
                                           </td>
                                       </tr>
-                                  <% } %>
-                          
+                                  <% } else { %>
+                                    <input type="hidden"   value="0"  name="nc_points" id="nc_points" class="form-control" min="0" max="5" >
+                                    <%}%>
                                   <!-- Professional (PRC) (CSC) Eligibility -->
                                   <% if(application.certificate_file_professional_prc_csc) { %>
                                       <tr>
@@ -365,7 +367,9 @@
                                               
                                           </td>
                                       </tr>
-                                  <% } %>
+                                  <% } else {%>
+                                    <input type="hidden"   value="0"  name="prc_points" id="prc_points" class="form-control" min="0" max="5" >
+                                  <%}%>
                               </tbody>
                           </table>
                           

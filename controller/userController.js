@@ -348,7 +348,7 @@ const getResetPass = async (req, res) => {
 			if (!user.length) {
 				return res.redirect("/signin");
 			}
-			res.render("User/reset-password", { token: req.params.token });
+			res.render("User/reset-password", { token: req.params.token , title: "Reset Password"});
 		}
 	);
 };

@@ -71,7 +71,12 @@ router.post(
 	auth.checkRole(["admin"]),
 	adminController.postInterview
 );
-router.post("/interview/edit/:interview_id", adminController.editInterview);
+router.post(
+	"/reschedule-interview/:id",
+	auth.requireAuth,
+	auth.checkRole(["admin"]),
+	adminController.rescheduleInterview
+);
 
 router.delete(
 	"/interview/delete",

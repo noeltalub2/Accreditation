@@ -105,33 +105,36 @@
                                                         onclick="markAsComplete('<%= record.id %>')"
                                                         data-bs-toggle="tooltip" aria-label="Mark as Complete"
                                                         data-bs-original-title="Mark as Complete">
-                                                        <i class="fa fa-fw fa-check"></i>Complete
+                                                        <i class="fa fa-fw fa-check"></i> Complete
                                                     </button>
                                                     <button type="button" class="btn btn-sm btn-info"
-        onclick="sendEmailNotification('<%= record.id %>', '<%= record.email %>','<%=record.firstname%>')"
-        data-bs-toggle="tooltip" aria-label="Send Email Notification"
-        data-bs-original-title="Send Email Notification">
-    <i class="fa fa-fw fa-envelope"></i> Send Email
-</button>
+                                                        onclick="sendEmailNotification('<%= record.id %>', '<%= record.email %>', '<%= record.firstname %>')"
+                                                        data-bs-toggle="tooltip" aria-label="Send Email Notification"
+                                                        data-bs-original-title="Send Email Notification">
+                                                        <i class="fa fa-fw fa-envelope"></i> Send Email
+                                                    </button>
                                                     <button type="button" class="btn btn-sm btn-danger"
                                                         onclick="confirmCancel('<%= record.id %>')"
                                                         data-bs-toggle="tooltip" aria-label="Cancel Interview"
                                                         data-bs-original-title="Cancel Interview">
-                                                        <i class="fa fa-fw fa-ban"></i>Cancel
+                                                        <i class="fa fa-fw fa-ban"></i> Cancel
                                                     </button>
-                                                    
+                                                    <!-- Reschedule Button -->
+                                                    <button type="button" class="btn btn-sm btn-warning"
+                                                        onclick="openRescheduleModal('<%= record.id %>')"
+                                                        data-bs-toggle="tooltip" aria-label="Reschedule Interview"
+                                                        data-bs-original-title="Reschedule Interview">
+                                                        <i class="fa fa-fw fa-calendar-alt"></i> Reschedule
+                                                    </button>
                                                 <% } else if (record.status === 'Completed') { %>
                                                     <span class="fw-bold">For Evaluation</span>
-                                                    <% } else if (record.status === 'Cancel') { %>
-                                                        <span class="fw-bold">Cancelled</span>
+                                                <% } else if (record.status === 'Cancel') { %>
+                                                    <span class="fw-bold">Cancelled</span>
                                                 <% } else if (record.status === 'Pending') { %>
-                                                   <p class="fw-bold">Waiting for approval</p>
-                                                                                                <% } %>
+                                                    <p class="fw-bold">Waiting for approval</p>
+                                                <% } %>
                                             </div>
-                                            
-
                                         </td>
-
 
                                     </tr>
                                     <%})%>
@@ -192,7 +195,31 @@
         </div>
     </div>
 </div>
-
+<!-- Reschedule Modal -->
+<div class="modal fade" id="modal-reschedule-interview" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rescheduleModalLabel">Reschedule Interview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="rescheduleInterviewForm">
+                    <input type="hidden" id="interview_id" value="">
+                    <div class="mb-3">
+                        <label for="new_interview_date" class="form-label">New Interview Date</label>
+                        <input type="date" class="form-control" id="new_interview_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_interview_time" class="form-label">New Interview Time</label>
+                        <input type="time" class="form-control" id="new_interview_time" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Reschedule</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function sendEmailNotification(interviewId, email,firstname) {
@@ -457,6 +484,69 @@
             });
         }
         
+        </script>
+        <script>
+            function openRescheduleModal(interviewId) {
+                document.getElementById('interview_id').value = interviewId; // Set interview ID
+                const modal = new bootstrap.Modal(document.getElementById('modal-reschedule-interview'));
+                modal.show(); // Show the modal
+            }
+        
+            document.addEventListener('DOMContentLoaded', function () {
+                document.getElementById('rescheduleInterviewForm').addEventListener('submit', async function (event) {
+                    event.preventDefault(); // Prevent default form submission behavior
+        
+                    const interviewId = document.getElementById('interview_id').value;
+                    const newInterviewDate = document.getElementById('new_interview_date').value;
+                    const newInterviewTime = document.getElementById('new_interview_time').value;
+        
+                    try {
+                        const response = await fetch(`/admin/reschedule-interview/${interviewId}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                interview_date: newInterviewDate,
+                                interview_time: newInterviewTime
+                            })
+                        });
+        
+                        const result = await response.json();
+        
+                        if (result.success) {
+                            const modal = bootstrap.Modal.getInstance(document.getElementById('modal-reschedule-interview'));
+                            modal.hide();
+        
+                            $.notify({
+                                icon: 'fa fa-check me-1',
+                                message: result.message
+                            }, {
+                                type: 'success', allow_dismiss: false,
+                            });
+        
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 2000);
+                        } else {
+                            $.notify({
+                                icon: 'fa fa-times-circle me-1',
+                                message: result.message
+                            }, {
+                                type: 'danger', allow_dismiss: false,
+                            });
+                        }
+                    } catch (error) {
+                        $.notify({
+                            icon: 'fa fa-times-circle me-1',
+                            message: 'An error occurred. Please try again.'
+                        }, {
+                            type: 'danger'
+                        });
+                        console.error('Error:', error);
+                    }
+                });
+            });
         </script>
 
 <script>

@@ -218,9 +218,9 @@ const postSignUp = async (req, res) => {
 			} else {
 				// Send verification email
 				const transporter = nodemailer.createTransport({
-					service: "Gmail",
+					host: process.env.EMAIL_HOST,
+					port: process.env.EMAIL_PORT,
 					secure: true,
-					port: 465,
 					auth: {
 						user: process.env.EMAIL,
 						pass: process.env.PASS,
@@ -308,9 +308,9 @@ const postReqPass = async (req, res) => {
 			if (err) throw err;
 
 			const transporter = nodemailer.createTransport({
-				service: "Gmail",
+				host: process.env.EMAIL_HOST,
+				port: process.env.EMAIL_PORT,
 				secure: true,
-				port: 456,
 				auth: {
 					user: process.env.EMAIL,
 					pass: process.env.PASS,

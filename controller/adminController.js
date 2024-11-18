@@ -568,6 +568,77 @@ const acceptInterview = async (req, res) => {
 		});
 	}
 };
+const rescheduleInterview = async (req, res) => {
+    const { id } = req.params; // Get interview ID from the route parameters
+    const { interview_date, interview_time, email, firstname } = req.body;
+
+    try {
+        // Update the interview date and time
+        const result = await query(
+            "UPDATE interviews SET interview_date = ?, interview_time = ? WHERE id = ?",
+            [interview_date, interview_time, id]
+        );
+
+        // Check if the update was successful
+        if (result.affectedRows === 1) {
+            // Set up the transporter for sending emails
+            const transporter = nodemailer.createTransport({
+				host: process.env.EMAIL_HOST,
+				port: process.env.EMAIL_PORT,
+				secure: true,
+                auth: {
+                    user: process.env.EMAIL, // Use environment variables for sender's email credentials
+                    pass: process.env.PASS,
+                },
+            });
+
+            // Define the email content for rescheduling notification
+            const mailOptions = {
+                to: email,
+                from: "no-reply@yourorganization.com", // Change to your sending email
+                subject: "Interview Rescheduled - MMSU ETEEAP",
+                html: `<p>Dear ${firstname},</p>
+                       <p>Your interview with <strong>MMSU ETEEAP</strong> has been rescheduled.</p>
+                       <p><strong>New Schedule:</strong><br>
+                       Date: ${interview_date}<br>
+                       Time: ${interview_time}</p>
+                       <p>We apologize for any inconvenience this may have caused and appreciate your understanding.</p>
+                       <p>If you have any questions or need further information, feel free to contact us.</p>
+                       <p>Best regards,<br>The MMSU ETEEAP Team</p>`,
+            };
+
+            // Send the email notification
+            transporter.sendMail(mailOptions, (err) => {
+                if (err) {
+                    console.error("Error sending reschedule notification:", err);
+                    return res.status(500).json({
+                        success: true,
+                        message:
+                            "Interview rescheduled successfully, but failed to send notification email.",
+                    });
+                }
+
+                // Success response
+                res.status(200).json({
+                    success: true,
+                    message: "Interview rescheduled and notification sent successfully.",
+                });
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: "Interview not found or already processed.",
+            });
+        }
+    } catch (error) {
+        console.error("Error rescheduling interview:", error);
+        res.status(500).json({
+            success: false,
+            message: "An error occurred while rescheduling the interview.",
+        });
+    }
+};
+
 
 const rejectInterview = async (req, res) => {
 	const { id } = req.params; // Get interview ID from the route parameters
@@ -667,9 +738,9 @@ const sendEmailNotification = async (req, res) => {
 	try {
 		// Set up the transporter for sending emails
 		const transporter = nodemailer.createTransport({
-			service: "Gmail",
+			host: process.env.EMAIL_HOST,
+			port: process.env.EMAIL_PORT,
 			secure: true,
-			port: 465,
 			auth: {
 				user: process.env.EMAIL, // Use environment variables for sender's email credentials
 				pass: process.env.PASS,
@@ -1448,9 +1519,9 @@ const postAssessor = async (req, res) => {
 
 		// Send verification email
 		const transporter = nodemailer.createTransport({
-			service: "Gmail",
+			host: process.env.EMAIL_HOST,
+			port: process.env.EMAIL_PORT,
 			secure: true,
-			port: 465,
 			auth: {
 				user: process.env.EMAIL,
 				pass: process.env.PASS,
@@ -1640,6 +1711,7 @@ export default {
 	cancelInterview,
 	acceptInterview,
 	rejectInterview,
+	rescheduleInterview,
 	sendEmailNotification,
 	getEvaluationId,
 	getUsers,

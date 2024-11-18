@@ -19,7 +19,7 @@ const generateEvaluationId = async (req, res) => {
 
 	const evaluation_result = (
 		await query(
-			"SELECT e.*, CONCAT(a.firstname, ' ', a.middlename, ' ', a.lastname) AS assessor_full_name, ap.name FROM evaluations e LEFT JOIN assessor a ON a.uuid = e.assessor_id LEFT JOIN application ap ON ap.id = e.application_id WHERE e.assessor_id = ? AND e.application_id = ?;",
+			"SELECT e.*,CONCAT( UPPER(a.firstname), ' ', UPPER(LEFT(a.middlename, 1)), '. ', UPPER(a.lastname) ) AS assessor_full_name, ap.name FROM evaluations e LEFT JOIN assessor a ON a.uuid = e.assessor_id LEFT JOIN application ap ON ap.id = e.application_id WHERE e.assessor_id = ? AND e.application_id = ?;",
 			[assessor_id, application_id]
 		)
 	)[0];
@@ -136,20 +136,61 @@ const generateEvaluationId = async (req, res) => {
 		})
 		.moveDown(1);
 
-	// Signatures Section
-	doc.moveDown(2)
-		.text("Submitted by:", { align: "left" })
-		.text(`${evaluation_result.assessor_full_name}`, { align: "left" })
-		.text("Internal Assessor", { align: "left" });
-
-	// Add a "Recommendation" textbox on the right
-	doc.moveUp(3) // Adjust vertical positioning as needed
-		.text("Recommendation:", 350, doc.y, { align: "left" }) // Position to the right side (adjust x coordinate as needed)
+	// Recommendation Box
+	doc.fontSize(10)
+		.text("Recommendation:", { align: "left" })
 		.moveDown(1)
-		.rect(350, doc.y, 200, 80) // Draw rectangle for recommendation textbox
-		.stroke(); // Draw border for the textbox
+		.rect(70, doc.y, 500, 70) // Draw recommendation box
+		.stroke()
+		.moveDown(8);
+// Credited Subjects Table
+doc.fontSize(10).text("Credited Subjects:", { align: "left" }).moveDown(0.5);
+doc.text("Subject".padEnd(30) + "Unit".padEnd(10) + "Subject".padEnd(30) + "Unit", {
+  align: "left",
+});
+doc.text("____________________________".padEnd(30) + "_____".padEnd(10) + "____________________________".padEnd(30) + "_____")
+   .text("____________________________".padEnd(30) + "_____".padEnd(10) + "____________________________".padEnd(30) + "_____")
+   .text("____________________________".padEnd(30) + "_____".padEnd(10) + "____________________________".padEnd(30) + "_____")
+   .moveDown(2);
 
-	// Finalize PDF file
+// Subjects to Enroll Table
+doc.fontSize(10).text("Subjects to Enroll:", { align: "left" }).moveDown(0.5);
+doc.text("Subject".padEnd(30) + "Unit".padEnd(10) + "Subject".padEnd(30) + "Unit", {
+  align: "left",
+});
+doc.text("____________________________".padEnd(30) + "_____".padEnd(10) + "____________________________".padEnd(30) + "_____")
+   .text("____________________________".padEnd(30) + "_____".padEnd(10) + "____________________________".padEnd(30) + "_____")
+   .text("____________________________".padEnd(30) + "_____".padEnd(10) + "____________________________".padEnd(30) + "_____")
+   .moveDown(2);
+
+
+// Submitted, Recommended, and Approved By Section
+const startY = doc.y; // Store the starting Y position for alignment
+
+// Submitted by
+doc.fontSize(10)
+   .text("Submitted by:", 70, startY)
+   .text(`${evaluation_result.assessor_full_name}`, 70, startY + 15, { underline: true })
+   .text("Internal Assessor", 70, startY + 30)
+   .text("Date Signed:", 70, startY + 45);
+
+// Recommended by
+doc.text("Recommended by:", 210, startY)
+   .text("JEAN P. PACUBAT", 210, startY + 15, { underline: true })
+   .text("Registrar", 210, startY + 30)
+   .text("Date Signed:", 210, startY + 45);
+
+// Approved by (Dean)
+doc.text("Approved by:", 320, startY)
+   .text("CESARIO Y. PACIS", 320, startY + 15, { underline: true })
+   .text("Dean", 320, startY + 30)
+   .text("Date Signed:", 320, startY + 45);
+
+// Approved by (Chief, ETEEAP)
+doc.text("ROBERT A. SALVADOR", 430, startY + 15, { underline: true })
+   .text("Chief, ETEEAP", 430, startY + 30)
+   .text("Date Signed:", 430, startY + 45);
+
 	doc.end();
 };
 const getLogout = (req, res) => {

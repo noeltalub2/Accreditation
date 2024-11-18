@@ -226,7 +226,8 @@
                                               </td>
                                               <td>
                                                   
-                                                      <input type="number" value="<%=usersEvaluationHistory[0]?.training_points[index] || ''%>"  name="training_points[<%= index %>]" class="form-control" min="0" max="5" required />
+                                                      <input type="number" value="<%=usersEvaluationHistory[0]?.training_points[index] || ''%>"  name="training_points[<%= index %>]" class="form-control" min="0" max="<%= training.training_level === 'International' ? 5 : training.training_level === 'National' ? 3 : training.training_level === 'Local/Regional' ? 2 : 0 %>"
+                                                      required />
                                            
                                               </td>
                                           </tr>
@@ -281,7 +282,7 @@
                                               </td>
                                               <td>
                                          
-                                                      <input type="number" value="<%=usersEvaluationHistory[0]?.professional_development_points[index] || ''%>"   name="professional_dev_points[<%= index %>]" class="form-control" min="0" max="5" required />
+                                                      <input type="number" value="<%=usersEvaluationHistory[0]?.professional_development_points[index] || ''%>"   name="professional_dev_points[<%= index %>]" class="form-control" min="0" max="1" required />
                                             
                                               </td>
                                           </tr>
@@ -321,12 +322,12 @@
                                           </td>
                                           <td>
                                               
-                                                  <input type="number"   value="<%=usersEvaluationHistory[0]?.eligibility_points[0] || ''%>" name="csc_points" id="csc_points" class="form-control" min="0" max="5" required >
+                                                  <input type="number"   value="<%=usersEvaluationHistory[0]?.eligibility_points[0] || ''%>" name="csc_points" id="csc_points" class="form-control" min="0" max="2" required >
                                          
                                           </td>
                                       </tr>
                                   <% } else { %>
-                                    <input type="hidden"   value="0"  name="csc_points" id="csc_points" class="form-control" min="0" max="5" >
+                                    <input type="hidden"   value="0"  name="csc_points" id="csc_points" class="form-control" min="0" max="2" >
                                 <%}%>
                                   <!-- Technical (NC) Eligibility -->
                                   <% if(application.certificate_file_technical_nc) { %>
@@ -342,12 +343,12 @@
                                           </td>
                                           <td>
                                        
-                                                  <input type="number"   value="<%=usersEvaluationHistory[0]?.eligibility_points[1] || ''%>"  name="nc_points" id="nc_points" class="form-control" min="0" max="5" required>
+                                                  <input type="number"   value="<%=usersEvaluationHistory[0]?.eligibility_points[1] || ''%>"  name="nc_points" id="nc_points" class="form-control" min="0" max="3" required>
                                          
                                           </td>
                                       </tr>
                                   <% } else { %>
-                                    <input type="hidden"   value="0"  name="nc_points" id="nc_points" class="form-control" min="0" max="5" >
+                                    <input type="hidden"   value="0"  name="nc_points" id="nc_points" class="form-control" min="0" max="3" >
                                     <%}%>
                                   <!-- Professional (PRC) (CSC) Eligibility -->
                                   <% if(application.certificate_file_professional_prc_csc) { %>
@@ -363,7 +364,7 @@
                                           </td>
                                           <td>
                                              
-                                                  <input type="number"  value="<%=usersEvaluationHistory[0]?.eligibility_points[2] || ''%>" name="prc_points" id="prc_points" class="form-control" min="0" max="40" required>
+                                                  <input type="number"  value="<%=usersEvaluationHistory[0]?.eligibility_points[2] || ''%>" name="prc_points" id="prc_points" class="form-control" min="0" max="5" required>
                                               
                                           </td>
                                       </tr>
@@ -401,7 +402,7 @@
                                               </td>
                                               <td>
                                   
-                                                      <input type="number" value="<%=usersEvaluationHistory[0]?.award_points[index] || ''%>"  name="award_points[<%= index %>]" class="form-control" min="0" max="5" required />
+                                                      <input type="number" value="<%=usersEvaluationHistory[0]?.award_points[index] || ''%>"  name="award_points[<%= index %>]" class="form-control" min="0" max="<%= award.award_level === 'Local/Regional' ? 2 : award.award_level === 'National/International' ? 3 : 'N/A' %>" required />
                                             
                                               </td>
                                           </tr>
@@ -584,7 +585,7 @@
                 qualificationStatusInput.style.color = totalPoints >= 80 ? 'green' : 'red';
             }
     
-            console.log(totalPoints);
+          
         }
     
         // Use querySelectorAll for attaching event listeners to form controls
@@ -653,19 +654,19 @@
             required: true,
             number: true,
             min: 0,
-            max: 40
+            max: 2
         },
         nc_points: {
             required: true,
             number: true,
             min: 0,
-            max: 40
+            max: 3
         },
         prc_points: {
             required: true,
             number: true,
             min: 0,
-            max: 40
+            max: 5
         },
         award_points: {
             required: true,

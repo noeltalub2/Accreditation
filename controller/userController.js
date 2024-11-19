@@ -220,7 +220,7 @@ const postSignUp = async (req, res) => {
 				const transporter = nodemailer.createTransport({
 					host: process.env.EMAIL_HOST,
 					port: process.env.EMAIL_PORT,
-					secure: true,
+					secure: process.env.EMAIL_SECURE,
 					auth: {
 						user: process.env.EMAIL,
 						pass: process.env.PASS,
@@ -310,7 +310,7 @@ const postReqPass = async (req, res) => {
 			const transporter = nodemailer.createTransport({
 				host: process.env.EMAIL_HOST,
 				port: process.env.EMAIL_PORT,
-				secure: true,
+				secure: process.env.EMAIL_SECURE,
 				auth: {
 					user: process.env.EMAIL,
 					pass: process.env.PASS,
@@ -982,6 +982,39 @@ const rejectInterview = async (req, res) => {
 	}
 };
 
+const rescheduleInterview = async (req, res) => {
+    const { id } = req.params; // Get interview ID from the route parameters
+    const { interview_date, interview_time } = req.body; // Removed email and firstname from req.body
+
+    try {
+        // Update the interview date, time, and status
+        const result = await query(
+            "UPDATE interviews SET interview_date = ?, interview_time = ?, status = ? WHERE id = ?",
+            [interview_date, interview_time, "Rescheduled", id]
+        );
+
+        // Check if the update was successful
+        if (result.affectedRows === 1) {
+            res.status(200).json({
+                success: true,
+                message: "Interview rescheduled successfully.",
+            });
+        } else {
+            res.status(404).json({
+                success: false,
+                message: "Interview not found or already processed.",
+            });
+        }
+    } catch (error) {
+        console.error("Error rescheduling interview:", error);
+        res.status(500).json({
+            success: false,
+            message: "An error occurred while rescheduling the interview.",
+        });
+    }
+};
+
+
 const getProfile = async (req, res) => {
 	const uuid = res.locals.user.id;
 	const profile = (
@@ -1139,7 +1172,7 @@ export default {
 	postInterview,
 	acceptInterview,
 	rejectInterview,
-
+	rescheduleInterview,
 	getProfile,
 	postProfile,
 	postChangePass,

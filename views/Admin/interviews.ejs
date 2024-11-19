@@ -96,11 +96,13 @@
                                                             <span class="badge bg-primary">Completed</span>
                                                             <% } else if (record.status==='Cancelled' ) { %>
                                                                 <span class="badge bg-danger">Cancelled</span>
-                                                            <%}%>
-                                        </td>
+                                                            <%} else {%>
+                                                                <span class="badge bg-warning">Rescheduled</span>
+                                                                <%}%>
+                                        </td>           
                                         <td class="text-center fs-sm">
                                             <div class="btn-group">
-                                                <% if (record.status === 'Accepted') { %>
+                                                <% if (record.status === 'Accepted' || record.status === 'Rescheduled') { %>
                                                     <button type="button" class="btn btn-sm btn-success"
                                                         onclick="markAsComplete('<%= record.id %>')"
                                                         data-bs-toggle="tooltip" aria-label="Mark as Complete"
@@ -119,13 +121,7 @@
                                                         data-bs-original-title="Cancel Interview">
                                                         <i class="fa fa-fw fa-ban"></i> Cancel
                                                     </button>
-                                                    <!-- Reschedule Button -->
-                                                    <button type="button" class="btn btn-sm btn-warning"
-                                                        onclick="openRescheduleModal('<%= record.id %>')"
-                                                        data-bs-toggle="tooltip" aria-label="Reschedule Interview"
-                                                        data-bs-original-title="Reschedule Interview">
-                                                        <i class="fa fa-fw fa-calendar-alt"></i> Reschedule
-                                                    </button>
+                                                   
                                                 <% } else if (record.status === 'Completed') { %>
                                                     <span class="fw-bold">For Evaluation</span>
                                                 <% } else if (record.status === 'Cancel') { %>

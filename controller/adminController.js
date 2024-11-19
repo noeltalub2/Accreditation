@@ -585,7 +585,7 @@ const rescheduleInterview = async (req, res) => {
             const transporter = nodemailer.createTransport({
 				host: process.env.EMAIL_HOST,
 				port: process.env.EMAIL_PORT,
-				secure: true,
+				secure: process.env.EMAIL_SECURE,
                 auth: {
                     user: process.env.EMAIL, // Use environment variables for sender's email credentials
                     pass: process.env.PASS,
@@ -740,7 +740,7 @@ const sendEmailNotification = async (req, res) => {
 		const transporter = nodemailer.createTransport({
 			host: process.env.EMAIL_HOST,
 			port: process.env.EMAIL_PORT,
-			secure: true,
+			secure: process.env.EMAIL_SECURE,
 			auth: {
 				user: process.env.EMAIL, // Use environment variables for sender's email credentials
 				pass: process.env.PASS,
@@ -1521,7 +1521,7 @@ const postAssessor = async (req, res) => {
 		const transporter = nodemailer.createTransport({
 			host: process.env.EMAIL_HOST,
 			port: process.env.EMAIL_PORT,
-			secure: true,
+			secure: process.env.EMAIL_SECURE,
 			auth: {
 				user: process.env.EMAIL,
 				pass: process.env.PASS,

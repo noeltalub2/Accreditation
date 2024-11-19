@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 13, 2024 at 04:43 PM
+-- Generation Time: Nov 19, 2024 at 01:24 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -215,7 +215,7 @@ CREATE TABLE `interviews` (
   `application_id` int(11) NOT NULL,
   `interview_date` date DEFAULT NULL,
   `interview_time` time DEFAULT NULL,
-  `status` enum('Pending','Completed','Rejected','Accepted','Cancelled') DEFAULT 'Pending',
+  `status` enum('Pending','Completed','Rejected','Accepted','Cancelled','Rescheduled') DEFAULT 'Pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;

@@ -104,7 +104,12 @@ router.post(
 
 router.post('/accept-interview/:id', auth.requireAuth, auth.checkRole(['user']), userController.acceptInterview);
 router.post('/reject-interview/:id', auth.requireAuth, auth.checkRole(['user']), userController.rejectInterview);
-
+router.post(
+	"/reschedule-interview/:id",
+	auth.requireAuth,
+	auth.checkRole(["user"]),
+	userController.rescheduleInterview
+);
 
 
 

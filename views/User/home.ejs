@@ -70,6 +70,7 @@
                   <%= interview.status === 'Rejected' ? 'bg-danger' : '' %>
                   <%= interview.status === 'Completed' ? 'bg-info' : '' %>
                   <%= interview.status === 'Cancelled' ? 'bg-danger' : '' %> 
+                  <%= interview.status === 'Rescheduled' ? 'bg-warning' : '' %> 
                 " class="me-1">
                     <%= interview.status %>
                   </span>
@@ -90,7 +91,13 @@
                         <p class="text-info mt-1 mb-2">Interview Completed. Thank you!</p>
                         <% } else if (interview.status==='Cancelled' ) { %> <!-- Added condition for Cancelled -->
                           <p class="text-secondary mt-1 mb-2">Interview Cancelled.</p>
-                          <% } %>
+                        
+
+                          <% } else if (interview.status === 'Rescheduled') { %> <!-- Added condition for Rescheduled -->
+          
+                            <p class="text-primary mt-1 mb-2">Interview Rescheduled. Please check the new date and time.</p>
+                       
+                        <% } %>
               </div>
               <% }); %> <!-- End of forEach -->
           </div>

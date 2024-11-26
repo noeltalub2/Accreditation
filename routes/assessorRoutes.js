@@ -9,6 +9,9 @@ const router = Router();
 
 router.get("/signin", auth.forwardAuth, assessorController.getSignIn);
 router.post("/signin", auth.forwardAuth, assessorController.postSignIn);
+router.post("/check-username", assessorController.checkUsername);
+router.post("/check-email", assessorController.checkEmail);
+router.post("/check-phonenumber", assessorController.checkPhonenumber);
 router.get(
 	"/home",
 	auth.requireAuth,

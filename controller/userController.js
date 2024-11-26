@@ -206,59 +206,92 @@ const postSignUp = async (req, res) => {
 			verification_token: nanoid(), // Generate a unique verification token
 		};
 
-		// Insert new user into database
-		const sql = "INSERT INTO users SET ?";
-		db.query(sql, data, (err, result) => {
+		db.getConnection((err, connection) => {
 			if (err) {
-				console.error(err);
-				return res.json({
-					success: false,
-					errors: [{ msg: "Failed to register user" }],
-				});
-			} else {
-				// Send verification email
-				const transporter = nodemailer.createTransport({
-					host: process.env.EMAIL_HOST,
-					port: process.env.EMAIL_PORT,
-					secure: process.env.EMAIL_SECURE,
-					auth: {
-						user: process.env.EMAIL,
-						pass: process.env.PASS,
-					},
-				});
-
-				const verificationLink = `http://${req.headers.host}/verify-email/${data.verification_token}`;
-
-				const mailOptions = {
-					to: email,
-					from: "no-reply@yourorganization.com", // Change to your sending email
-					subject: "Verify Your Email Address - MMSU ETEEAP",
-					html: `<p>Dear ${firstname},</p>
-						   <p>Thank you for signing up with <strong>MMSU ETEEAP</strong>!</p>
-						   <p>To complete your registration, please verify your email address by clicking the link below:</p>
-						   <p><a href="${verificationLink}">Verify your email</a></p>
-						   <p>If you did not register for an account, please ignore this email. Your account will not be activated unless you follow the verification link.</p>
-						   <p>Best regards,<br>The MMSU ETEEAP Team</p>`,
-				};
-
-				transporter.sendMail(mailOptions, (err) => {
+				console.error('Error getting connection from pool:', err);
+				return res.json({ success: false, msg: 'Database connection error' });
+			}
+	
+			connection.beginTransaction((err) => {
+				if (err) {
+					connection.release();
+					console.error('Error starting transaction:', err);
+					return res.json({ success: false, msg: 'Failed to start transaction' });
+				}
+	
+				const insertUserQuery = 'INSERT INTO users SET ?';
+	
+				// Insert user
+				connection.query(insertUserQuery, data, (err, result) => {
 					if (err) {
-						console.error(err);
-						return res.json({
-							success: false,
-							msg: "Failed to send verification email",
+						return connection.rollback(() => {
+							connection.release();
+							console.error('Error inserting user:', err);
+							return res.json({ success: false, msg: 'Failed to register user' });
 						});
 					}
-
-					return res.json({
-						success: true,
-						msg: "Registration successful! Please check your email for a verification link.",
+	
+					// If the email fails, rollback
+					const transporter = nodemailer.createTransport({
+						host: process.env.EMAIL_HOST,
+						port: process.env.EMAIL_PORT,
+						secure: process.env.EMAIL_SECURE === 'true',
+						auth: {
+							user: process.env.EMAIL,
+							pass: process.env.PASS,
+						},
+					});
+	
+					const verificationLink = `http://${req.headers.host}/verify-email/${data.verification_token}`;
+					const mailOptions = {
+						to: data.email,
+						from: 'no-reply@yourorganization.com',
+						subject: 'Verify Your Email Address - MMSU ETEEAP',
+						html: `
+							<p>Dear ${firstname},</p>
+                       <p>Thank you for signing up with <strong>MMSU ETEEAP</strong>!</p>
+                       <p>To complete your registration, please verify your email address by clicking the link below:</p>
+                       <p><a href="${verificationLink}">Verify your email</a></p>
+                       <p>If you did not register for an account, please ignore this email. Your account will not be activated unless you follow the verification link.</p>
+                       <p>Best regards,<br>The MMSU ETEEAP Team</p>
+						`,
+					};
+	
+					transporter.sendMail(mailOptions, (err) => {
+						if (err) {
+							return connection.rollback(() => {
+								connection.release();
+								console.error('Error sending email:', err);
+								return res.json({
+									success: false,
+									msg: 'An error occurred. Please try again.',
+								});
+							});
+						}
+	
+						// Commit transaction if everything is successful
+						connection.commit((err) => {
+							connection.release();
+							if (err) {
+								console.error('Error committing transaction:', err);
+								return res.json({
+									success: false,
+									msg: 'Failed to complete registration',
+								});
+							}
+	
+							return res.json({
+								success: true,
+								msg: 'Registration successful! Please check your email for a verification link.',
+							});
+						});
 					});
 				});
-			}
+			});
 		});
 	}
 };
+
 
 const getVerifyEmail = async (req, res) => {
 	const { token } = req.params;
@@ -348,7 +381,10 @@ const getResetPass = async (req, res) => {
 			if (!user.length) {
 				return res.redirect("/signin");
 			}
-			res.render("User/reset-password", { token: req.params.token , title: "Reset Password"});
+			res.render("User/reset-password", {
+				token: req.params.token,
+				title: "Reset Password",
+			});
 		}
 	);
 };
@@ -533,91 +569,89 @@ const getSubmitApplication = async (req, res) => {
 };
 
 const postApplicationForm = async (req, res) => {
-    const userId = res.locals.user.id;
+	const userId = res.locals.user.id;
 
-    // Arrays from req.body
-    const {
-        // Work Experience
-        job_title,
-        company_name_work,
-        company_address_work,
-        date_started_end_work,
-        employment_file_work,
+	// Arrays from req.body
+	const {
+		// Work Experience
+		job_title,
+		company_name_work,
+		company_address_work,
+		date_started_end_work,
+		employment_file_work,
 
-        // Training
-        training_level,
-        training_title,
-        training_sponsor,
-        training_date,
-        training_certificate,
+		// Training
+		training_level,
+		training_title,
+		training_sponsor,
+		training_date,
+		training_certificate,
 
-        // Professional Development
-        professional_dev_level,
-        organization_dev,
-        description_dev,
-        certificate_file_dev,
+		// Professional Development
+		professional_dev_level,
+		organization_dev,
+		description_dev,
+		certificate_file_dev,
 
-        // Award
-        award_level,
-        certificate_file_award
-    } = req.body;
+		// Award
+		award_level,
+		certificate_file_award,
+	} = req.body;
 
+	// Other fields (non-array)
+	const {
+		name,
+		address,
+		zip_code,
+		phonenumber,
+		email,
+		birth_date,
+		birthplace,
+		civil_status,
+		sex,
+		nationality,
+		languages,
+		first_priority,
+		second_priority,
+		third_priority,
+		cost_accreditation,
+		time_commitment,
+		qualification,
+		school_name,
+		school_address,
+		date_first_attended,
+		date_last_attended,
+		final_essay,
+		hobbies_leisure,
+		special_skills,
+		work_related_activities,
+		volunteer_activities,
+		travels,
+	} = req.body;
 
-	
-    // Other fields (non-array)
-    const {
-        name,
-        address,
-        zip_code,
-        phonenumber,
-        email,
-        birth_date,
-        birthplace,
-        civil_status,
-        sex,
-        nationality,
-        languages,
-        first_priority,
-        second_priority,
-        third_priority,
-        cost_accreditation,
-        time_commitment,
-        qualification,
-        school_name,
-        school_address,
-        date_first_attended,
-        date_last_attended,
-        final_essay,
-        hobbies_leisure,
-        special_skills,
-        work_related_activities,
-        volunteer_activities,
-        travels,
-    } = req.body;
+	try {
+		// Check if the user has an existing application in progress
+		const existingApplication = await query(
+			"SELECT * FROM application WHERE uuid = ? AND status IN (?, ?, ?, ?)",
+			[
+				userId,
+				"Pending",
+				"Under Review",
+				"Additional Information Requested",
+				"Approved",
+			]
+		);
 
-    try {
-        // Check if the user has an existing application in progress
-        const existingApplication = await query(
-            "SELECT * FROM application WHERE uuid = ? AND status IN (?, ?, ?, ?)",
-            [
-                userId,
-                "Pending",
-                "Under Review",
-                "Additional Information Requested",
-                "Approved",
-            ]
-        );
+		if (existingApplication.length > 0) {
+			return res.status(400).json({
+				message:
+					"You already have a current application that is still being processed or approved.",
+			});
+		}
 
-        if (existingApplication.length > 0) {
-            return res.status(400).json({
-                message:
-                    "You already have a current application that is still being processed or approved.",
-            });
-        }
-
-        // Insert into the application table
-        const result = await query(
-            `INSERT INTO application (
+		// Insert into the application table
+		const result = await query(
+			`INSERT INTO application (
                 uuid, name, address, zip_code, phonenumber, email, birth_date, 
                 birthplace, civil_status, sex, nationality, languages, first_priority, 
                 second_priority, third_priority, cost_accreditation, time_commitment, 
@@ -626,126 +660,152 @@ const postApplicationForm = async (req, res) => {
                 certificate_file_technical_nc, certificate_file_professional_prc_csc, hobbies_leisure,
                 special_skills, work_related_activities, volunteer_activities, travels
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-            [
-                userId || null,
-                name || null,
-                address || null,
-                zip_code || null,
-                phonenumber || null,
-                email || null,
-                birth_date || null,
-                birthplace || null,
-                civil_status || null,
-                sex || null,
-                nationality || null,
-                languages || null,
-                first_priority || null,
-                second_priority || null,
-                third_priority || null,
-                cost_accreditation || null,
-                time_commitment || null,
-                qualification || null,
-                school_name || null,
-                school_address || null,
-                date_first_attended || null,
-                date_last_attended || null,
-                final_essay || null,
-                // Handle file uploads
-                req.files.find((file) => file.fieldname === "tor_file")?.filename || null,
-                req.files.find((file) => file.fieldname === "certificate_file_sub_professional")?.filename || null,
-                req.files.find((file) => file.fieldname === "certificate_file_technical_nc")?.filename || null,
-                req.files.find((file) => file.fieldname === "certificate_file_professional_prc_csc")?.filename || null,
-                hobbies_leisure || null,
-                special_skills || null,
-                work_related_activities || null,
-                volunteer_activities || null,
-                travels || null,
-            ]
-        );
+			[
+				userId || null,
+				name || null,
+				address || null,
+				zip_code || null,
+				phonenumber || null,
+				email || null,
+				birth_date || null,
+				birthplace || null,
+				civil_status || null,
+				sex || null,
+				nationality || null,
+				languages || null,
+				first_priority || null,
+				second_priority || null,
+				third_priority || null,
+				cost_accreditation || null,
+				time_commitment || null,
+				qualification || null,
+				school_name || null,
+				school_address || null,
+				date_first_attended || null,
+				date_last_attended || null,
+				final_essay || null,
+				// Handle file uploads
+				req.files.find((file) => file.fieldname === "tor_file")
+					?.filename || null,
+				req.files.find(
+					(file) =>
+						file.fieldname === "certificate_file_sub_professional"
+				)?.filename || null,
+				req.files.find(
+					(file) => file.fieldname === "certificate_file_technical_nc"
+				)?.filename || null,
+				req.files.find(
+					(file) =>
+						file.fieldname ===
+						"certificate_file_professional_prc_csc"
+				)?.filename || null,
+				hobbies_leisure || null,
+				special_skills || null,
+				work_related_activities || null,
+				volunteer_activities || null,
+				travels || null,
+			]
+		);
 
-        // Get the application ID for the newly inserted application
-        const applicationId = result.insertId;
+		// Get the application ID for the newly inserted application
+		const applicationId = result.insertId;
 
-        // Insert into work_experience table (batch insert)
-        if (job_title && job_title.length > 0) {
-            const workExperienceData = job_title.map((item, index) => [
-                applicationId,
-                item,
-                company_name_work[index] || null,
-                company_address_work[index] || null,
-                date_started_end_work[index] || null,
-                req.files.find((file) => file.fieldname === `employment_file_work[${index}]`)?.filename || null // Find the file for this index
-            ]);
-            await query(
-                `INSERT INTO work_experience (application_id, job_title, company_name, company_address, date_started_end, employment_file) 
+		// Insert into work_experience table (batch insert)
+		if (job_title && job_title.length > 0) {
+			const workExperienceData = job_title.map((item, index) => [
+				applicationId,
+				item,
+				company_name_work[index] || null,
+				company_address_work[index] || null,
+				date_started_end_work[index] || null,
+				req.files.find(
+					(file) =>
+						file.fieldname === `employment_file_work[${index}]`
+				)?.filename || null, // Find the file for this index
+			]);
+			await query(
+				`INSERT INTO work_experience (application_id, job_title, company_name, company_address, date_started_end, employment_file) 
                 VALUES ?`,
-                [workExperienceData]
-            );
-        }
+				[workExperienceData]
+			);
+		}
 
-        // Insert into training table (batch insert)
-        if (training_title && training_title.length > 0) {
-            const trainingData = training_title.map((item, index) => [
-                applicationId,
-                training_level[index] || null,
-                item,
-                training_sponsor[index] || null,
-                training_date[index] || null,
-          
-				req.files.find((file) => file.fieldname === `training_certificate[${index}]`)?.filename || null,
-            ]);
-            await query(
-                `INSERT INTO training (application_id, training_level, training_title, training_sponsor, training_date, training_certificate)
+		// Insert into training table (batch insert)
+		if (training_title && training_title.length > 0) {
+			const trainingData = training_title.map((item, index) => [
+				applicationId,
+				training_level[index] || null,
+				item,
+				training_sponsor[index] || null,
+				training_date[index] || null,
+
+				req.files.find(
+					(file) =>
+						file.fieldname === `training_certificate[${index}]`
+				)?.filename || null,
+			]);
+			await query(
+				`INSERT INTO training (application_id, training_level, training_title, training_sponsor, training_date, training_certificate)
                 VALUES ?`,
-                [trainingData]
-            );
-        }
+				[trainingData]
+			);
+		}
 
-        // Insert into professional_development table (batch insert)
-        if (professional_dev_level && professional_dev_level.length > 0) {
-            const professionalDevelopmentData = professional_dev_level.map((item, index) => [
-                applicationId,
-                item,
-                organization_dev[index] || null,
-                description_dev[index] || null,
-             
-				req.files.find((file) => file.fieldname === `certificate_file_dev[${index}]`)?.filename || null,
-            ]);
-            await query(
-                `INSERT INTO professional_development (application_id, professional_dev_level, organization_dev, description_dev, certificate_file_dev)
+		// Insert into professional_development table (batch insert)
+		if (professional_dev_level && professional_dev_level.length > 0) {
+			const professionalDevelopmentData = professional_dev_level.map(
+				(item, index) => [
+					applicationId,
+					item,
+					organization_dev[index] || null,
+					description_dev[index] || null,
+
+					req.files.find(
+						(file) =>
+							file.fieldname === `certificate_file_dev[${index}]`
+					)?.filename || null,
+				]
+			);
+			await query(
+				`INSERT INTO professional_development (application_id, professional_dev_level, organization_dev, description_dev, certificate_file_dev)
                 VALUES ?`,
-                [professionalDevelopmentData]
-            );
-        }
+				[professionalDevelopmentData]
+			);
+		}
 
-        // Insert into award table (batch insert)
-        if (award_level && award_level.length > 0) {
-            const awardData = award_level.map((item, index) => [
-                applicationId,
-                item,
-                
-				req.files.find((file) => file.fieldname === `certificate_file_award[${index}]`)?.filename || null,
-            ]);
-            await query(
-                `INSERT INTO award (application_id, award_level, certificate_file_award)
+		// Insert into award table (batch insert)
+		if (award_level && award_level.length > 0) {
+			const awardData = award_level.map((item, index) => [
+				applicationId,
+				item,
+
+				req.files.find(
+					(file) =>
+						file.fieldname === `certificate_file_award[${index}]`
+				)?.filename || null,
+			]);
+			await query(
+				`INSERT INTO award (application_id, award_level, certificate_file_award)
                 VALUES ?`,
-                [awardData]
-            );
-        }
+				[awardData]
+			);
+		}
 
-        res.status(200).json({
-            success: true,
-            message: "You have successfully submitted your application.",
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Error submitting application." });
-    }
+		res.status(200).json({
+			success: true,
+			message: "You have successfully submitted your application.",
+		});
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: "Error submitting application." });
+	}
 };
 
-
 const getSubmitApplicationView = async (req, res) => {
-	const hasAccess = await query("SELECT * FROM application WHERE uuid = ? AND id = ?", [res.locals.user.id, req.params.id]);
+	const hasAccess = await query(
+		"SELECT * FROM application WHERE uuid = ? AND id = ?",
+		[res.locals.user.id, req.params.id]
+	);
 	if (hasAccess.length === 0) {
 		return res.redirect("/application");
 	}
@@ -758,19 +818,19 @@ const getSubmitApplicationView = async (req, res) => {
 	const workExperience = await query(
 		"SELECT * FROM work_experience WHERE application_id = ? ORDER BY id DESC",
 		[req.params.id]
-	)
+	);
 	const trainingExperience = await query(
 		"SELECT * FROM training WHERE application_id = ? ORDER BY id DESC",
 		[req.params.id]
-	)
+	);
 	const professionalDevelopments = await query(
 		"SELECT * FROM professional_development WHERE application_id = ? ORDER BY id DESC",
 		[req.params.id]
-	)
+	);
 	const awards = await query(
 		"SELECT * FROM award WHERE application_id = ? ORDER BY id DESC",
 		[req.params.id]
-	)
+	);
 	const comments = await query(
 		"SELECT * FROM comments WHERE application_id = ? ORDER BY id DESC",
 		[req.params.id]
@@ -795,7 +855,10 @@ const getSubmitApplicationView = async (req, res) => {
 		comments,
 		interview,
 		evaluations,
-		workExperience,trainingExperience,professionalDevelopments,awards
+		workExperience,
+		trainingExperience,
+		professionalDevelopments,
+		awards,
 	});
 };
 
@@ -983,37 +1046,36 @@ const rejectInterview = async (req, res) => {
 };
 
 const rescheduleInterview = async (req, res) => {
-    const { id } = req.params; // Get interview ID from the route parameters
-    const { interview_date, interview_time } = req.body; // Removed email and firstname from req.body
+	const { id } = req.params; // Get interview ID from the route parameters
+	const { interview_date, interview_time } = req.body; // Removed email and firstname from req.body
 
-    try {
-        // Update the interview date, time, and status
-        const result = await query(
-            "UPDATE interviews SET interview_date = ?, interview_time = ?, status = ? WHERE id = ?",
-            [interview_date, interview_time, "Rescheduled", id]
-        );
+	try {
+		// Update the interview date, time, and status
+		const result = await query(
+			"UPDATE interviews SET interview_date = ?, interview_time = ?, status = ? WHERE id = ?",
+			[interview_date, interview_time, "Rescheduled", id]
+		);
 
-        // Check if the update was successful
-        if (result.affectedRows === 1) {
-            res.status(200).json({
-                success: true,
-                message: "Interview rescheduled successfully.",
-            });
-        } else {
-            res.status(404).json({
-                success: false,
-                message: "Interview not found or already processed.",
-            });
-        }
-    } catch (error) {
-        console.error("Error rescheduling interview:", error);
-        res.status(500).json({
-            success: false,
-            message: "An error occurred while rescheduling the interview.",
-        });
-    }
+		// Check if the update was successful
+		if (result.affectedRows === 1) {
+			res.status(200).json({
+				success: true,
+				message: "Interview rescheduled successfully.",
+			});
+		} else {
+			res.status(404).json({
+				success: false,
+				message: "Interview not found or already processed.",
+			});
+		}
+	} catch (error) {
+		console.error("Error rescheduling interview:", error);
+		res.status(500).json({
+			success: false,
+			message: "An error occurred while rescheduling the interview.",
+		});
+	}
 };
-
 
 const getProfile = async (req, res) => {
 	const uuid = res.locals.user.id;
@@ -1151,6 +1213,7 @@ export default {
 	getSignUp,
 	postSignUp,
 	getVerifyEmail,
+
 	getReqPass,
 	postReqPass,
 	getResetPass,

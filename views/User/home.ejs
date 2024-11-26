@@ -28,94 +28,275 @@
       </div> <!-- end card-->
     </div> <!-- end col-->
 
-    <!-- end col -->
-    <% if (interview.length> 0) { %> <!-- Check if there are interviews -->
-      <div class="col col-md-6">
-        <div class="card widget-flat">
-          <div class="card-body">
-            <div class="float-end">
-              <i class="ri-calendar-2-line text-bg-primary widget-icon"></i>
-            </div>
-            <h5 class="text-muted fw-normal mt-0" title="Average Revenue">Interviews Available</h5>
-
-            <% interview.forEach(function(interview) { %>
-              <div class="mb-0">
-              
-                <p class="mb-0 text-muted">
-                  <span class="text-nowrap">
-                    <%function formatDate(dateString) {
-                      const date = new Date(dateString);
-                      const options = { day: "numeric", month: "long" };
-                      return date.toLocaleDateString("en-US", options);
-                    }
-                    function formatTime(timeString) {
-                      // Split the time string (e.g., "14:31:00") to get hours and minutes
-                      const [hours, minutes] = timeString.split(':');
-                      
-                      // Create a new Date object using current date and provided time
-                      const date = new Date();
-                      date.setHours(hours, minutes, 0, 0);  // Set hours, minutes, and reset seconds
-                      
-                      // Format the time using toLocaleTimeString
-                      const options = { hour: "numeric", minute: "numeric", hour12: true };
-                      return date.toLocaleTimeString("en-US", options);
-                    }
-                    %>
-                    <%= interview.status !=='Rejected' && interview.status !=='Cancelled' ? '' + formatDate(interview.interview_date) + ' at ' + formatTime(interview.interview_time)
-                      : '' %>
-                  </span>
-                  <span class="badge 
+  </div>
+  <div class="row g-3">
+    <% if (interview.length === 0) { %>
+      <div class="col-12">
+        <div class="alert alert-info text-center" role="alert">
+          No interview available.
+        </div>
+      </div>
+    <% } else { %>
+      <% interview.forEach(function(interview) { %>
+        <div class="col-lg-4 col-md-6"> <!-- Responsive columns -->
+          <div class="card shadow-sm border-light"> <!-- Added shadow and border styles -->
+            <div class="card-body">
+              <!-- Change title based on interview status -->
+              <h5 class="card-title mb-3">
+                <%= interview.status === 'Rejected' || interview.status === 'Rescheduled' ? 'Interview Status' : 'Upcoming Interview' %>
+              </h5>
+  
+              <p class="mb-1 text-muted">
+                <span class="badge 
                   <%= interview.status === 'Pending' ? 'bg-warning' : '' %>
                   <%= interview.status === 'Accepted' ? 'bg-success' : '' %>
                   <%= interview.status === 'Rejected' ? 'bg-danger' : '' %>
                   <%= interview.status === 'Completed' ? 'bg-info' : '' %>
-                  <%= interview.status === 'Cancelled' ? 'bg-danger' : '' %> 
-                  <%= interview.status === 'Rescheduled' ? 'bg-warning' : '' %> 
-                " class="me-1">
-                    <%= interview.status %>
-                  </span>
-               
-                </p>
-
-               
-
-                <!-- Conditionally render messages based on interview status -->
-                <% if (interview.status==='Pending' ) { %>
-                  <p class="text-warning mt-1 mb-2">Your interview is currently <strong>Pending</strong>. Please wait for
-                    admin to make a decision.</p>
-                  <% } else if (interview.status==='Accepted' ) { %>
-                    <p class="text-success mt-1 mb-2">Interview Accepted. Prepare accordingly!</p>
-                    <% } else if (interview.status==='Rejected' ) { %>
-                      <p class="text-danger mt-1 mb-2">Interview Rejected.</p>
-                      <% } else if (interview.status==='Completed' ) { %>
-                        <p class="text-info mt-1 mb-2">Interview Completed. Thank you!</p>
-                        <% } else if (interview.status==='Cancelled' ) { %> <!-- Added condition for Cancelled -->
-                          <p class="text-secondary mt-1 mb-2">Interview Cancelled.</p>
-                        
-
-                          <% } else if (interview.status === 'Rescheduled') { %> <!-- Added condition for Rescheduled -->
+                  <%= interview.status === 'Cancelled' ? 'bg-danger' : '' %>
+                  <%= interview.status === 'Rescheduled' ? 'bg-warning' : '' %> <!-- Added for Rescheduled -->
+                " class="me-1"><%= interview.status %></span>
+                <span class="text-nowrap">
+                  <%= (interview.status !== 'Rejected' && interview.status !== 'Cancelled') 
+                      ? 'On ' + new Date(interview.interview_date).toLocaleDateString() + ' at '
+                      +interview.interview_time
+                      : '' %>
+                </span>
+              </p>
+  
+              <p class="card-text">
+                <small class="text-muted">
+                  <%= interview.status === 'Rejected' ? 'Unfortunately, this interview has been rejected.' : 
+                      interview.status === 'Cancelled' ? 'This interview has been cancelled.' : 
+                      interview.status === 'Completed' ? 'Interview has been completed. Thank you! Please wait for the result.' : 
+                      interview.status === 'Rescheduled' ? 'This interview has been rescheduled. Please take note of the new schedule.' : 
+                      'Please prepare to submit personality and work aptitude tests.' %>
+                </small>
+              </p>
+  
+              <!-- Conditionally render buttons based on interview status -->
+              <% if (interview.status === 'Pending') { %>
+                <div class="d-flex justify-content-between mt-3">
+                  <button class="btn btn-primary w-100" onclick="confirmAccept('<%= interview.id %>')">Accept Interview</button>
+                  <button class="btn btn-danger w-100" onclick="openRescheduleModal('<%= interview.id %>')">Reschedule Interview</button>
+                </div>
+              <% } else if (interview.status === 'Accepted') { %>
+                <p class="text-success mt-3">Interview Accepted. Prepare accordingly!</p>
+              <% } else if (interview.status === 'Rejected') { %>
+                <p class="text-danger mt-3">Interview Rejected.</p>
+              <% } else if (interview.status === 'Completed') { %>
+                <p class="text-info mt-3">Interview Completed. Thank you!</p>
+              <% } else if (interview.status === 'Cancelled') { %>
+                <p class="text-secondary mt-3">Interview Cancelled.</p>
+              <% } else if (interview.status === 'Rescheduled') { %> <!-- Added condition for Rescheduled -->
           
-                            <p class="text-primary mt-1 mb-2">Interview Rescheduled. Please check the new date and time.</p>
-                       
-                        <% } %>
-              </div>
-              <% }); %> <!-- End of forEach -->
-          </div>
-        </div>
-      </div>
-
-      <% } else { %> <!-- Message when there are no interviews -->
-        <div class="col col-md-6">
-          <div class="card widget-flat">
-            <div class="card-body">
-              <div class="float-end">
-                <i class="ri-calendar-2-line text-bg-primary widget-icon"></i>
-              </div>
-              <h5 class="text-muted fw-normal mt-0" title="Average Revenue">No Interviews Available</h5>
-              <h3 class="my-3">Currently no interviews scheduled.</h3>
-          
+                  <p class="text-primary mt-3">Interview Rescheduled. Please check the new date and time.</p>
+             
+              <% } %>
             </div>
           </div>
-          <% } %> <!-- End of if statement -->
-
         </div>
+      <% }); %>
+    <% } %>
+  </div>
+    
+    
+    
+  <!-- Reschedule Modal -->
+  <div class="modal fade" id="modal-reschedule-interview" tabindex="-1" aria-labelledby="rescheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rescheduleModalLabel">Reschedule Interview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="rescheduleInterviewForm">
+                    <input type="hidden" id="interview_id" value="">
+                    <div class="mb-3">
+                        <label for="new_interview_date" class="form-label">New Interview Date</label>
+                        <input type="date" class="form-control" id="new_interview_date" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="new_interview_time" class="form-label">New Interview Time</label>
+                        <input type="time" class="form-control" id="new_interview_time" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Reschedule</button>
+                </form>
+            </div>
+        </div>
+    </div>
+  </div>
+  <!-- SweetAlert2 Script -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script>
+  function confirmAccept(interviewId) {
+      Swal.fire({
+          title: 'Are you sure?',
+          text: 'Do you want to accept this interview?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#3085d6',
+          cancelButtonColor: '#d33',
+          confirmButtonText: 'Yes, accept it!',
+          cancelButtonText: 'Cancel'
+      }).then((result) => {
+          if (result.isConfirmed) {
+              // If confirmed, submit the form using Fetch API
+              fetch(`/accept-interview/${interviewId}`, {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+              })
+              .then(response => {
+                  if (response.ok) {
+                      return response.json(); // Return JSON if successful
+                  } else {
+                      throw new Error('Network response was not ok.');
+                  }
+              })
+              .then(data => {
+                  // Show success message
+                  Swal.fire({
+                      title: 'Success!',
+                      text: data.message, // Message from server response
+                      icon: 'success',
+                      confirmButtonColor: '#3085d6',
+                      confirmButtonText: 'Okay'
+                  }).then(() => {
+                      // Optionally, refresh or update the UI here
+                      location.reload(); // This can be optional depending on how you want to manage the UI.
+                  });
+              })
+              .catch(error => {
+                  Swal.fire({
+                      title: 'Error!',
+                      text: 'An error occurred while accepting the interview.',
+                      icon: 'error',
+                      confirmButtonColor: '#d33',
+                      confirmButtonText: 'Okay'
+                  });
+              });
+          }
+      });
+  }
+  
+  
+  function confirmReject(interviewId) {
+      Swal.fire({
+          title: 'Are you sure?',
+          text: 'Do you want to reject this interview?',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Yes, reject it!',
+          cancelButtonText: 'Cancel'
+      }).then((result) => {
+          if (result.isConfirmed) {
+              // If confirmed, submit the form using Fetch API
+              fetch(`/reject-interview/${interviewId}`, {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+              })
+              .then(response => {
+                  if (response.ok) {
+                      return response.json(); // Return JSON if successful
+                  } else {
+                      throw new Error('Network response was not ok.');
+                  }
+              })
+              .then(data => {
+                  // Show success message
+                  Swal.fire({
+                      title: 'Success!',
+                      text: data.message, // Message from server response
+                      icon: 'success',
+                      confirmButtonColor: '#3085d6',
+                      confirmButtonText: 'Okay'
+                  }).then(() => {
+                      // Optionally, refresh or update the UI here
+                      location.reload(); // This can be optional depending on how you want to manage the UI.
+                  });
+              })
+              .catch(error => {
+                  Swal.fire({
+                      title: 'Error!',
+                      text: 'An error occurred while rejecting the interview.',
+                      icon: 'error',
+                      confirmButtonColor: '#d33',
+                      confirmButtonText: 'Okay'
+                  });
+              });
+          }
+      });
+  }
+  
+  </script>
+  
+  <script>
+    function openRescheduleModal(interviewId) {
+        document.getElementById('interview_id').value = interviewId; // Set interview ID
+        const modal = new bootstrap.Modal(document.getElementById('modal-reschedule-interview'));
+        modal.show(); // Show the modal
+    }
+  
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('rescheduleInterviewForm').addEventListener('submit', async function (event) {
+            event.preventDefault(); // Prevent default form submission behavior
+  
+            const interviewId = document.getElementById('interview_id').value;
+            const newInterviewDate = document.getElementById('new_interview_date').value;
+            const newInterviewTime = document.getElementById('new_interview_time').value;
+  
+            try {
+                const response = await fetch(`/reschedule-interview/${interviewId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        interview_date: newInterviewDate,
+                        interview_time: newInterviewTime
+                    })
+                });
+  
+                const result = await response.json();
+  
+                if (result.success) {
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('modal-reschedule-interview'));
+                    modal.hide();
+  
+                    $.notify({
+                        icon: 'fa fa-check me-1',
+                        message: result.message
+                    }, {
+                        type: 'success', allow_dismiss: false,
+                    });
+  
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 2000);
+                } else {
+                    $.notify({
+                        icon: 'fa fa-times-circle me-1',
+                        message: result.message
+                    }, {
+                        type: 'danger', allow_dismiss: false,
+                    });
+                }
+            } catch (error) {
+                $.notify({
+                    icon: 'fa fa-times-circle me-1',
+                    message: 'An error occurred. Please try again.'
+                }, {
+                    type: 'danger'
+                });
+                console.error('Error:', error);
+            }
+        });
+    });
+  </script>
+    

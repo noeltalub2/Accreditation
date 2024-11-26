@@ -79,9 +79,7 @@
 
                                         </td>
                                         <td class="fs-sm">
-                                            <%= new Date('1970-01-01T' + record.interview_time).toLocaleString('en-US',
-                                                { hour: 'numeric' , minute: 'numeric' , second: 'numeric' , hour12: true
-                                                }) %>
+                                            <%= record.interview_time %>
                                         </td>
 
                                         <td class="text-center">
@@ -174,12 +172,21 @@
                             required>
                     </div>
 
-                    <!-- Interview Time Input -->
-                    <div class="mb-3">
-                        <label for="interview_time" class="form-label">Interview Time</label>
-                        <input type="time" name="interview_time" id="interview_time" class="form-control"
-                            required>
-                    </div>
+               <!-- Interview Time Input -->
+<div class="mb-3">
+    <label for="interview_time" class="form-label">Interview Time</label>
+    <select name="interview_time" id="interview_time" class="form-control" required>
+        <option value="08:00-09:00">8:00 AM - 9:00 AM</option>
+        <option value="09:00-10:00">9:00 AM - 10:00 AM</option>
+        <option value="10:00-11:00">10:00 AM - 11:00 AM</option>
+        <option value="11:00-12:00">11:00 AM - 12:00 PM</option>
+        <option value="12:00-01:00">12:00 PM - 1:00 PM</option>
+        <option value="01:00-02:00">1:00 PM - 2:00 PM</option>
+        <option value="02:00-03:00">2:00 PM - 3:00 PM</option>
+        <option value="03:00-04:00">3:00 PM - 4:00 PM</option>
+        <option value="04:00-05:00">4:00 PM - 5:00 PM</option>
+    </select>
+</div>
 
 
                 </div>
@@ -547,7 +554,10 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Handle interview scheduling form submission
+        const today = new Date();
+    today.setDate(today.getDate() + 1); // Add 1 day to today's date
+    const minDate = today.toISOString().split("T")[0]; // Convert to YYYY-MM-DD format
+    document.getElementById("interview_date").setAttribute("min", minDate); // Set the min attribute
         document.getElementById('newInterviewForm').addEventListener('submit', async function (event) {
             event.preventDefault(); // Prevent default form submission behavior
 

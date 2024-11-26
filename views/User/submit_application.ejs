@@ -129,7 +129,7 @@
                         <option value="female" <%=userProfile.gender==='female' ? 'selected' : '' %>
                           >Female</option>
 
-                          <option value="other" <%=userProfile.gender==='other' ? 'selected' : '' %>>Other</option>
+                          <option value="prefer-not-to-say" <%=userProfile.gender==='prefer-not-to-say' ? 'selected' : '' %>>Prefer not to say</option>
                       </select>
                     </div>
                   </div>
@@ -357,7 +357,7 @@
                   <div class="row mb-3">
                     <div class='col-sm-2'>
                       <label for='training_level' class='form-label'>Level of Training/Seminar</label>
-                      <select id="training_level" name="training_level[0]" class="form-control" required>
+                      <select id="training_level" name="training_level[0]" class="form-control" >
                         <option value="" selected>Select Level of Training/Seminar</option>
                         <option value="Local/Regional">Local/Regional</option>
                         <option value="National">National</option>
@@ -367,22 +367,22 @@
                 
                     <div class='col-sm-2'>
                       <label for='training_title' class='form-label'>Title of Training/Seminar</label>
-                      <input type='text' class='form-control' id='training_title' name='training_title[0]' required>
+                      <input type='text' class='form-control' id='training_title' name='training_title[0]' >
                     </div>
                 
                     <div class='col-sm-2'>
                       <label for='training_sponsor' class='form-label'>Sponsoring Organization</label>
-                      <input type='text' class='form-control' id='training_sponsor' name='training_sponsor[0]' required>
+                      <input type='text' class='form-control' id='training_sponsor' name='training_sponsor[0]' >
                     </div>
                 
                     <div class='col-sm-3'>
                       <label for='training_date' class='form-label'>Inclusive Date</label>
-                      <input type='text' class='form-control' id='training_date' name='training_date[0]' required >
+                      <input type='text' class='form-control' id='training_date' name='training_date[0]'  >
                     </div>
                 
                     <div class="col-sm-3">
                       <label for="training_certificate" class="form-label">Copy of Certificate Obtained</label>
-                      <input type="file" class="form-control" id="training_certificate" name="training_certificate[0]" accept=".pdf" required />
+                      <input type="file" class="form-control" id="training_certificate" name="training_certificate[0]" accept=".pdf"  />
                     </div>
                   </div>
                 
@@ -403,7 +403,7 @@
                     <!-- Level of Development -->
                     <div class='col-sm-3'>
                       <label for='professional_dev_level' class='form-label'>Level</label>
-                      <select id="professional_dev_level" name="professional_dev_level[0]" class="form-control" required>
+                      <select id="professional_dev_level" name="professional_dev_level[0]" class="form-control" >
                         <option value="" hidden selected>Select Level</option>
                         <option value="Local/Regional">Local/Regional</option>
                         <option value="National">National</option>
@@ -414,19 +414,19 @@
                     <!-- Name of Organization/Scholarship -->
                     <div class='col-sm-3'>
                       <label for='organization_dev' class='form-label'>Name of Organization/Scholarship</label>
-                      <input type='text' class='form-control' id='organization_dev' name='organization_dev[0]' required>
+                      <input type='text' class='form-control' id='organization_dev' name='organization_dev[0]' >
                     </div>
                 
                     <!-- Description -->
                     <div class='col-sm-3'>
                       <label for='description_dev' class='form-label'>Description</label>
-                      <input class='form-control' id='description_dev' name='description_dev[0]' required>
+                      <input class='form-control' id='description_dev' name='description_dev[0]' >
                     </div>
                 
                     <!-- Copy of Certificate -->
                     <div class='col-sm-3'>
                       <label for='certificate_file_dev' class='form-label'>Copy of Certificate</label>
-                      <input type='file' class='form-control' id='certificate_file_dev' name='certificate_file_dev[0]' accept='.pdf' required>
+                      <input type='file' class='form-control' id='certificate_file_dev' name='certificate_file_dev[0]' accept='.pdf' >
                     </div>
                   </div>
                 
@@ -479,7 +479,7 @@
                     <!-- Award Level -->
                     <div class='col-sm-3'>
                       <label for='award_level' class='form-label'>Awards</label>
-                      <select id="award_level" name="award_level[0]" class="form-control" required>
+                      <select id="award_level" name="award_level[0]" class="form-control" >
                         <option value="" hidden selected>Select Award Level</option>
                         <option value="Local/Regional">Local/Regional</option>
                         <option value="National/International">National/International</option>
@@ -489,7 +489,7 @@
                     <!-- Copy of Certificate -->
                     <div class='col-sm-4'>
                       <label for='certificate_file_award' class='form-label'>Copy of Certificate</label>
-                      <input type='file' class='form-control' id='certificate_file_award' name='certificate_file_award[0]' accept='.pdf' required>
+                      <input type='file' class='form-control' id='certificate_file_award' name='certificate_file_award[0]' accept='.pdf' >
                     </div>
                   </div>
                 
@@ -875,18 +875,26 @@ $(document).ready(() => DocumentUpload.init());
     }
 </script>
 <script>
-    $("#training_date").flatpickr({
-    mode: "range"
-})
+   $("#training_date").flatpickr({
+    mode: "range",
+    maxDate: "today" // Disable future dates
+});
+
 $("#date_national").flatpickr({
-    mode: "range"
-})
+    mode: "range",
+    maxDate: "today" // Disable future dates
+});
+
 $("#date_international").flatpickr({
-    mode: "range"
-})
+    mode: "range",
+    maxDate: "today" // Disable future dates
+});
+
 $(".date-range").flatpickr({
-    mode: "range"
-})
+    mode: "range",
+    maxDate: "today" // Disable future dates
+});
+
 </script>
 `)%>
 
@@ -950,6 +958,7 @@ $(".date-range").flatpickr({
       // Initialize Flatpickr on the newly added date input
       flatpickr(newFieldSet.querySelector(".date-range"), {
         mode: "range",
+         maxDate: "today"
       });
   
       // Increment the counter for the next field
@@ -1031,6 +1040,7 @@ document.getElementById('add_training_field_button').addEventListener('click', f
     // Initialize Flatpickr on the newly added date input
     flatpickr(newFieldSet.querySelector(".date-range"), {
       mode: "range",
+       maxDate: "today"
     });
 
     // Increment the counter for the next field

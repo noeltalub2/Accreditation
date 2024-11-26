@@ -85,8 +85,8 @@
                                                     >Male</option>
                                                 <option value="female" <%=profile.gender==='female' ? 'selected' : '' %>
                                                     >Female</option>
-                                                    <option value="other" <%=profile.gender==='other' ? 'selected' : '' %>
-                                                        >Other</option>
+                                                    <option value="prefer-not-to-say" <%=profile.gender==='prefer-not-to-say' ? 'selected' : '' %>
+                                                        >Prefer not to say</option>
                                             </select>
                                         </div>
 
@@ -220,7 +220,7 @@
         required: true,
         email: true,
         remote: {
-        url: '/check-email',
+        url: '/assessor/check-email',
         type: 'POST',
         data: {
         email: function () {
@@ -243,7 +243,7 @@
         required: true,
         minlength: 11,
         remote: {
-        url: '/check-phonenumber',
+        url: '/assessor/check-phonenumber',
         type: 'POST',
         data: {
         phonenumber: function () {

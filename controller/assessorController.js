@@ -28,7 +28,98 @@ const sendNotifications = async (userIds, message) => {
 		}
 	}
 };
+const checkUsername = async (req, res) => {
+	const { username, uuid } = req.body;
 
+	let queryStr;
+	let queryParams;
+
+	// If UUID is provided, exclude it from the result
+	if (uuid) {
+		queryStr = "SELECT * FROM assessor WHERE username = ? AND uuid != ?";
+		queryParams = [username, uuid];
+	} else {
+		queryStr = "SELECT * FROM assessor WHERE username = ?";
+		queryParams = [username];
+	}
+
+	try {
+		const result = await query(queryStr, queryParams);
+
+		if (result.length > 0) {
+			return res.json({ available: false });
+		} else {
+			return res.json({ available: true });
+		}
+	} catch (err) {
+		console.error("Database query failed:", err);
+		return res
+			.status(500)
+			.json({ success: false, message: "Database error" });
+	}
+};
+
+const checkEmail = async (req, res) => {
+	const { email, uuid } = req.body;
+
+	let queryStr;
+	let queryParams;
+
+	// If UUID is provided, exclude it from the result
+	if (uuid) {
+		queryStr = "SELECT * FROM assessor WHERE email = ? AND uuid != ?";
+		queryParams = [email, uuid];
+	} else {
+		queryStr = "SELECT * FROM assessor WHERE email = ?";
+		queryParams = [email];
+	}
+
+	try {
+		const result = await query(queryStr, queryParams);
+
+		if (result.length > 0) {
+			return res.json({ available: false });
+		} else {
+			return res.json({ available: true });
+		}
+	} catch (err) {
+		console.error("Database query failed:", err);
+		return res
+			.status(500)
+			.json({ success: false, message: "Database error" });
+	}
+};
+
+const checkPhonenumber = async (req, res) => {
+	const { phonenumber, uuid } = req.body;
+
+	let queryStr;
+	let queryParams;
+
+	// If UUID is provided, exclude it from the result
+	if (uuid) {
+		queryStr = "SELECT * FROM assessor WHERE phonenumber = ? AND uuid != ?";
+		queryParams = [phonenumber, uuid];
+	} else {
+		queryStr = "SELECT * FROM assessor WHERE phonenumber = ?";
+		queryParams = [phonenumber];
+	}
+
+	try {
+		const result = await query(queryStr, queryParams);
+
+		if (result.length > 0) {
+			return res.json({ available: false });
+		} else {
+			return res.json({ available: true });
+		}
+	} catch (err) {
+		console.error("Database query failed:", err);
+		return res
+			.status(500)
+			.json({ success: false, message: "Database error" });
+	}
+};
 const getSignIn = (req, res) => {
 	res.render("Assessor/signin", {
 		title: "Sign In as Assessor",
@@ -684,5 +775,5 @@ export default {
 	postChangePass,
 	getEvaluationId,
 	postEvaluation,
-	updateEvaluation,
+	updateEvaluation,checkUsername,checkEmail,checkPhonenumber
 };

@@ -82,7 +82,7 @@
                                           <% if (application.tor_file) { %>
                                               <div>
                                                  
-                                                  <a href="/uploads/<%= application.tor_file %>"
+                                                  <a target="_blank" href="/uploads/<%= application.tor_file %>"
                                                       class="btn btn-sm btn-primary" tabindex="-1"> 
                                                       <i class="ri-eye-line me-1"></i>View
                                                  
@@ -149,7 +149,7 @@
                                                   <td>
                                                       <% if (emp.employment_file) { %>
                                                           <!-- Check if there is a file -->
-                                                          <a href="/uploads/<%= emp.employment_file %>"
+                                                          <a target="_blank" href="/uploads/<%= emp.employment_file %>"
                                                               class="btn btn-sm btn-primary" tabindex="-1">
                                                               <i class="ri-eye-line me-1"></i>View
                                                           </a>
@@ -212,7 +212,7 @@
                                               </td>
                                               <td>
                                                   <% if (training.training_certificate) { %>
-                                                      <a href="/uploads/<%= training.training_certificate %>"
+                                                      <a target="_blank" href="/uploads/<%= training.training_certificate %>"
                                                           class="btn btn-sm btn-primary" tabindex="-1">
                                                           <i class="ri-eye-line me-1"></i> View
                                                       </a>
@@ -268,7 +268,7 @@
                                               </td>
                                               <td>
                                                   <% if (dev.certificate_file_dev) { %>
-                                                      <a href="/uploads/<%= dev.certificate_file_dev %>"
+                                                      <a target="_blank" href="/uploads/<%= dev.certificate_file_dev %>"
                                                           class="btn btn-sm btn-primary" tabindex="-1">
                                                           <i class="ri-eye-line me-1"></i> View
                                                       </a>
@@ -313,7 +313,7 @@
                                       <tr>
                                           <td>CSC Sub-Professional</td>
                                           <td>
-                                              <a href="/uploads/<%= application.certificate_file_sub_professional %>" class="btn btn-sm btn-primary" tabindex="-1">
+                                              <a target="_blank" href="/uploads/<%= application.certificate_file_sub_professional %>" class="btn btn-sm btn-primary" tabindex="-1">
                                                   <i class="ri-eye-line me-1"></i>View
                                               </a>
                                               <a href="/uploads/<%= application.certificate_file_sub_professional %>" class="btn btn-sm btn-primary" tabindex="-1" download>
@@ -334,7 +334,7 @@
                                       <tr>
                                           <td>Technical (NC)</td>
                                           <td>
-                                              <a href="/uploads/<%= application.certificate_file_technical_nc %>" class="btn btn-sm btn-primary" tabindex="-1">
+                                              <a target="_blank" href="/uploads/<%= application.certificate_file_technical_nc %>" class="btn btn-sm btn-primary" tabindex="-1">
                                                   <i class="ri-eye-line me-1"></i>View
                                               </a>
                                               <a href="/uploads/<%= application.certificate_file_technical_nc %>" class="btn btn-sm btn-primary" tabindex="-1" download>
@@ -355,7 +355,7 @@
                                       <tr>
                                           <td>Professional (PRC) (CSC)</td>
                                           <td>
-                                              <a href="/uploads/<%= application.certificate_file_professional_prc_csc %>" class="btn btn-sm btn-primary" tabindex="-1">
+                                              <a target="_blank" href="/uploads/<%= application.certificate_file_professional_prc_csc %>" class="btn btn-sm btn-primary" tabindex="-1">
                                                   <i class="ri-eye-line me-1"></i>View
                                               </a>
                                               <a href="/uploads/<%= application.certificate_file_professional_prc_csc %>" class="btn btn-sm btn-primary" tabindex="-1" download>
@@ -390,7 +390,7 @@
                                               <td><%= award.award_level || 'N/A' %></td>
                                               <td>
                                                   <% if (award.certificate_file_award) { %>
-                                                      <a href="/uploads/<%= award.certificate_file_award %>" class="btn btn-sm btn-primary" tabindex="-1">
+                                                      <a target="_blank" href="/uploads/<%= award.certificate_file_award %>" class="btn btn-sm btn-primary" tabindex="-1">
                                                           <i class="ri-eye-line me-1"></i> View
                                                       </a>
                                                       <a href="/uploads/<%= award.certificate_file_award %>" class="btn btn-sm btn-primary" tabindex="-1" download>
@@ -581,8 +581,8 @@
                 submitButton.disabled = false;
     
                 // Update qualification status based on total points
-                qualificationStatusInput.value = totalPoints >= 80 ? 'Qualified' : 'Not Qualified';
-                qualificationStatusInput.style.color = totalPoints >= 80 ? 'green' : 'red';
+                qualificationStatusInput.value = totalPoints >= 45 ? 'Qualified' : 'Not Qualified';
+                qualificationStatusInput.style.color = totalPoints >= 45 ? 'green' : 'red';
             }
     
           

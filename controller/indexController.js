@@ -47,9 +47,15 @@ const generateEvaluationId = async (req, res) => {
 	const filename = "Documentary_Evaluation_Report.pdf";
 	res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
 	doc.pipe(res);
+	const logoBase64 = "public/assets/images/mmsu_logo.png"
 	// Use a fixed-width font
 	doc.font("Courier");
 	// Add MMSU Header
+	// Add logo at the top-left
+doc.image(logoBase64, 50, 50, { // Position the logo (50, 50) can be adjusted
+    width: 50, // Adjust logo width if needed
+    height: 50, // Adjust logo height if needed
+});
 	doc.fontSize(12)
 		.text("MARIANO MARCOS STATE UNIVERSITY", { align: "center" })
 		.moveDown(0.5)

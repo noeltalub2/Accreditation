@@ -52,7 +52,7 @@ const generateEvaluationId = async (req, res) => {
 	doc.font("Courier");
 	// Add MMSU Header
 	// Add logo at the top-left
-doc.image(logoBase64, 50, 50, { // Position the logo (50, 50) can be adjusted
+doc.image(logoBase64, 65, 65, { // Position the logo (50, 50) can be adjusted
     width: 50, // Adjust logo width if needed
     height: 50, // Adjust logo height if needed
 });
@@ -60,7 +60,7 @@ doc.image(logoBase64, 50, 50, { // Position the logo (50, 50) can be adjusted
 		.text("MARIANO MARCOS STATE UNIVERSITY", { align: "center" })
 		.moveDown(0.5)
 		.text(
-			"Expanded Tertiary Education Equivalency and Accreditation Program",
+			"Expanded Tertiary Education Equivalency and\n Accreditation Program",
 			{ align: "center" }
 		)
 		.moveDown(0.5)

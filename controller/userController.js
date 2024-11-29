@@ -1014,21 +1014,22 @@ const acceptInterview = async (req, res) => {
 	}
 };
 
-const rejectInterview = async (req, res) => {
+
+const rescheduleInterview = async (req, res) => {
 	const { id } = req.params; // Get interview ID from the route parameters
 
 	try {
 		// Update the interview status to 'Rejected'
 		const result = await query(
 			"UPDATE interviews SET status = ? WHERE id = ?",
-			["Rejected", id]
+			["Rescheduled", id]
 		);
 
 		// Check if the update was successful
 		if (result.affectedRows === 1) {
 			res.status(200).json({
 				success: true,
-				message: "Interview rejected successfully.",
+				message: "Rescheduled rejected successfully.",
 			});
 		} else {
 			res.status(404).json({
@@ -1038,38 +1039,6 @@ const rejectInterview = async (req, res) => {
 		}
 	} catch (error) {
 		console.error("Error rejecting interview:", error);
-		res.status(500).json({
-			success: false,
-			message: "An error occurred while rejecting the interview.",
-		});
-	}
-};
-
-const rescheduleInterview = async (req, res) => {
-	const { id } = req.params; // Get interview ID from the route parameters
-	const { interview_date, interview_time } = req.body; // Removed email and firstname from req.body
-
-	try {
-		// Update the interview date, time, and status
-		const result = await query(
-			"UPDATE interviews SET interview_date = ?, interview_time = ?, status = ? WHERE id = ?",
-			[interview_date, interview_time, "Rescheduled", id]
-		);
-
-		// Check if the update was successful
-		if (result.affectedRows === 1) {
-			res.status(200).json({
-				success: true,
-				message: "Interview rescheduled successfully.",
-			});
-		} else {
-			res.status(404).json({
-				success: false,
-				message: "Interview not found or already processed.",
-			});
-		}
-	} catch (error) {
-		console.error("Error rescheduling interview:", error);
 		res.status(500).json({
 			success: false,
 			message: "An error occurred while rescheduling the interview.",
@@ -1234,7 +1203,6 @@ export default {
 	getInterview,
 	postInterview,
 	acceptInterview,
-	rejectInterview,
 	rescheduleInterview,
 	getProfile,
 	postProfile,

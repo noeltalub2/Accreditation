@@ -288,17 +288,17 @@
                   <input type="text" class="form-control" id="school_address" name="school_address" required>
                 </div>
   
-                <!-- Date First Attended -->
                 <div class="mb-3">
                   <label for="date_first_attended" class="form-label">Date First Attended</label>
-                  <input type="date" class="form-control " id="date_first_attended" name="date_first_attended" required>
+                  <input type="date" class="form-control" id="date_first_attended" name="date_first_attended" required>
                 </div>
-  
+                
                 <!-- Date Last Attended -->
                 <div class="mb-3">
                   <label for="date_last_attended" class="form-label">Date Last Attended</label>
-                  <input type="date" class="form-control " id="date_last_attended" name="date_last_attended" required>
+                  <input type="date" class="form-control" id="date_last_attended" name="date_last_attended" required>
                 </div>
+                
   
                 <!-- Copy of TOR/Form 137 -->
                 <div class="mb-3">
@@ -1197,4 +1197,12 @@ initialRemoveButtonsTraining.forEach(button => {
       button.closest('.dynamic_field').remove();
     });
   });
+</script>
+<script>
+  // Get today's date in YYYY-MM-DD format
+  const today = new Date().toISOString().split('T')[0];
+
+  // Set the max attribute for the date inputs
+  document.getElementById('date_first_attended').setAttribute('max', today);
+  document.getElementById('date_last_attended').setAttribute('max', today);
 </script>

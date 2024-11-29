@@ -122,7 +122,7 @@
           <thead>
               <tr>
                   <th>Assessor Name</th>
-                  <th>Email</th>
+                  <th>Applicant Name</th>
                   <th>Total Score</th>
                   <th>Evaluation Status</th>
               </tr>
@@ -131,7 +131,7 @@
               <% assessors.forEach(function(assessor) { %>
                   <tr>
                       <td><%= assessor.firstname %> <%= assessor.lastname %></td>
-                      <td><%= assessor.email ? assessor.email : 'N/A' %></td>
+                      <td><%= assessor.name ? assessor.name : 'N/A' %></td>
                       <td><%= assessor.total_score ? assessor.total_score : 'N/A' %></td>
                       <td><%= assessor.evaluation_status ? assessor.evaluation_status : 'N/A' %></td>
                   </tr>

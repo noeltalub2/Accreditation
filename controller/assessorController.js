@@ -318,7 +318,7 @@ const postEvaluation = async (req, res) => {
 
 	// Check qualification status
 	let qualification_status;
-	if (points_calculated >= 80) {
+	if (points_calculated >= 45) {
 		qualification_status = "Qualified";
 	} else {
 		qualification_status = "Not Qualified";
@@ -507,7 +507,7 @@ const updateEvaluation = async (req, res) => {
 
 	// Check qualification status
 	let qualification_status;
-	if (points_calculated >= 80) {
+	if (points_calculated >= 45) {
 		qualification_status = "Qualified";
 	} else {
 		qualification_status = "Not Qualified";

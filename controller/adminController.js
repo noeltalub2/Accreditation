@@ -202,17 +202,7 @@ const getDashboard = async (req, res) => {
 
 		// Get assessor details with evaluations
 		const assessors = await query(`
-            SELECT 
-                ass.assessor_id,
-                ass.firstname,
-                ass.lastname,
-                ass.email,
-                e.total_score,
-                e.status AS evaluation_status
-            FROM 
-                assessor ass
-            LEFT JOIN 
-                evaluations e ON ass.uuid = e.assessor_id;
+           SELECT ass.assessor_id, ass.firstname, ass.lastname, ass.email, e.total_score, e.status AS evaluation_status, a.name FROM assessor ass LEFT JOIN application_assessors aa ON ass.uuid = aa.assessor_id LEFT JOIN application a ON a.id = aa.application_id LEFT JOIN evaluations e ON ass.uuid = e.assessor_id;;
         `);
 
 		// Render the dashboard with all retrieved data
@@ -510,7 +500,7 @@ const postInterview = async (req, res) => {
 		// Check for existing pending interviews on the same date for the same user
 		const existingInterviews = await query(
 			`SELECT COUNT(*) as count FROM interviews 
-             WHERE user_id = ? AND status = 'Pending' AND status = 'Accepted'`,
+             WHERE user_id = ? AND status = 'Pending' AND status = 'Accepted' AND status = 'Rescheduled'`,
 			[user_id]
 		);
 
@@ -571,11 +561,11 @@ const acceptInterview = async (req, res) => {
 const rescheduleInterview = async (req, res) => {
     const { id } = req.params; // Get interview ID from the route parameters
     const { interview_date, interview_time, email, firstname } = req.body;
-
+	
     try {
         // Update the interview date and time
         const result = await query(
-            "UPDATE interviews SET interview_date = ?, interview_time = ? WHERE id = ?",
+            "UPDATE interviews SET interview_date = ?, interview_time = ?, status = 'Pending' WHERE id = ?",
             [interview_date, interview_time, id]
         );
 

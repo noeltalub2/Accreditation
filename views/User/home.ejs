@@ -68,7 +68,7 @@
                   <%= interview.status === 'Rejected' ? 'Unfortunately, this interview has been rejected.' : 
                       interview.status === 'Cancelled' ? 'This interview has been cancelled.' : 
                       interview.status === 'Completed' ? 'Interview has been completed. Thank you! Please wait for the result.' : 
-                      interview.status === 'Rescheduled' ? 'This interview has been rescheduled. Please take note of the new schedule.' : 
+                      interview.status === 'Rescheduled' ? 'This interview has been requested to be rescheduled. Please take note of the new schedule.' : 
                       'Please prepare to submit personality and work aptitude tests.' %>
                 </small>
               </p>
@@ -77,7 +77,7 @@
               <% if (interview.status === 'Pending') { %>
                 <div class="d-flex justify-content-between mt-3">
                   <button class="btn btn-primary w-100" onclick="confirmAccept('<%= interview.id %>')">Accept Interview</button>
-                  <button class="btn btn-danger w-100" onclick="openRescheduleModal('<%= interview.id %>')">Reschedule Interview</button>
+                  <button class="btn btn-danger w-100" onclick="requestResechedule('<%= interview.id %>')">Reschedule Interview</button>
                 </div>
               <% } else if (interview.status === 'Accepted') { %>
                 <p class="text-success mt-3">Interview Accepted. Prepare accordingly!</p>
@@ -182,20 +182,20 @@
   }
   
   
-  function confirmReject(interviewId) {
+  function requestResechedule(interviewId) {
       Swal.fire({
           title: 'Are you sure?',
-          text: 'Do you want to reject this interview?',
+          text: 'Do you want to reschedule this interview?',
           icon: 'warning',
           showCancelButton: true,
           confirmButtonColor: '#d33',
           cancelButtonColor: '#3085d6',
-          confirmButtonText: 'Yes, reject it!',
+          confirmButtonText: 'Yes, reschedule it!',
           cancelButtonText: 'Cancel'
       }).then((result) => {
           if (result.isConfirmed) {
               // If confirmed, submit the form using Fetch API
-              fetch(`/reject-interview/${interviewId}`, {
+              fetch(`/reschedule-interview/${interviewId}`, {
                   method: 'POST',
                   headers: {
                       'Content-Type': 'application/json'
@@ -246,7 +246,10 @@
     document.addEventListener('DOMContentLoaded', function () {
         document.getElementById('rescheduleInterviewForm').addEventListener('submit', async function (event) {
             event.preventDefault(); // Prevent default form submission behavior
-  
+            const today = new Date();
+    today.setDate(today.getDate() + 1); // Add 1 day to today's date
+    const minDate = today.toISOString().split("T")[0]; // Convert to YYYY-MM-DD format
+    document.getElementById("new_interview_date").setAttribute("min", minDate); // Set the min attribute
             const interviewId = document.getElementById('interview_id').value;
             const newInterviewDate = document.getElementById('new_interview_date').value;
             const newInterviewTime = document.getElementById('new_interview_time').value;

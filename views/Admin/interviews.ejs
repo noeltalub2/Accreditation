@@ -100,7 +100,7 @@
                                         </td>           
                                         <td class="text-center fs-sm">
                                             <div class="btn-group">
-                                                <% if (record.status === 'Accepted' || record.status === 'Rescheduled') { %>
+                                                <% if (record.status === 'Accepted') { %>
                                                     <button type="button" class="btn btn-sm btn-success"
                                                         onclick="markAsComplete('<%= record.id %>')"
                                                         data-bs-toggle="tooltip" aria-label="Mark as Complete"
@@ -119,13 +119,24 @@
                                                         data-bs-original-title="Cancel Interview">
                                                         <i class="fa fa-fw fa-ban"></i> Cancel
                                                     </button>
+                                                <% } else if (record.status === 'Rescheduled') { %>
+                                                    <div class="btn-group">
+                                                         <button class=" btn-danger btn btn-sm" onclick="openRescheduleModal('<%= record.id %>','<%= record.email %>', '<%= record.firstname %>')">Reschedule Interview</button>
+                                                    </div>
                                                    
                                                 <% } else if (record.status === 'Completed') { %>
                                                     <span class="fw-bold">For Evaluation</span>
                                                 <% } else if (record.status === 'Cancel') { %>
                                                     <span class="fw-bold">Cancelled</span>
                                                 <% } else if (record.status === 'Pending') { %>
-                                                    <p class="fw-bold">Waiting for approval</p>
+                                                   <div class="btn-group">
+                                                    <button type="button" class="btn btn-sm btn-info"
+                                                    onclick="sendEmailNotification('<%= record.id %>', '<%= record.email %>', '<%= record.firstname %>')"
+                                                    data-bs-toggle="tooltip" aria-label="Send Email Notification"
+                                                    data-bs-original-title="Send Email Notification">
+                                                    <i class="fa fa-fw fa-envelope"></i> Send Email
+                                                </button>
+                                                   </div>
                                                 <% } %>
                                             </div>
                                         </td>
@@ -209,20 +220,37 @@
             <div class="modal-body">
                 <form id="rescheduleInterviewForm">
                     <input type="hidden" id="interview_id" value="">
+                    <input type="hidden" id="interview_email" value="">
+                    <input type="hidden" id="interview_name" value="">
                     <div class="mb-3">
                         <label for="new_interview_date" class="form-label">New Interview Date</label>
-                        <input type="date" class="form-control" id="new_interview_date" required>
+                        <% 
+  const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+%>
+<input type="date" class="form-control" id="new_interview_date" required min="<%= today %>">
+
                     </div>
                     <div class="mb-3">
                         <label for="new_interview_time" class="form-label">New Interview Time</label>
-                        <input type="time" class="form-control" id="new_interview_time" required>
+                        <select name="new_interview_time" id="new_interview_time" class="form-control" required>
+                            <option value="08:00-09:00">8:00 AM - 9:00 AM</option>
+                            <option value="09:00-10:00">9:00 AM - 10:00 AM</option>
+                            <option value="10:00-11:00">10:00 AM - 11:00 AM</option>
+                            <option value="11:00-12:00">11:00 AM - 12:00 PM</option>
+                            <option value="12:00-01:00">12:00 PM - 1:00 PM</option>
+                            <option value="01:00-02:00">1:00 PM - 2:00 PM</option>
+                            <option value="02:00-03:00">2:00 PM - 3:00 PM</option>
+                            <option value="03:00-04:00">3:00 PM - 4:00 PM</option>
+                            <option value="04:00-05:00">4:00 PM - 5:00 PM</option>
+                        </select>
                     </div>
-                    <button type="submit" class="btn btn-primary">Reschedule</button>
+                    <button type="submit" id="rescheduleButton" class="btn btn-primary">Reschedule     <span class="spinner-border spinner-border-sm" role="status"
+                        aria-hidden="true" style="display: none;"></span></button>
                 </form>
             </div>
         </div>
     </div>
-</div>
+  </div>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         function sendEmailNotification(interviewId, email,firstname) {
@@ -489,20 +517,33 @@
         
         </script>
         <script>
-            function openRescheduleModal(interviewId) {
+            function openRescheduleModal(interviewId,email,firstname) {
                 document.getElementById('interview_id').value = interviewId; // Set interview ID
+                document.getElementById('interview_email').value = email;
+                document.getElementById('interview_name').value = firstname;
                 const modal = new bootstrap.Modal(document.getElementById('modal-reschedule-interview'));
                 modal.show(); // Show the modal
             }
-        
+          
             document.addEventListener('DOMContentLoaded', function () {
                 document.getElementById('rescheduleInterviewForm').addEventListener('submit', async function (event) {
                     event.preventDefault(); // Prevent default form submission behavior
-        
+                    const submitButton = document.getElementById('rescheduleButton');
+                                const spinner = submitButton.querySelector('.spinner-border');
+
+                                // Show spinner and disable button
+                                spinner.style.display = 'inline-block';
+                                submitButton.disabled = true;
+                    const today = new Date();
+            today.setDate(today.getDate() + 1); // Add 1 day to today's date
+            const minDate = today.toISOString().split("T")[0]; // Convert to YYYY-MM-DD format
+            document.getElementById("new_interview_date").setAttribute("min", minDate); // Set the min attribute
                     const interviewId = document.getElementById('interview_id').value;
                     const newInterviewDate = document.getElementById('new_interview_date').value;
                     const newInterviewTime = document.getElementById('new_interview_time').value;
-        
+                    const newInterviewEmail = document.getElementById('interview_email').value;
+                    const newInterviewName = document.getElementById('interview_name').value;
+          
                     try {
                         const response = await fetch(`/admin/reschedule-interview/${interviewId}`, {
                             method: 'POST',
@@ -511,23 +552,27 @@
                             },
                             body: JSON.stringify({
                                 interview_date: newInterviewDate,
-                                interview_time: newInterviewTime
+                                interview_time: newInterviewTime,
+                                email: newInterviewEmail,
+                                firstname: newInterviewName
                             })
                         });
-        
+          
                         const result = await response.json();
-        
+               // Hide spinner and enable button
+               spinner.style.display = 'none';
+                                        submitButton.disabled = false;
                         if (result.success) {
                             const modal = bootstrap.Modal.getInstance(document.getElementById('modal-reschedule-interview'));
                             modal.hide();
-        
+          
                             $.notify({
                                 icon: 'fa fa-check me-1',
                                 message: result.message
                             }, {
                                 type: 'success', allow_dismiss: false,
                             });
-        
+          
                             setTimeout(() => {
                                 window.location.reload();
                             }, 2000);
@@ -540,6 +585,10 @@
                             });
                         }
                     } catch (error) {
+                             // Hide spinner and enable button
+                             spinner.style.display = 'none';
+                                        submitButton.disabled = false;
+
                         $.notify({
                             icon: 'fa fa-times-circle me-1',
                             message: 'An error occurred. Please try again.'
@@ -550,7 +599,7 @@
                     }
                 });
             });
-        </script>
+          </script>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {

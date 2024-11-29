@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 19, 2024 at 01:24 AM
+-- Generation Time: Nov 29, 2024 at 03:29 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -318,8 +318,6 @@ ALTER TABLE `admin`
 --
 ALTER TABLE `application`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `phonenumber` (`phonenumber`),
-  ADD UNIQUE KEY `email` (`email`),
   ADD KEY `uuid` (`uuid`);
 
 --
@@ -335,9 +333,9 @@ ALTER TABLE `application_assessors`
 --
 ALTER TABLE `assessor`
   ADD PRIMARY KEY (`assessor_id`),
+  ADD UNIQUE KEY `uuid` (`uuid`),
   ADD UNIQUE KEY `email` (`email`,`phonenumber`),
-  ADD UNIQUE KEY `username` (`username`),
-  ADD UNIQUE KEY `uuid` (`uuid`);
+  ADD UNIQUE KEY `username` (`username`);
 
 --
 -- Indexes for table `award`

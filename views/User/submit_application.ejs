@@ -59,7 +59,7 @@
                 <!-- Name Field -->
                 <div class="mb-3">
                   <label for="name" class="form-label">Name (Last Name, First Name, Middle Name)</label>
-                  <input type="text" class="form-control" id="name" name="name" required
+                  <input type="text" class="form-control" id="name" name="name" readonly
                     value="<%=userProfile.lastname%>, <%=userProfile.firstname%>, <%=userProfile.middlename%>">
                 </div>
                 <div class="row">
@@ -354,37 +354,7 @@
                 <!-- Level of Training/Seminar -->
                 <h6>A. Trainings and Seminars</h6>
                 <div id="trainings_seminars_fields" class="input-fields">
-                  <div class="row mb-3">
-                    <div class='col-sm-2'>
-                      <label for='training_level' class='form-label'>Level of Training/Seminar</label>
-                      <select id="training_level" name="training_level[0]" class="form-control" >
-                        <option value="" selected>Select Level of Training/Seminar</option>
-                        <option value="Local/Regional">Local/Regional</option>
-                        <option value="National">National</option>
-                        <option value="International">International</option>
-                      </select>
-                    </div>
                 
-                    <div class='col-sm-2'>
-                      <label for='training_title' class='form-label'>Title of Training/Seminar</label>
-                      <input type='text' class='form-control' id='training_title' name='training_title[0]' >
-                    </div>
-                
-                    <div class='col-sm-2'>
-                      <label for='training_sponsor' class='form-label'>Sponsoring Organization</label>
-                      <input type='text' class='form-control' id='training_sponsor' name='training_sponsor[0]' >
-                    </div>
-                
-                    <div class='col-sm-3'>
-                      <label for='training_date' class='form-label'>Inclusive Date</label>
-                      <input type='text' class='form-control' id='training_date' name='training_date[0]'  >
-                    </div>
-                
-                    <div class="col-sm-3">
-                      <label for="training_certificate" class="form-label">Copy of Certificate Obtained</label>
-                      <input type="file" class="form-control" id="training_certificate" name="training_certificate[0]" accept=".pdf"  />
-                    </div>
-                  </div>
                 
                 </div>
 
@@ -393,49 +363,20 @@
 
                 <!-- Add Button -->
                 <div class="mb-3">
-                  <button type="button" class="btn btn-primary" id="add_training_field_button">Add Another Training/Seminar</button>
+                  <button type="button" class="btn btn-primary" id="add_training_field_button">Add Another Trainings and Seminars</button>
                 </div>
                 <h6>B. Professional Development</h6>
 
                 <!-- Professional Development Fields -->
                 <div id="professional_dev_fields" class="input-fields">
-                  <div class="row mb-3">
-                    <!-- Level of Development -->
-                    <div class='col-sm-3'>
-                      <label for='professional_dev_level' class='form-label'>Level</label>
-                      <select id="professional_dev_level" name="professional_dev_level[0]" class="form-control" >
-                        <option value="" hidden selected>Select Level</option>
-                        <option value="Local/Regional">Local/Regional</option>
-                        <option value="National">National</option>
-                        <option value="International">International</option>
-                      </select>
-                    </div>
-                
-                    <!-- Name of Organization/Scholarship -->
-                    <div class='col-sm-3'>
-                      <label for='organization_dev' class='form-label'>Name of Organization/Scholarship</label>
-                      <input type='text' class='form-control' id='organization_dev' name='organization_dev[0]' >
-                    </div>
-                
-                    <!-- Description -->
-                    <div class='col-sm-3'>
-                      <label for='description_dev' class='form-label'>Description</label>
-                      <input class='form-control' id='description_dev' name='description_dev[0]' >
-                    </div>
-                
-                    <!-- Copy of Certificate -->
-                    <div class='col-sm-3'>
-                      <label for='certificate_file_dev' class='form-label'>Copy of Certificate</label>
-                      <input type='file' class='form-control' id='certificate_file_dev' name='certificate_file_dev[0]' accept='.pdf' >
-                    </div>
-                  </div>
+                 
                 
                   <!-- Dynamic Fields Section -->
                   <div id="dynamic_professional_dev_fields_container"></div>
                 
                   <!-- Add Button -->
                   <div class="mb-3">
-                    <button type="button" class="btn btn-primary" id="add_professional_dev_field_button">Add Another</button>
+                    <button type="button" class="btn btn-primary" id="add_professional_dev_field_button">Add Another Professional Development</button>
                   </div>
                 </div>
                 
@@ -475,30 +416,14 @@
                 
                
                 <div id="local_regional_fields_award" class="input-fields">
-                  <div class="row mb-3">
-                    <!-- Award Level -->
-                    <div class='col-sm-3'>
-                      <label for='award_level' class='form-label'>Awards</label>
-                      <select id="award_level" name="award_level[0]" class="form-control" >
-                        <option value="" hidden selected>Select Award Level</option>
-                        <option value="Local/Regional">Local/Regional</option>
-                        <option value="National/International">National/International</option>
-                      </select>
-                    </div>
-                
-                    <!-- Copy of Certificate -->
-                    <div class='col-sm-4'>
-                      <label for='certificate_file_award' class='form-label'>Copy of Certificate</label>
-                      <input type='file' class='form-control' id='certificate_file_award' name='certificate_file_award[0]' accept='.pdf' >
-                    </div>
-                  </div>
-                
+             
+                  <h6>Awards</h6>
                   <!-- Dynamic Fields Section -->
                   <div id="dynamic_local_regional_award_fields_container"></div>
                 
                   <!-- Add Button -->
                   <div class="mb-3">
-                    <button type="button" class="btn btn-primary" id="add_local_regional_award_button">Add Another Award</button>
+                    <button type="button" class="btn btn-primary" id="add_local_regional_award_button">Add Awards</button>
                   </div>
                 </div>
 
@@ -984,7 +909,7 @@ $(".date-range").flatpickr({
   </script>
   <script>
     // Counter for dynamic fields
-let trainingFieldCounter = 1;
+let trainingFieldCounter = 0;
 
 // JavaScript to dynamically add and remove input fields
 document.getElementById('add_training_field_button').addEventListener('click', function() {
@@ -1070,7 +995,7 @@ initialRemoveButtonsTraining.forEach(button => {
   </script>
   <script>
     // Counter for dynamic professional development fields
-    let professionalDevFieldCounter = 1;
+    let professionalDevFieldCounter = 0;
     
     // JavaScript to dynamically add and remove professional development fields
     document.getElementById('add_professional_dev_field_button').addEventListener('click', function() {
@@ -1142,7 +1067,7 @@ initialRemoveButtonsTraining.forEach(button => {
 
 <script>
   // Counter for dynamic award fields
-  let localRegionalAwardCounter = 1;
+  let localRegionalAwardCounter = 0;
 
   // JavaScript to dynamically add and remove local/regional award fields
   document.getElementById('add_local_regional_award_button').addEventListener('click', function() {

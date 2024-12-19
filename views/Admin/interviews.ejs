@@ -51,6 +51,7 @@
                                     <th>Application</th>
                                     <th>Interview Date</th>
                                     <th>Interview Time</th>
+                                    <th>Interview Type</th>
                                     <th>Status</th>
 
                                     <th>Action</th>
@@ -81,7 +82,9 @@
                                         <td class="fs-sm">
                                             <%= record.interview_time %>
                                         </td>
-
+                                        <td>
+                                            <%= record.interview_type %>
+                                        </td>  
                                         <td class="text-center">
                                             <% if (record.status==='Pending' ) { %>
                                                 <span class="badge bg-warning">Pending</span>
@@ -97,7 +100,8 @@
                                                             <%} else {%>
                                                                 <span class="badge bg-warning">Rescheduled</span>
                                                                 <%}%>
-                                        </td>           
+                                        </td>         
+                                      
                                         <td class="text-center fs-sm">
                                             <div class="btn-group">
                                                 <% if (record.status === 'Accepted') { %>
@@ -198,6 +202,13 @@
         <option value="04:00-05:00">4:00 PM - 5:00 PM</option>
     </select>
 </div>
+<div class="mb-3">
+    <label for="interview_type" class="form-label">Interview Type</label>
+    <select name="interview_type" id="interview_type" class="form-control" required>
+        <option value="Online">Online</option>
+        <option value="Face to Face">Face-to-Face</option>
+    </select>
+</div>
 
 
                 </div>
@@ -244,6 +255,14 @@
                             <option value="04:00-05:00">4:00 PM - 5:00 PM</option>
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label for="new_interview_type" class="form-label">Interview Type</label>
+                        <select name="new_interview_type" id="new_interview_type" class="form-control" required>
+                            <option value="Online">Online</option>
+                            <option value="Face to Face">Face-to-Face</option>
+                        </select>
+                    </div>
+                    
                     <button type="submit" id="rescheduleButton" class="btn btn-primary">Reschedule     <span class="spinner-border spinner-border-sm" role="status"
                         aria-hidden="true" style="display: none;"></span></button>
                 </form>
@@ -541,6 +560,7 @@
                     const interviewId = document.getElementById('interview_id').value;
                     const newInterviewDate = document.getElementById('new_interview_date').value;
                     const newInterviewTime = document.getElementById('new_interview_time').value;
+                    const newInterviewType = document.getElementById('new_interview_type').value;
                     const newInterviewEmail = document.getElementById('interview_email').value;
                     const newInterviewName = document.getElementById('interview_name').value;
           
@@ -551,6 +571,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
+                                interview_type: newInterviewType,
                                 interview_date: newInterviewDate,
                                 interview_time: newInterviewTime,
                                 email: newInterviewEmail,
@@ -613,6 +634,7 @@
             const applicationId = document.getElementById('application_id').value; // Get user ID from the select
             const interviewDate = document.getElementById('interview_date').value;
             const interviewTime = document.getElementById('interview_time').value;
+            const interviewType = document.getElementById('interview_type').value;
             console.log(applicationId, interviewDate, interviewTime);
 
             try {
@@ -626,6 +648,7 @@
                         application_id: applicationId,
                         interview_date: interviewDate,
                         interview_time: interviewTime,
+                        interview_type: interviewType
 
                     })
                 });

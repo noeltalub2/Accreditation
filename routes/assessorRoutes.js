@@ -25,7 +25,12 @@ router.get(
 	auth.checkRole(["assessor"]),
 	assessorController.getEvaluationId
 );
-
+router.post(
+	"/return/:id",
+	auth.requireAuth,
+	auth.checkRole(["assessor"]),
+	assessorController.returnApplication
+);
 router.post(
 	"/evaluation",
 	auth.requireAuth,

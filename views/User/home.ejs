@@ -43,7 +43,7 @@
             <div class="card-body">
               <!-- Change title based on interview status -->
               <h5 class="card-title mb-3">
-                <%= interview.status === 'Rejected' || interview.status === 'Rescheduled' ? 'Interview Status' : 'Upcoming Interview' %>
+                <%= interview.status === 'Rejected' || interview.status === 'Rescheduled' ? 'Interview Status' : 'Upcoming Interview' %>  (<%=interview.interview_type%>)
               </h5>
   
               <p class="mb-1 text-muted">

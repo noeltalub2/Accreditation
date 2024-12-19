@@ -100,7 +100,7 @@
                                       </td>
                                       <td>
                                     
-                                              <input type="number"  value="<%=usersEvaluationHistory[0]?.education_points || ''%>"  name="education_points" id="education_points" class="form-control" min="0" max="20"  />
+                                              <input type="number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"    value="<%=usersEvaluationHistory[0]?.education_points || ''%>"  name="education_points" id="education_points" class="form-control" min="0" max="20"  />
                                 
                                       </td>
 
@@ -163,7 +163,7 @@
                                                   </td>
                                                   <td>
                                                
-                                                          <input type="number" value="<%=usersEvaluationHistory[0]?.work_experience_points[index] || ''%>"  name="work_experience_points[<%= index %>]" class="form-control" min="0" max="<%=(40 / workExperience.length).toFixed(0) %>" required  />
+                                                          <input type="number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"   value="<%=usersEvaluationHistory[0]?.work_experience_points[index] || ''%>"  name="work_experience_points[<%= index %>]" class="form-control" min="0" max="<%=(40 / workExperience.length).toFixed(0) %>" required  />
                                                   
                                                   </td>
                                               </tr>
@@ -226,7 +226,7 @@
                                               </td>
                                               <td>
                                                   
-                                                      <input type="number" value="<%=usersEvaluationHistory[0]?.training_points[index] || ''%>"  name="training_points[<%= index %>]" class="form-control" min="0" max="<%= training.training_level === 'International' ? 5 : training.training_level === 'National' ? 3 : training.training_level === 'Local/Regional' ? 2 : 0 %>"
+                                                      <input type="number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"   value="<%=usersEvaluationHistory[0]?.training_points[index] || ''%>"  name="training_points[<%= index %>]" class="form-control" min="0" max="<%= training.training_level === 'International' ? 5 : training.training_level === 'National' ? 3 : training.training_level === 'Local/Regional' ? 2 : 0 %>"
                                                       required />
                                            
                                               </td>
@@ -282,7 +282,7 @@
                                               </td>
                                               <td>
                                          
-                                                      <input type="number" value="<%=usersEvaluationHistory[0]?.professional_development_points[index] || ''%>"   name="professional_dev_points[<%= index %>]" class="form-control" min="0" max="1" required />
+                                                      <input type="number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"   value="<%=usersEvaluationHistory[0]?.professional_development_points[index] || ''%>"   name="professional_dev_points[<%= index %>]" class="form-control" min="0" max="1" required />
                                             
                                               </td>
                                           </tr>
@@ -322,7 +322,7 @@
                                           </td>
                                           <td>
                                               
-                                                  <input type="number"   value="<%=usersEvaluationHistory[0]?.eligibility_points[0] || ''%>" name="csc_points" id="csc_points" class="form-control" min="0" max="2" required >
+                                                  <input type="number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"     value="<%=usersEvaluationHistory[0]?.eligibility_points[0] || ''%>" name="csc_points" id="csc_points" class="form-control" min="0" max="2" required >
                                          
                                           </td>
                                       </tr>
@@ -343,7 +343,7 @@
                                           </td>
                                           <td>
                                        
-                                                  <input type="number"   value="<%=usersEvaluationHistory[0]?.eligibility_points[1] || ''%>"  name="nc_points" id="nc_points" class="form-control" min="0" max="3" required>
+                                                  <input type="number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"     value="<%=usersEvaluationHistory[0]?.eligibility_points[1] || ''%>"  name="nc_points" id="nc_points" class="form-control" min="0" max="3" required>
                                          
                                           </td>
                                       </tr>
@@ -364,7 +364,7 @@
                                           </td>
                                           <td>
                                              
-                                                  <input type="number"  value="<%=usersEvaluationHistory[0]?.eligibility_points[2] || ''%>" name="prc_points" id="prc_points" class="form-control" min="0" max="5" required>
+                                                  <input type="number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"    value="<%=usersEvaluationHistory[0]?.eligibility_points[2] || ''%>" name="prc_points" id="prc_points" class="form-control" min="0" max="5" required>
                                               
                                           </td>
                                       </tr>
@@ -402,7 +402,7 @@
                                               </td>
                                               <td>
                                   
-                                                      <input type="number" value="<%=usersEvaluationHistory[0]?.award_points[index] || ''%>"  name="award_points[<%= index %>]" class="form-control" min="0" max="<%= award.award_level === 'Local/Regional' ? 2 : award.award_level === 'National/International' ? 3 : 'N/A' %>" required />
+                                                      <input type="number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"   value="<%=usersEvaluationHistory[0]?.award_points[index] || ''%>"  name="award_points[<%= index %>]" class="form-control" min="0" max="<%= award.award_level === 'Local/Regional' ? 2 : award.award_level === 'National/International' ? 3 : 'N/A' %>" required />
                                             
                                               </td>
                                           </tr>
@@ -417,13 +417,13 @@
                           <h4>INTERVIEW</h4>
                           <div class="mb-3">
                             <label for="interview_chief_points" class="form-label">Interview Chief Points</label>
-                            <input type="number"  id="interview_chief_points" name="interview_chief_points"
+                            <input type="number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"    id="interview_chief_points" name="interview_chief_points"
                                    class="form-control" min="0" max="5" required
                                    value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].interview_chief_points : '' %>">
                         </div>
                         <div class="mb-3">
                             <label for="interview_assessor_points" class="form-label">Interview Assessor Points</label>
-                            <input type="number"  id="interview_assessor_points" name="interview_assessor_points"
+                            <input type="number" oninput="this.value = this.value.replace(/[^0-9]/g, '')"    id="interview_assessor_points" name="interview_assessor_points"
                                    class="form-control" min="0" max="10" required
                                    value="<%= usersEvaluation.length > 0 ? usersEvaluation[0].interview_assessor_points : '' %>">
                         </div>

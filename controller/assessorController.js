@@ -261,7 +261,36 @@ const getEvaluationId = async (req, res) => {
 		awards,
 	});
 };
+const returnApplication = async (req, res) => {
+	const { id } = req.params; // Get interview ID from the route parameters
 
+	try {
+		// Update the interview status to 'Cancelled'
+		const result = await query(
+			"UPDATE application_assessors SET status = ? WHERE id = ?",
+			["Returned", id]
+		);
+
+		// Check if the update was successful
+		if (result.affectedRows === 1) {
+			res.status(200).json({
+				success: true,
+				message: "Application returned successfully.",
+			});
+		} else {
+			res.status(404).json({
+				success: false,
+				message: "Application not found or already processed.",
+			});
+		}
+	} catch (error) {
+		console.error("Error cancelling interview:", error);
+		res.status(500).json({
+			success: false,
+			message: "An error occurred while cancelling the application.",
+		});
+	}
+};
 const postEvaluation = async (req, res) => {
 	const user_id = res.locals.user.id;
 
@@ -775,5 +804,5 @@ export default {
 	postChangePass,
 	getEvaluationId,
 	postEvaluation,
-	updateEvaluation,checkUsername,checkEmail,checkPhonenumber
+	updateEvaluation,checkUsername,checkEmail,checkPhonenumber,returnApplication
 };

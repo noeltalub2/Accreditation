@@ -176,26 +176,26 @@ const startY = doc.y; // Store the starting Y position for alignment
 // Submitted by
 doc.fontSize(10)
    .text("Submitted by:", 70, startY)
-   .text(`${evaluation_result.assessor_full_name}`, 70, startY + 15, { underline: true })
-   .text("Internal Assessor", 70, startY + 30)
-   .text("Date Signed:", 70, startY + 45);
+   .text(`${evaluation_result.assessor_full_name}`, 70, startY + 35, { underline: true })
+   .text("Internal Assessor", 70, startY + 50)
+   .text("Date Signed:", 70, startY + 65);
 
 // Recommended by
 doc.text("Recommended by:", 210, startY)
-   .text("JEAN P. PACUBAT", 210, startY + 15, { underline: true })
-   .text("Registrar", 210, startY + 30)
-   .text("Date Signed:", 210, startY + 45);
+   .text("JEAN P. PACUBAT", 210, startY + 35, { underline: true })
+   .text("Registrar", 210, startY + 50)
+   .text("Date Signed:", 210, startY + 65);
 
 // Approved by (Dean)
 doc.text("Approved by:", 320, startY)
-   .text("CESARIO Y. PACIS", 320, startY + 15, { underline: true })
-   .text("Dean", 320, startY + 30)
-   .text("Date Signed:", 320, startY + 45);
+   .text("CESARIO Y. PACIS", 320, startY + 35, { underline: true })
+   .text("Dean", 320, startY + 50)
+   .text("Date Signed:", 320, startY + 65);
 
 // Approved by (Chief, ETEEAP)
-doc.text("ROBERT A. SALVADOR", 430, startY + 15, { underline: true })
-   .text("Chief, ETEEAP", 430, startY + 30)
-   .text("Date Signed:", 430, startY + 45);
+doc.text("ROBERT A. SALVADOR", 430, startY + 35, { underline: true })
+   .text("Chief, ETEEAP", 430, startY + 50)
+   .text("Date Signed:", 430, startY + 65);
 
 	doc.end();
 };

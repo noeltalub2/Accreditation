@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 29, 2024 at 03:29 AM
+-- Generation Time: Dec 19, 2024 at 06:09 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -98,7 +98,7 @@ CREATE TABLE `application_assessors` (
   `id` int(11) NOT NULL,
   `application_id` int(11) NOT NULL,
   `assessor_id` varchar(11) NOT NULL,
-  `status` enum('Pending','Evaluated') NOT NULL DEFAULT 'Pending',
+  `status` enum('Pending','Evaluated','Returned') NOT NULL DEFAULT 'Pending',
   `assigned_at` datetime DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -215,6 +215,7 @@ CREATE TABLE `interviews` (
   `application_id` int(11) NOT NULL,
   `interview_date` date DEFAULT NULL,
   `interview_time` time DEFAULT NULL,
+  `interview_type` varchar(255) DEFAULT NULL,
   `status` enum('Pending','Completed','Rejected','Accepted','Cancelled','Rescheduled') DEFAULT 'Pending',
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()

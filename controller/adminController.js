@@ -460,7 +460,7 @@ const getInterview = async (req, res) => {
 	try {
 		// Fetch interview data from the database
 		const users = await query(
-			`SELECT i.id, i.interview_date, i.application_id, i.interview_time, i.status, u.email, u.profile_url, u.phonenumber, u.firstname, u.middlename, u.lastname, u.uuid
+			`SELECT i.id, i.interview_date, i.application_id, i.interview_time, i.interview_type, i.status, u.email, u.profile_url, u.phonenumber, u.firstname, u.middlename, u.lastname, u.uuid
             FROM interviews i
             JOIN users u ON i.user_id = u.uuid
             GROUP BY i.id;`
@@ -489,7 +489,7 @@ const getInterview = async (req, res) => {
 	}
 };
 const postInterview = async (req, res) => {
-	const { application_id, interview_date, interview_time } = req.body;
+	const { application_id, interview_date, interview_time, interview_type } = req.body;
 	try {
 		const user_id = (
 			await query("SELECT uuid FROM application WHERE id = ?", [
@@ -500,7 +500,7 @@ const postInterview = async (req, res) => {
 		// Check for existing pending interviews on the same date for the same user
 		const existingInterviews = await query(
 			`SELECT COUNT(*) as count FROM interviews 
-             WHERE user_id = ? AND status = 'Pending' AND status = 'Accepted' AND status = 'Rescheduled'`,
+             WHERE user_id = ? AND status = 'Pending' AND status = 'Accepted' AND status = 'Rescheduled' `,
 			[user_id]
 		);
 
@@ -512,8 +512,8 @@ const postInterview = async (req, res) => {
 			});
 		}
 		const query_documents = await query(
-			`INSERT INTO interviews (application_id,user_id, interview_date, interview_time) VALUES (?, ?, ?, ?)`,
-			[application_id, user_id, interview_date, interview_time]
+			`INSERT INTO interviews (application_id,user_id, interview_date, interview_time, interview_type) VALUES (?, ?, ?, ?, ?)`,
+			[application_id, user_id, interview_date, interview_time, interview_type]
 		);
 
 		return res.json({
@@ -560,13 +560,13 @@ const acceptInterview = async (req, res) => {
 };
 const rescheduleInterview = async (req, res) => {
     const { id } = req.params; // Get interview ID from the route parameters
-    const { interview_date, interview_time, email, firstname } = req.body;
+    const { interview_date, interview_time, email, firstname, interview_type } = req.body;
 	
     try {
         // Update the interview date and time
         const result = await query(
-            "UPDATE interviews SET interview_date = ?, interview_time = ?, status = 'Pending' WHERE id = ?",
-            [interview_date, interview_time, id]
+            "UPDATE interviews SET interview_date = ?, interview_time = ?, status = 'Pending', interview_type = ? WHERE id = ?",
+            [interview_date, interview_time, interview_type, id]
         );
 
         // Check if the update was successful
@@ -590,8 +590,10 @@ const rescheduleInterview = async (req, res) => {
                 html: `<p>Dear ${firstname},</p>
                        <p>Your interview with <strong>MMSU ETEEAP</strong> has been rescheduled.</p>
                        <p><strong>New Schedule:</strong><br>
-                       Date: ${interview_date}<br>
-                       Time: ${interview_time}</p>
+                       	Date: ${interview_date}<br>
+                       	Time: ${interview_time}<br>
+						Type: ${interview_type}</p>
+					 
                        <p>We apologize for any inconvenience this may have caused and appreciate your understanding.</p>
                        <p>If you have any questions or need further information, feel free to contact us.</p>
                        <p>Best regards,<br>The MMSU ETEEAP Team</p>`,

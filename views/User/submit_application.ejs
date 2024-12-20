@@ -59,14 +59,14 @@
                 <!-- Name Field -->
                 <div class="mb-3">
                   <label for="name" class="form-label">Name (Last Name, First Name, Middle Name)</label>
-                  <input type="text" class="form-control" id="name" name="name" readonly
+                  <input type="text" class="form-control capitalize-first" id="name" name="name" readonly
                     value="<%=userProfile.lastname%>, <%=userProfile.firstname%>, <%=userProfile.middlename%>">
                 </div>
                 <div class="row">
                   <div class="col-lg-6"> <!-- Address Field -->
                     <div class="mb-3">
                       <label for="address" class="form-label">Address</label>
-                      <input type="text" class="form-control" id="address" name="address" required>
+                      <input type="text" class="form-control capitalize-first" id="address" name="address" required>
                     </div>
                   </div>
                   <div class="col-lg-6"> <!-- Zip Code Field -->
@@ -101,7 +101,7 @@
                     <!-- Birthplace Field -->
                     <div class="mb-3">
                       <label for="birthplace" class="form-label">Birthplace</label>
-                      <input type="text" class="form-control" id="birthplace" name="birthplace" required>
+                      <input type="text" class="form-control capitalize-first" id="birthplace" name="birthplace" required>
                     </div>
                   </div>
                   <div class="col-lg-6">
@@ -142,7 +142,7 @@
                     <!-- Nationality Field -->
                     <div class="mb-3">
                       <label for="nationality" class="form-label">Nationality</label>
-                      <input type="text" class="form-control" id="nationality" name="nationality" value="Filipino"
+                      <input type="text" class="form-control capitalize-first" id="nationality" name="nationality" value="Filipino"
                         required>
                     </div>
   
@@ -152,7 +152,7 @@
                     <!-- Languages Spoken Field -->
                     <div class="mb-3">
                       <label for="languages" class="form-label">Languages and Dialects Spoken</label>
-                      <input type="text" class="form-control" id="languages" name="languages" required>
+                      <input type="text" class="form-control capitalize-first" id="languages" name="languages" required>
                     </div>
                   </div>
                 </div>
@@ -207,13 +207,13 @@
                 <div class="mb-3">
                   <label for="cost_accreditation" class="form-label">Who will pay for the cost of obtaining your
                     accreditation?</label>
-                  <input class="form-control" id="cost_accreditation" name="cost_accreditation">
+                  <input class="form-control capitalize-first" id="cost_accreditation" name="cost_accreditation">
                 </div>
   
                 <div class="mb-3">
                   <label for="time_commitment" class="form-label">How soon do you need to complete
                     accreditation/equivalency?</label>
-                  <input class="form-control" id="time_commitment" name="time_commitment">
+                  <input class="form-control capitalize-first" id="time_commitment" name="time_commitment">
                 </div>
   
   
@@ -223,14 +223,14 @@
                 <div class="mb-3">
                   <label for="hobbies_leisure" class="form-label">A. Hobbies/Leisure Activities</label>
                   <br><small>Include only those leisure activities which can be considered learning opportunities.</small>
-                  <textarea class="form-control" id="hobbies_leisure" name="hobbies_leisure" rows="5"></textarea>
+                  <textarea class="form-control capitalize-first" id="hobbies_leisure" name="hobbies_leisure" rows="5"></textarea>
                 </div>
                 <div class="mb-3">
                   <label for="special_skills" class="form-label">B. Special Skills</label>
                   <br><small>A special skill can be considered as an acceptable substitute for a specific credit
                     requirement. Note down those special skills which you think must be related to the field of study you
                     want to pursue.</small>
-                  <textarea class="form-control" id="special_skills" name="special_skills" rows="5"></textarea>
+                  <textarea class="form-control capitalize-first" id="special_skills" name="special_skills" rows="5"></textarea>
                 </div>
   
                 <div class="mb-3">
@@ -239,7 +239,7 @@
                     those tasks that can be considered as new and through which you learned new skills and knowledge.
                     Please do not include, under this category, formal training. However, you may include here experiences
                     which can be classified as on-the-job-training or apprenticeship.</small>
-                  <textarea class="form-control" id="work_related_activities" name="work_related_activities"
+                  <textarea class="form-control capitalize-first" id="work_related_activities" name="work_related_activities"
                     rows="5"></textarea>
                 </div>
   
@@ -247,7 +247,7 @@
   
                   <label for="volunteer_activities" class="form-label">D. Volunteer Activities</label>
                   <br><small>Choose only volunteer activities that also demonstrate learning opportunities.</small>
-                  <textarea class="form-control" id="volunteer_activities" name="volunteer_activities"
+                  <textarea class="form-control capitalize-first" id="volunteer_activities" name="volunteer_activities"
                     rows="5"></textarea>
                 </div>
   
@@ -257,7 +257,7 @@
                     nature of the travel undertaken, whether for leisure, employment, businesses or other purpose. State
                     in clear turns what new learning experience was obtained from this travels and how it helps you become
                     a better person.</small>
-                  <textarea class="form-control" id="travels" name="travels" rows="5"></textarea>
+                  <textarea class="form-control capitalize-first" id="travels" name="travels" rows="5"></textarea>
                 </div>
                 <!-- Education -->
                 <h4>III. Education</h4>
@@ -279,13 +279,13 @@
                 <!-- Name of School -->
                 <div class="mb-3">
                   <label for="school_name" class="form-label">Name of School</label>
-                  <input type="text" class="form-control" id="school_name" name="school_name" required>
+                  <input type="text" class="form-control capitalize-first" id="school_name" name="school_name" required>
                 </div>
   
                 <!-- Address of School -->
                 <div class="mb-3">
                   <label for="school_address" class="form-label">Address of School</label>
-                  <input type="text" class="form-control" id="school_address" name="school_address" required>
+                  <input type="text" class="form-control capitalize-first" id="school_address" name="school_address" required>
                 </div>
   
                 <div class="mb-3">
@@ -321,12 +321,12 @@
                 
                     <div class='col-sm-2'>
                       <label for='company_name_work' class='form-label'>Company Name</label>
-                      <input type='text' class='form-control' name='company_name_work[0]' required>
+                      <input type='text' class='form-control capitalize-first' name='company_name_work[0]' required>
                     </div>
                 
                     <div class='col-sm-2'>
                       <label for='company_address_work' class='form-label'>Company Address</label>
-                      <input type='text' class='form-control' name='company_address_work[0]' required>
+                      <input type='text' class='form-control capitalize-first' name='company_address_work[0]' required>
                     </div>
                 
                     <div class='col-sm-3'>
@@ -430,7 +430,7 @@
                 <h4>VI. Essay</h4>
                 <div class="mb-3">
                   <label for="final_essay" class="form-label">If you finish your degree, how will this contribute to your personal development to the development of your community, your work place, society and country?</label>
-                  <textarea class="form-control" id="final_essay" name="final_essay" rows="5"></textarea>
+                  <textarea class="form-control capitalize-first" id="final_essay" name="final_essay" rows="5"></textarea>
                 </div>
   
                 <button type="submit" class="btn btn-primary" id="submit-button"><span
@@ -800,25 +800,47 @@ $(document).ready(() => DocumentUpload.init());
     }
 </script>
 <script>
-   $("#training_date").flatpickr({
-    mode: "range",
-    maxDate: "today" // Disable future dates
-});
 
-$("#date_national").flatpickr({
-    mode: "range",
-    maxDate: "today" // Disable future dates
-});
+$(document).ready(function() {
+      $('#training_date').daterangepicker({
+        locale: {
+          format: 'MM-DD-YY'
+        },
+        maxDate: moment(),
+        opens: 'left',
+      });
+      $('#date_national').daterangepicker({
+        locale: {
+          format: 'MM-DD-YY'
+        },
+        maxDate: moment(),
+        opens: 'left',
+      });
+      $('#date_international').daterangepicker({
+        locale: {
+          format: 'MM-DD-YY'
+        },
+        maxDate: moment(),
+        opens: 'left',
+      });
+      $('.date-range').daterangepicker({
+        locale: {
+          format: 'MM-DD-YY'
+        },
+        maxDate: moment(),
+        opens: 'left',
+      });
 
-$("#date_international").flatpickr({
-    mode: "range",
-    maxDate: "today" // Disable future dates
-});
+        // Ensure first character is always capitalized when typing in .capitalize-first class inputs
+        $('input.capitalize-first').on('input', function() {
+        var value = $(this).val();
+        // Capitalize the first character and leave the rest as is
+        $(this).val(value.charAt(0).toUpperCase() + value.slice(1));
+      });
+    });
 
-$(".date-range").flatpickr({
-    mode: "range",
-    maxDate: "today" // Disable future dates
-});
+
+
 
 </script>
 `)%>
@@ -852,12 +874,12 @@ $(".date-range").flatpickr({
   
           <div class='col-sm-2'>
             <label for='company_name_work' class='form-label'>Company Name</label>
-            <input type='text' class='form-control' name='company_name_work[${fieldCounter}]' required>
+            <input type='text' class='form-control capitalize-first' name='company_name_work[${fieldCounter}]' required>
           </div>
   
           <div class='col-sm-2'>
             <label for='company_address_work' class='form-label'>Company Address</label>
-            <input type='text' class='form-control' name='company_address_work[${fieldCounter}]' required>
+            <input type='text' class='form-control capitalize-first' name='company_address_work[${fieldCounter}]' required>
           </div>
   
           <div class='col-sm-3'>
@@ -880,12 +902,15 @@ $(".date-range").flatpickr({
       // Append the new field set to the container
       document.getElementById('dynamic_fields_container').appendChild(newFieldSet);
   
-      // Initialize Flatpickr on the newly added date input
-      flatpickr(newFieldSet.querySelector(".date-range"), {
-        mode: "range",
-         maxDate: "today"
+      $(document).ready(function() {
+      $('.date-range').daterangepicker({
+        locale: {
+          format: 'MM-DD-YY'
+        },
+        maxDate: moment(),
+        opens: 'left',
       });
-  
+    });
       // Increment the counter for the next field
       fieldCounter++;
   
@@ -934,12 +959,12 @@ document.getElementById('add_training_field_button').addEventListener('click', f
 
       <div class="col-sm-2">
         <label for="training_title" class="form-label">Title of Training/Seminar</label>
-        <input type="text" class="form-control" name="training_title[${trainingFieldCounter}]" required>
+        <input type="text" class="form-control capitalize-first" name="training_title[${trainingFieldCounter}]" required>
       </div>
 
       <div class="col-sm-2">
         <label for="training_sponsor" class="form-label">Sponsoring Organization</label>
-        <input type="text" class="form-control" name="training_sponsor[${trainingFieldCounter}]" required>
+        <input type="text" class="form-control capitalize-first" name="training_sponsor[${trainingFieldCounter}]" required>
       </div>
 
       <div class="col-sm-3">
@@ -962,10 +987,14 @@ document.getElementById('add_training_field_button').addEventListener('click', f
     // Append the new field set to the container
     document.getElementById('dynamic_trainings_seminars_container').appendChild(newFieldSet);
 
-    // Initialize Flatpickr on the newly added date input
-    flatpickr(newFieldSet.querySelector(".date-range"), {
-      mode: "range",
-       maxDate: "today"
+    $(document).ready(function() {
+      $('.date-range').daterangepicker({
+        locale: {
+          format: 'MM-DD-YY'
+        },
+        maxDate: moment(),
+        opens: 'left',
+      });
     });
 
     // Increment the counter for the next field
@@ -1020,12 +1049,12 @@ initialRemoveButtonsTraining.forEach(button => {
   
             <div class='col-sm-3'>
               <label for='organization_dev' class='form-label'>Name of Organization/Scholarship</label>
-              <input type='text' class='form-control' name='organization_dev[${professionalDevFieldCounter}]' required>
+              <input type='text' class='form-control capitalize-first' name='organization_dev[${professionalDevFieldCounter}]' required>
             </div>
   
             <div class='col-sm-3'>
               <label for='description_dev' class='form-label'>Description</label>
-              <input class='form-control' name='description_dev[${professionalDevFieldCounter}]' required>
+              <input class='form-control capitalize-first' name='description_dev[${professionalDevFieldCounter}]' required>
             </div>
   
             <div class='col-sm-3'>
